@@ -1,0 +1,59 @@
+#!/sbin/runscript
+
+extra_started_commands="reload"
+
+depend() {
+    need net
+    after postgresql
+}
+
+get_config() {
+    [ -f ${CONFIGFILE} ] || return 1
+
+    eval echo $(sed -e 's:;.*::' ${CONFIGFILE} | \
+        awk '$1 == "'$1'" { print ($2 == "=" ? $3 : $2) }')
+}
+
+PIDFILE="$(get_config pidfile)"
+
+prep() {
+    checkpath -o postgres:postgres -m 0770 \
+	-d $(dirname ${PIDFILE}) || return 1
+    checkpath -o postgres:postgres -m 0770 \
+	-d $(dirname $(get_config logfile)) || return 1
+}
+
+start() {
+    ebegin "Starting pgbouncer"
+    prep || eend 1
+    start-stop-daemon --start \
+	--pidfile ${PIDFILE} \
+	--user pgbouncer \
+	--exec /usr/bin/pgbouncer -- -q -d
+    eend $?
+}
+
+stop() {
+    local seconds=$(( ${NICE_TIMEOUT} + ${FORCE_TIMEOUT} ))
+    ebegin "Stopping PgBouncer (this can take up to ${seconds} seconds)"
+
+    local retries=SIGINT/${NICE_TIMEOUT}
+
+    if [ "${FORCE_QUIT}" = "YES" ] ; then
+        einfo "FORCE_QUIT enabled."
+        retries="${retries}/SIGTERM/${FORCE_TIMEOUT}"
+    fi
+
+    # Loops through nice and force quit in one go.
+    start-stop-daemon --stop \
+        --pidfile ${PIDFILE} \
+        --retry ${retries}
+
+    eend $?
+}
+
+reload() {
+    ebegin "Reloading PgBouncer"
+    start-stop-daemon --signal HUP --pidfile ${PIDFILE}
+    eend $?
+}
