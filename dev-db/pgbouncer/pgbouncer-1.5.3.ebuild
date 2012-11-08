@@ -77,7 +77,7 @@ pkg_postinst() {
 			done
 		done
 		if [[ -n ${y} ]] ; then
-			elog "Previous versions of this ebuild created the `pgbouncer' user and user"
+			elog "Previous versions of this ebuild created the 'pgbouncer' user and user"
 			elog "group. They can now be removed."
 			elog "    # userdel pgbouncer && groupdel pgbouncer"
 		fi
