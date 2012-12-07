@@ -130,7 +130,8 @@ src_install() {
 	rm "${ED}/usr/share/postgresql-${SLOT}/man/man1"/{initdb,pg_controldata,pg_ctl,pg_resetxlog,postgres,postmaster}.1
 	docompress /usr/share/postgresql-${SLOT}/man/man{1,7}
 
-	dodoc README HISTORY doc/{README.*,TODO,bug.template}
+	insinto /usr/share/doc/postgresql-${SLOT}
+	doins README HISTORY doc/{README.*,TODO,bug.template}
 
 	cd "${S}/contrib"
 	emake DESTDIR="${D}" install

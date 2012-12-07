@@ -135,7 +135,9 @@ src_install() {
 	cp -r "${S}"/doc/src/sgml/man{1,7} "${ED}"/usr/share/postgresql-${SLOT}/man/ || die
 	rm "${ED}/usr/share/postgresql-${SLOT}/man/man1"/{initdb,pg_{controldata,ctl,resetxlog},post{gres,master}}.1
 	docompress /usr/share/postgresql-${SLOT}/man/man{1,7}
-	dodoc README HISTORY doc/{TODO,bug.template}
+
+	insinto /usr/share/doc/postgresql-${SLOT}
+	doins README HISTORY doc/{README.*,TODO,bug.template}
 
 	cd "${S}/contrib"
 	emake DESTDIR="${D}" install
