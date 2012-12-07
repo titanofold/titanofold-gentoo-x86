@@ -138,8 +138,6 @@ src_install() {
 			emake install -C $bd DESTDIR="${D}" || die "emake install in $bd failed"
 	done
 
-	dodoc README HISTORY doc/{TODO,bug.template}
-
 	dodir /etc/eselect/postgresql/slots/${SLOT}
 	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
 		"${ED}/etc/eselect/postgresql/slots/${SLOT}/server"

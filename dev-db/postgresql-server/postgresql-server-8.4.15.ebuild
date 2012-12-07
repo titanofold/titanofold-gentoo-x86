@@ -134,8 +134,6 @@ src_install() {
 		"${ED}/usr/share/doc/postgresql-${SLOT}/html"
 	rm "${ED}"/usr/share/postgresql-${SLOT}/man/man1/{clusterdb,create{db,lang,user},drop{db,lang,user},ecpg,pg_{config,dump,dumpall,restore},psql,reindexdb,vacuumdb}.1
 
-	dodoc README HISTORY doc/{README.*,TODO,bug.template}
-
 	dodir /etc/eselect/postgresql/slots/${SLOT}
 	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" \
 		> "${ED}/etc/eselect/postgresql/slots/${SLOT}/server"
