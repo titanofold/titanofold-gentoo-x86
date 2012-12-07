@@ -1,29 +1,30 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-server/postgresql-server-8.3.21.ebuild,v 1.5 2012/12/01 19:19:54 armin76 Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-server/postgresql-server-9.0.9.ebuild,v 1.7 2012/09/20 18:08:10 blueness Exp $
 
 EAPI="4"
+PYTHON_DEPEND="python? 2"
 
 WANT_AUTOMAKE="none"
-inherit autotools eutils multilib pam prefix user versionator
+inherit autotools eutils multilib pam prefix python user versionator
 
 SLOT="$(get_version_component_range 1-2)"
 
-KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 s390 sh sparc x86 ~x86-fbsd"
+KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 s390 sh sparc x86 ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 DESCRIPTION="PostgreSQL server"
 HOMEPAGE="http://www.postgresql.org/"
 SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2
-		 http://dev.gentoo.org/~titanofold/postgresql-patches-8.3-r2.tbz2
+		 http://dev.gentoo.org/~titanofold/postgresql-patches-9.0-r3.tbz2
 		 http://dev.gentoo.org/~titanofold/postgresql-initscript-2.1.1.tbz2"
 LICENSE="POSTGRESQL GPL-2"
 
 S="${WORKDIR}/postgresql-${PV}"
 
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN zh_TW"
-IUSE="doc kernel_linux nls pam perl python selinux tcl uuid xml"
+IUSE="doc kernel_linux nls pam perl -pg_legacytimestamp python selinux tcl uuid xml"
 
-for lingua in ${LINGUAS} ; do
+for lingua in ${LINGUAS}; do
 	IUSE+=" linguas_${lingua}"
 done
 
@@ -37,7 +38,7 @@ wanted_languages() {
 	echo -n ${enable_langs}
 }
 
-RDEPEND="~dev-db/postgresql-base-${PV}:${SLOT}[pam?,nls=]
+RDEPEND="~dev-db/postgresql-base-${PV}:${SLOT}[pam?,pg_legacytimestamp=,nls=]
 		 perl? ( >=dev-lang/perl-5.8 )
 		 selinux? ( sec-policy/selinux-postgresql )
 		 tcl? ( >=dev-lang/tcl-8 )
@@ -56,15 +57,15 @@ PDEPEND="doc? ( ~dev-db/postgresql-docs-${PV} )"
 pkg_setup() {
 	enewgroup postgres 70
 	enewuser postgres 70 /bin/bash /var/lib/postgresql postgres
+
+	use python && python_set_active_version 2
 }
 
 src_prepare() {
 	epatch "${WORKDIR}/autoconf.patch" \
 		"${WORKDIR}/bool.patch" \
-		"${WORKDIR}/darwin.patch" \
 		"${WORKDIR}/pg_ctl-exit-status.patch" \
-		"${WORKDIR}/server.patch" \
-		"${WORKDIR}/SuperH.patch"
+		"${WORKDIR}/server.patch"
 
 	eprefixify src/include/pg_config_manual.h
 
@@ -91,6 +92,7 @@ src_configure() {
 	# eval is needed to get along with pg_config quotation of space-rich entities.
 	eval econf "$(${EPREFIX%/}/usr/$(get_libdir)/postgresql-${SLOT}/bin/pg_config --configure)" \
 		--with-includes="${EPREFIX%/}/usr/include/postgresql-${SLOT}/" \
+		--with-libraries="${EPREFIX%/}/usr/$(get_libdir)/postgresql-${SLOT}/$(get_libdir)" \
 		--with-system-tzdata="${EPREFIX%/}/usr/share/zoneinfo" \
 		$(use_with perl) \
 		$(use_with python) \
@@ -98,17 +100,14 @@ src_configure() {
 		$(use_with xml libxml) \
 		$(use_with xml libxslt) \
 		$(use_with uuid ossp-uuid) \
-		"$(has_version ~dev-db/postgresql-base-${PV}[nls] && use_enable nls nls "$(wanted_languages)")"
+		"$(use_enable nls nls "$(wanted_languages)")"
 }
 
 src_compile() {
 	local bd
 	for bd in . contrib $(use xml && echo contrib/xml2); do
 		PATH="${EROOT%/}/usr/$(get_libdir)/postgresql-${SLOT}/bin:${PATH}" \
-			emake -C $bd -j1 \
-				PGXS=$(${EROOT%/}/usr/$(get_libdir)/postgresql-${SLOT}/bin/pg_config --pgxs) \
-				PGXS_IN_SERVER=1 PGXS_WITH_SERVER="${S}/src/backend/postgres" \
-				NO_PGXS=0 USE_PGXS=1 docdir=${EROOT%/}/usr/share/doc/${PF}
+			emake -C $bd -j1 || die "emake in $bd failed"
 	done
 }
 
@@ -116,23 +115,18 @@ src_install() {
 	if use perl ; then
 		mv -f "${S}/src/pl/plperl/GNUmakefile" "${S}/src/pl/plperl/GNUmakefile_orig"
 		sed -e "s:\$(DESTDIR)\$(plperl_installdir):\$(plperl_installdir):" \
-			"${S}/src/pl/plperl/GNUmakefile_orig" \
-			> "${S}/src/pl/plperl/GNUmakefile"
+			"${S}/src/pl/plperl/GNUmakefile_orig" > "${S}/src/pl/plperl/GNUmakefile"
 	fi
 
 	local bd
 	for bd in . contrib $(use xml && echo contrib/xml2) ; do
 		PATH="${EROOT%/}/usr/$(get_libdir)/postgresql-${SLOT}/bin:${PATH}" \
-			emake install -C $bd -j1 DESTDIR="${D}" \
-				PGXS_IN_SERVER=1 PGXS_WITH_SERVER="${S}/src/backend/postgres" \
-				PGXS=$(${EROOT%/}/usr/$(get_libdir)/postgresql-${SLOT}/bin/pg_config --pgxs) \
-				NO_PGXS=0 USE_PGXS=1 docdir=${EROOT%/}/usr/share/doc/${PF}
+			emake install -C $bd -j1 DESTDIR="${D}" || die "emake install in $bd failed"
 	done
 
-	rm -r "${ED}/usr/share/postgresql-${SLOT}/man/man7/" \
-		"${ED}/usr/share/doc/${PF}/html"
-	rm "${ED}"/usr/share/postgresql-${SLOT}/man/man1/{clusterdb,create{db,lang,user},drop{db,lang,user},ecpg,pg_{config,dump,dumpall,restore},psql,reindexdb,vacuumdb}.1
-	docompress /usr/share/postgresql-${SLOT}/man/man1
+	dodir /usr/share/postgresql-${SLOT}/man/man1/
+	cp "${S}"/doc/src/sgml/man1/{initdb,pg_controldata,pg_ctl,pg_resetxlog,post{gres,master}}.1 \
+		"${ED}"/usr/share/postgresql-${SLOT}/man/man1/ || die
 
 	dodoc README HISTORY doc/{README.*,TODO,bug.template}
 
@@ -140,8 +134,11 @@ src_install() {
 	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" \
 		> "${ED}/etc/eselect/postgresql/slots/${SLOT}/server"
 
-	newconfd "${WORKDIR}/postgresql.confd" postgresql-${SLOT}
-	newinitd "${WORKDIR}/postgresql.init" postgresql-${SLOT}
+	newconfd "${WORKDIR}/postgresql.confd" postgresql-${SLOT} \
+		|| die "Inserting conf.d file failed"
+
+	newinitd "${WORKDIR}/postgresql.init" postgresql-${SLOT} \
+		|| die "Inserting init.d file failed"
 
 	use pam && pamd_mimic system-auth postgresql auth account session
 
@@ -196,7 +193,7 @@ pkg_config() {
 		unset LC_MONETARY
 		unset LC_MESSAGES
 		unset LC_ALL
-		source ${EROOT%/}/etc/env.d/02locale
+		source "${EROOT%/}/etc/env.d/02locale"
 		[[ -n ${LANG} ]] && export LANG
 		[[ -n ${LC_CTYPE} ]] && export LC_CTYPE
 		[[ -n ${LC_NUMERIC} ]] && export LC_NUMERIC
@@ -215,7 +212,7 @@ pkg_config() {
 	einfo "    http://www.postgresql.org/docs/${SLOT}/static/app-initdb.html"
 	einfo
 	einfo "PG_INITDB_OPTS is currently set to:"
-	if [[ -z ${PG_INITDB_OPTS} ]] ; then
+	if [[ -z "${PG_INITDB_OPTS}" ]] ; then
 		einfo "    (none)"
 	else
 		einfo "    ${PG_INITDB_OPTS}"
@@ -235,7 +232,7 @@ pkg_config() {
 		elif [[ $answer =~ ^[Nn]([Oo])?$ ]] ; then
 			die "Aborting initialization."
 		else
-			echo "Answer not recognized."
+			echo "Answer not recognized"
 		fi
 	done
 
@@ -250,10 +247,10 @@ pkg_config() {
 
 	if ! use kernel_linux ; then
 		einfo "Skipped."
-		einfo "Tests not supported on this OS (yet)."
+		einfo "  Tests not supported on this OS (yet)"
 	else
 		if [[ -z ${SKIP_SYSTEM_TESTS} ]] ; then
-			ebegin "Checking whether your system supports at least ${PG_MAX_CONNECTIONS} connections"
+			einfo "Checking whether your system supports at least ${PG_MAX_CONNECTIONS} connections..."
 
 			local SEMMSL=$(sysctl -n kernel.sem | cut -f1)
 			local SEMMNS=$(sysctl -n kernel.sem | cut -f2)
@@ -269,18 +266,18 @@ pkg_config() {
 				if [[ $(eval echo \$$p) -lt $(eval echo \$${p}_MIN) ]] ; then
 					eerror "The value for ${p} $(eval echo \$$p) is below the recommended value $(eval echo \$${p}_MIN)"
 					eerror "You have now several options:"
-					eerror "  - Change the mentioned system parameter"
-					eerror "  - Lower the number of max connections by setting PG_MAX_CONNECTIONS to a"
-					eerror "    value lower than ${PG_MAX_CONNECTIONS}"
-					eerror "  - Set SKIP_SYSTEM_TESTS in case you want to ignore this test completely"
+					eerror "    - Change the mentioned system parameter"
+					eerror "    - Lower the number of max connections by setting PG_MAX_CONNECTIONS to a"
+					eerror "      value lower than ${PG_MAX_CONNECTIONS}"
+					eerror "    - Set SKIP_SYSTEM_TESTS in case you want to ignore this test completely"
 					eerror "More information can be found here:"
 					eerror "    http://www.postgresql.org/docs/${SLOT}/static/kernel-resources.html"
 					die "System test failed."
 				fi
 			done
-			eend
+			einfo "Passed."
 		else
-			ewarn "SKIP_SYSTEM_TESTS is set, so skipping."
+			ewarn "SKIP_SYSTEM_TESTS set, so skipping."
 		fi
 	fi
 
@@ -292,16 +289,25 @@ pkg_config() {
 	fi
 
 	einfo "Initializing the database ..."
+
 	if [[ ${EUID} == 0 ]] ; then
-		su postgres -c "${EROOT%/}/usr/$(get_libdir)/postgresql-${SLOT}/bin/initdb -D \"${DATA_DIR}\" ${PG_INITDB_OPTS}"
+		su postgres \
+			-c "${EROOT%/}/usr/$(get_libdir)/postgresql-${SLOT}/bin/initdb -D '${DATA_DIR}' -L '${EROOT%/}/usr/share/postgresql-${SLOT}/' ${PG_INITDB_OPTS}"
 	else
-		"${EROOT%/}"/usr/$(get_libdir)/postgresql-${SLOT}/bin/initdb -U postgres -D "${DATA_DIR}" ${PG_INITDB_OPTS}
+		"${EROOT%/}"/usr/$(get_libdir)/postgresql-${SLOT}/bin/initdb \
+			-U postgres -D "${DATA_DIR}" \
+			-L "${EROOT%/}/usr/share/postgresql-${SLOT}/" ${PG_INITDB_OPTS}
 	fi
+
 	mv "${DATA_DIR%/}"/*.conf "${PGDATA}"
 
 	einfo "The autovacuum function, which was in contrib, has been moved to the main"
-	einfo "PostgreSQL functions starting with 8.1. You can enable it in the clusters"
-	einfo "postgresql.conf."
+	einfo "PostgreSQL functions starting with 8.1, and starting with 8.4 is now enabled"
+	einfo "by default. You can disable it in the cluster's:"
+	einfo "    ${PGDATA%/}/postgresql.conf"
+	einfo
+	einfo "The PostgreSQL server, by default, will log events to:"
+	einfo "    ${DATA_DIR%/}/postmaster.log"
 	einfo
 	if use prefix ; then
 		einfo "The location of the configuration files have moved to:"
@@ -325,10 +331,7 @@ src_test() {
 	einfo ">>> Test phase [check]: ${CATEGORY}/${PF}"
 
 	if [[ ${UID} != 0 ]] ; then
-		PATH="${EROOT%/}/usr/$(get_libdir)/postgresql-${SLOT}/bin/:${PATH}" \
-			emake check \
-			PGXS=$(${EROOT%/}/usr/$(get_libdir)/postgresql-${SLOT}/bin/pg_config --pgxs) \
-			NO_PGXS=0 USE_PGXS=1 SLOT=${SLOT}
+		emake check || die "Make check failed. See above for details."
 
 		einfo "If you think other tests besides the regression tests are necessary, please"
 		einfo "submit a bug including a patch for this ebuild to enable them."
