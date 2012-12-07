@@ -8,7 +8,6 @@ inherit versionator
 
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~sparc-fbsd ~x86-fbsd"
 
-# Nothing to test here per 232157
 RESTRICT="test"
 
 DESCRIPTION="PostgreSQL documentation"
@@ -29,19 +28,20 @@ src_unpack() {
 }
 
 src_install() {
+	local mypath=/usr/share/doc/postgresql-${SLOT}
+
 	cd "${S}/doc"
 
-	dodir /usr/share/doc/${PF}/html
-	tar -zxf "postgres.tar.gz" -C "${ED}/usr/share/doc/${PF}/html"
-	fowners root:0 -R /usr/share/doc/${PF}/html
+	dodir ${mypath}/html
+	tar -zxf "postgres.tar.gz" -C "${ED}${mypath}/html" || die
 
-	docinto sgml
-	dodoc src/sgml/*.{sgml,dsl}
-	docinto sgml/ref
-	dodoc src/sgml/ref/*.sgml
+	insinto ${mypath}/sgml
+	doins src/sgml/*.{sgml,dsl}
 
-	docinto
-	dodoc TODO
+	insinto ${mypath}/sgml/ref
+	doins src/sgml/ref/*.sgml
+
+	fowners root:0 -R ${mypath}
 
 	dodir /etc/eselect/postgresql/slots/${SLOT}
 	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \

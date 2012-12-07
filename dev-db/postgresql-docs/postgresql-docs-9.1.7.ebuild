@@ -8,6 +8,8 @@ inherit versionator
 
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
+RESTRICT="test"
+
 SLOT="$(get_version_component_range 1-2)"
 S="${WORKDIR}/postgresql-${PV}"
 
@@ -26,22 +28,20 @@ src_unpack() {
 }
 
 src_install() {
-	dodir /usr/share/doc/${PF}/html
+	local mypath=/usr/share/doc/postgresql-${SLOT}
 
 	cd "${S}/doc"
 
-	docinto sgml
-	dodoc src/sgml/*.{sgml,dsl}
+	insinto ${mypath}/html
+	doins src/sgml/html/*
 
-	docinto sgml/ref
-	dodoc src/sgml/ref/*.sgml
+	insinto ${mypath}/sgml
+	doins src/sgml/*.{sgml,dsl}
 
-	docinto html
-	dodoc src/sgml/html/*.html
-	dodoc src/sgml/html/stylesheet.css
+	insinto ${mypath}/sgml/ref
+	doins src/sgml/ref/*.sgml
 
-	docinto
-	dodoc TODO
+	fowners root:0 -R ${mypath}
 
 	dodir /etc/eselect/postgresql/slots/${SLOT}
 	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \

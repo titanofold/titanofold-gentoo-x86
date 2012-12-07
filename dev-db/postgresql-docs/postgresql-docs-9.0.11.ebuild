@@ -28,21 +28,20 @@ src_unpack() {
 }
 
 src_install() {
-	dodir /usr/share/doc/${PF}/html
+	local mypath=/usr/share/doc/postgresql-${SLOT}
 
 	cd "${S}/doc"
 
-	docinto sgml
-	dodoc src/sgml/*.{sgml,dsl}
-	docinto sgml/ref
-	dodoc src/sgml/ref/*.sgml
+	insinto ${mypath}/html
+	doins src/sgml/html/*
 
-	docinto html
-	dodoc src/sgml/html/*.html
-	dodoc src/sgml/html/stylesheet.css
+	insinto ${mypath}/sgml
+	doins src/sgml/*.{sgml,dsl}
 
-	docinto
-	dodoc TODO
+	insinto ${mypath}/sgml/ref
+	doins src/sgml/ref/*.sgml
+
+	fowners root:0 -R ${mypath}
 
 	dodir /etc/eselect/postgresql/slots/${SLOT}
 	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
