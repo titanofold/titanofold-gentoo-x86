@@ -8,7 +8,7 @@ PYTHON_DEPEND="python? 2"
 WANT_AUTOMAKE="none"
 inherit autotools eutils flag-o-matic multilib pam prefix python user versionator
 
-KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 s390 sh sparc x86 ~amd64-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
 S="${WORKDIR}/postgresql-${PV}"
