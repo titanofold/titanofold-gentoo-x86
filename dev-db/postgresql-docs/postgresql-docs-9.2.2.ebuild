@@ -36,6 +36,8 @@ src_unpack() {
 }
 
 src_install() {
+	# Don't use ${PF} here as three packages
+	# (dev-db/postgresql-{docs,base,server}) have the same set of docs.
 	local mypath=/usr/share/doc/postgresql-${SLOT}
 
 	cd "${S}/doc"

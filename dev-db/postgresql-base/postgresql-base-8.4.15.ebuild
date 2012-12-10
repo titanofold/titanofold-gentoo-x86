@@ -124,6 +124,8 @@ src_install() {
 	rm "${ED}"/usr/share/postgresql-${SLOT}/man/man1/{initdb,pg_{controldata,ctl,resetxlog},post{gres,master}}.1
 	docompress /usr/share/postgresql-${SLOT}/man/man{1,7}
 
+	# Don't use ${PF} here as three packages
+	# (dev-db/postgresql-{docs,base,server}) have the same set of docs.
 	insinto /usr/share/doc/postgresql-${SLOT}
 	doins README HISTORY doc/{README.*,TODO,bug.template}
 
