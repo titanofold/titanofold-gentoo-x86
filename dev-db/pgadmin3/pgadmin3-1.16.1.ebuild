@@ -1,6 +1,6 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/pgadmin3/pgadmin3-1.14.2.ebuild,v 1.4 2012/04/16 21:37:54 ranger Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/pgadmin3/pgadmin3-1.16.1.ebuild,v 1.1 2012/12/13 09:55:34 patrick Exp $
 
 EAPI="4"
 
@@ -13,9 +13,9 @@ HOMEPAGE="http://www.pgadmin.org/"
 SRC_URI="mirror://postgresql/${PN}/release/v${PV}/src/${P}.tar.gz"
 
 LICENSE="POSTGRESQL"
-KEYWORDS="amd64 ppc x86 ~x86-fbsd"
+KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
 SLOT="0"
-IUSE="debug"
+IUSE="debug +database-designer"
 
 DEPEND="x11-libs/wxGTK:2.8[X,debug=]
 	>=dev-db/postgresql-base-8.4.0
@@ -35,7 +35,8 @@ pkg_setup() {
 
 src_configure() {
 	econf --with-wx-version=2.8 \
-		$(use_enable debug)
+		$(use_enable debug) \
+		$(use_enable database-designer)
 }
 
 src_install() {
