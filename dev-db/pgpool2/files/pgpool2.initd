@@ -22,7 +22,7 @@ get_config() {
 }
 
 PIDFILE="$(get_config pid_file_name)"
-${PIDFILE:='/run/pgpool/pgpool.pid'}
+: ${PIDFILE:='/run/pgpool/pgpool.pid'}
 
 prep() {
     # $logdir contains status file(s), not log files.
@@ -47,7 +47,6 @@ start() {
     start-stop-daemon --start \
         --user pgpool:postgres \
         --pidfile ${PIDFILE} \
-        --stderr ${LOGFILE} \
         --exec /usr/bin/pgpool
 
     eend
