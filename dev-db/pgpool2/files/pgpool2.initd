@@ -7,11 +7,11 @@ extra_started_commands="reload"
 
 CONFIGFILE="/etc/pgpool2/pgpool.conf"
 LOGFILE="/var/log/pgpool2.log"
-PIDFILE=""
 
 depend() {
     use net
     use postgresql
+    after logger
 }
 
 get_config() {
@@ -22,13 +22,21 @@ get_config() {
 }
 
 PIDFILE="$(get_config pid_file_name)"
+${PIDFILE:='/run/pgpool/pgpool.pid'}
 
 prep() {
+    # $logdir contains status file(s), not log files.
+    local logdir=$(get_config logdir)
+    local socket_dir=$(get_config socket_dir)
+    local pcp_socket_dir=$(get_config pcp_socket_dir)
+
     checkpath -o pgpool:postgres -m 0770 -d $(dirname ${PIDFILE}) || return 1
-    checkpath -o pgpool:postgres -m 0770 -d $(get_config logdir) || return 1
+    checkpath -o pgpool:postgres -m 0770 -d ${logdir:-'/run/pgpool'} || return 1
     checkpath -o pgpool:postgres -m 0660 -f ${LOGFILE} || return 1
-    checkpath -o postgres:postgres -m 0770 -d $(get_config socket_dir) || return 1
-    checkpath -o postgres:postgres -m 0770 -d $(get_config pcp_socket_dir) || return 1
+    checkpath -o postgres:postgres -m 0770 \
+        -d ${socket_dir:-'/run/postgresql'} || return 1
+    checkpath -o postgres:postgres -m 0770 \
+        -d ${pcp_socket_dir:-'/run/postgresql'} || return 1
 }
 
 start() {
@@ -39,6 +47,7 @@ start() {
     start-stop-daemon --start \
         --user pgpool:postgres \
         --pidfile ${PIDFILE} \
+        --stderr ${LOGFILE} \
         --exec /usr/bin/pgpool
 
     eend
