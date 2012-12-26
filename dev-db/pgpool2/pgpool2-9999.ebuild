@@ -1,6 +1,6 @@
 # Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/pgpool2/pgpool2-9999.ebuild,v 1.4 2012/04/23 15:00:45 titanofold Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/pgpool2/pgpool2-3.2.1.ebuild,v 1.2 2012/11/16 20:03:13 ago Exp $
 
 EAPI=4
 
@@ -13,63 +13,105 @@ inherit base autotools ${SCM_ECLASS}
 unset SCM_ECLASS
 
 DESCRIPTION="Connection pool server for PostgreSQL"
-HOMEPAGE="http://pgpool.projects.postgresql.org/"
-[[ ${PV} == 9999 ]] || SRC_URI="http://pgfoundry.org/frs/download.php/3076/${MY_P}.tar.gz"
-
+HOMEPAGE="http://www.pgpool.net/"
+[[ ${PV} == 9999 ]] || SRC_URI="http://www.pgpool.net/download.php?f=${MY_P}.tar.gz -> ${MY_P}.tar.gz"
 LICENSE="BSD"
 SLOT="0"
-[[ ${PV} == 9999 ]] || KEYWORDS="~amd64 ~x86"
-IUSE="pam ssl static-libs"
+
+# Don't move KEYWORDS on the previous line or ekeyword won't work # 399061
+[[ ${PV} == 9999 ]] || \
+KEYWORDS="~amd64 ~x86"
+
+IUSE="memcached pam ssl static-libs"
 
 RDEPEND="
 	dev-db/postgresql-base
+	memcached? ( dev-libs/libmemcached )
 	pam? ( sys-auth/pambase )
 	ssl? ( dev-libs/openssl )
 "
-DEPEND="${DEPEND}
+DEPEND="${RDEPEND}
 	sys-devel/bison
 	!!dev-db/pgpool
 "
 
 AUTOTOOLS_IN_SOURCE_BUILD="1"
 
-DOCS=(
-	"NEWS"
-	"doc/where_to_send_queries.pdf"
-)
-HTML_DOCS=(
-	"doc/pgpool-en.html"
-	"doc/pgpool.css"
-	"doc/tutorial-en.html"
-)
-
 S=${WORKDIR}/${MY_P}
 
+pkg_setup() {
+	enewgroup postgres 70
+	enewuser pgpool -1 -1 -1 postgres
+
+	# We need the postgres user as well so we can set the proper
+	# permissions on the sockets without getting into fights with
+	# PostgreSQL's initialization scripts.
+	enewuser postgres 70 /bin/bash /var/lib/postgresql postgres
+}
+
 src_prepare() {
-	sed -i \
-		-e 's:/tmp/:/var/run/postgresql:g' \
-		pgpool.conf.sample pool.h || die
-	sed -i \
-		-e '/ACLOCAL_AMFLAGS/ d' \
-		Makefile.am || die
-	base_src_prepare
-	eautoreconf
+	epatch "${FILESDIR}/pgpool_run_paths.patch"
+
+	local pg_config_manual="$(pg_config --includedir)/pg_config_manual.h"
+	local pgsql_socket_dir=$(grep DEFAULT_PGSOCKET_DIR "${pg_config_manual}" | \
+		sed 's|.*\"\(.*\)\"|\1|g')
+	local pgpool_socket_dir="$(dirname $pgsql_socket_dir)/pgpool"
+
+	sed "s|@PGSQL_SOCKETDIR@|${pgsql_socket_dir}|g" \
+		-i *.conf.sample* pool.h || die
+
+	sed "s|@PGPOOL_SOCKETDIR@|${pgpool_socket_dir}|g" \
+		-i *.conf.sample* pool.h || die
 }
 
 src_configure() {
+	local myconf
+	use memcached && \
+		myconf="--with-memcached=\"${EROOT%/}/usr/include/libmemcached\""
+	use pam && myconf+=' --with-pam'
+
 	econf \
-		--sysconfdir="${EROOT}/etc/${PN}" \
 		--disable-rpath \
-		$(use_enable static-libs static) \
+		--sysconfdir="${EROOT%/}/etc/${PN}" \
 		$(use_with ssl openssl) \
-		$(use_with pam)
+		$(use_enable static-libs static) \
+		${myconf}
+}
+
+src_compile() {
+	emake
+
+	cd sql
+	emake
 }
 
 src_install() {
-	base_src_install
-	find "${ED}" -name '*.la' -exec rm -f {} +
-	# move misc data to proper folder
-	mv "${ED}/usr/share/${PN/2/-II}" "${ED}/usr/share/${PN}" || die
+	emake DESTDIR="${D}" install
+
+	cd sql
+	emake DESTDIR="${D}" install
+	cd "${S}"
+
+	# `contrib' moved to `extension' with PostgreSQL 9.1
+	local pgslot=$(postgresql-config show)
+	if [[ ${pgslot//.} > 90 ]] ; then
+		cd "${ED%/}$(pg_config --sharedir)"
+		mv contrib extension || die
+		cd "${S}"
+	fi
 
 	newinitd "${FILESDIR}/${PN}.initd" ${PN}
+	newconfd "${FILESDIR}/${PN}.confd" ${PN}
+
+	# Documentation
+	dodoc NEWS TODO doc/where_to_send_queries.{pdf,odg}
+	dohtml -r doc
+
+	# Examples and extras
+	insinto "/usr/share/${PN}"
+	doins doc/{pgpool_remote_start,basebackup.sh,recovery.conf.sample}
+	mv "${ED%/}/usr/share/${PN/2/-II}" "${ED%/}/usr/share/${PN}" || die
+
+	# One more thing: Evil la files!
+	find "${ED}" -name '*.la' -exec rm -f {} +
 }

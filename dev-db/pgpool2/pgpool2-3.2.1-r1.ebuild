@@ -39,15 +39,15 @@ AUTOTOOLS_IN_SOURCE_BUILD="1"
 
 S=${WORKDIR}/${MY_P}
 
-#pkg_setup() {
-#	enewgroup postgres 70
-#	enewuser pgpool -1 -1 -1 postgres
+pkg_setup() {
+	enewgroup postgres 70
+	enewuser pgpool -1 -1 -1 postgres
 
 	# We need the postgres user as well so we can set the proper
 	# permissions on the sockets without getting into fights with
 	# PostgreSQL's initialization scripts.
-#	enewuser postgres 70 /bin/bash /var/lib/postgresql postgres
-#}
+	enewuser postgres 70 /bin/bash /var/lib/postgresql postgres
+}
 
 src_prepare() {
 	epatch "${FILESDIR}/pgpool_run_paths.patch"
