@@ -146,7 +146,7 @@ src_compile() {
 }
 
 src_install() {
-	mkdir -p ${D}/usr/share/postgresql-${SLOT}
+	mkdir -p "${D}/usr/share/postgresql-${SLOT}"
 	emake DESTDIR="${D}" install
 	insinto /usr/include/postgresql-${SLOT}/postmaster
 	doins "${S}"/src/include/postmaster/*.h
