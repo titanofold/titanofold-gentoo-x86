@@ -49,13 +49,8 @@ MAKEOPTS+=" -j1"
 
 pkg_setup() {
 	export PGSLOT="$(postgresql-config show)"
-	if [[ ${PGSLOT//.} < 84 ]] ; then
-		eerror "You must build ${CATEGORY}/${P} against PostgreSQL 8.4 or higher."
-		eerror "Set an appropriate slot with postgresql-config."
-		die "postgresql-config not set to 8.4 or higher."
-	fi
 
-	if [[ ${PGSLOT//.} > 92 ]] ; then
+	if [[ ${PGSLOT//.} < 84 || ${PGSLOT//.} > 92 ]] ; then
 		eerror "You must build ${CATEGORY}/${P} against PostgreSQL 8.4 - 9.2."
 		eerror "Set an appropriate slot with postgresql-config."
 		die 'Select a PostgreSQL slot between 8.4 and 9.2'
