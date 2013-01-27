@@ -50,17 +50,16 @@ MAKEOPTS+=" -j1"
 pkg_setup() {
 	export PGSLOT="$(postgresql-config show)"
 	if [[ ${PGSLOT//.} < 84 ]] ; then
-		eerror "You must build ${CATEGORY}/${PN} against PostgreSQL 8.4 or higher."
+		eerror "You must build ${CATEGORY}/${P} against PostgreSQL 8.4 or higher."
 		eerror "Set an appropriate slot with postgresql-config."
 		die "postgresql-config not set to 8.4 or higher."
 	fi
 
-#	if [[ ${PGSLOT//.} > 90 ]] ; then
-#		ewarn "You are building ${CATEGORY}/${PN} against a version of PostgreSQL greater than 9.0."
-#		ewarn "This is neither supported here nor upstream."
-#		ewarn "However, all indicators show that this should work."
-#		ewarn "Any bugs you encounter should be reported upstream."
-#	fi
+	if [[ ${PGSLOT//.} > 92 ]] ; then
+		eerror "You must build ${CATEGORY}/${P} against PostgreSQL 8.4 - 9.2."
+		eerror "Set an appropriate slot with postgresql-config."
+		die 'Select a PostgreSQL slot between 8.4 and 9.2'
+	fi
 }
 
 src_configure() {
