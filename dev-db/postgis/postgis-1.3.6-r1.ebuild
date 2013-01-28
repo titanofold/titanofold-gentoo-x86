@@ -7,14 +7,20 @@ EAPI="1"
 inherit eutils multilib versionator
 
 DESCRIPTION="Geographic Objects for PostgreSQL"
-HOMEPAGE="http://postgis.refractions.net"
-SRC_URI="http://postgis.refractions.net/download/${P}.tar.gz"
+HOMEPAGE="http://postgis.net"
+SRC_URI="http://download.osgeo.org/postgis/source/${P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86"
 IUSE="geos proj doc"
 
-RDEPEND=">=dev-db/postgresql-server-8.0
+RDEPEND="		|| (
+			dev-db/postgresql-server:8.4
+			dev-db/postgresql-server:8.3
+			dev-db/postgresql-server:8.2
+			dev-db/postgresql-server:8.1
+			dev-db/postgresql-server:8.0
+		)
 	geos? ( sci-libs/geos )
 	proj? ( sci-libs/proj )"
 
@@ -24,6 +30,14 @@ DEPEND="${RDEPEND}
 RESTRICT="test"
 
 pkg_setup(){
+	export PGSLOT="$(postgresql-config show)"
+
+	if [[ ${PGSLOT//.} < 71 || ${PGSLOT//.} > 84 ]] ; then
+		eerror "You must build ${CATEGORY}/${P} against PostgreSQL 7.1 - 8.4."
+		eerror "Set an appropriate slot with postgresql-config."
+		die 'Select a PostgreSQL slot between 8.4 and 9.2'
+	fi
+
 	if [ ! -z "${PGUSER}" ]; then
 		eval unset PGUSER
 	fi

@@ -7,8 +7,8 @@ EAPI="4"
 inherit eutils versionator
 
 DESCRIPTION="Geographic Objects for PostgreSQL"
-HOMEPAGE="http://postgis.refractions.net"
-SRC_URI="http://postgis.refractions.net/download/${P}.tar.gz"
+HOMEPAGE="http://postgis.net"
+SRC_URI="http://download.osgeo.org/postgis/source/${P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86"
@@ -46,10 +46,11 @@ MAKEOPTS+=" -j1"
 
 pkg_setup() {
 	export PGSLOT="$(postgresql-config show)"
-	if [[ ${PGSLOT//.} < 82 || ${PGSLOT//.} > 84 ]] ; then
-		eerror "You must build ${CATEGORY}/${PN} against PostgreSQL between 8.2 and 8.4."
+
+	if [[ ${PGSLOT//.} < 82 || ${PGSLOT//.} > 90 ]] ; then
+		eerror "You must build ${CATEGORY}/${P} against PostgreSQL 8.2 - 9.0."
 		eerror "Set an appropriate slot with postgresql-config."
-		die "postgresql-config not set to 8.2, 8.3 or 8.4."
+		die 'Select a PostgreSQL slot between 8.4 and 9.2'
 	fi
 }
 

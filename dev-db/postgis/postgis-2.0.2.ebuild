@@ -7,8 +7,8 @@ EAPI="4"
 inherit eutils versionator
 
 DESCRIPTION="Geographic Objects for PostgreSQL"
-HOMEPAGE="http://postgis.refractions.net"
-SRC_URI="http://postgis.refractions.net/download/${P}.tar.gz"
+HOMEPAGE="http://postgis.net"
+SRC_URI="http://download.osgeo.org/postgis/source/${P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86 ~amd64-linux ~x86-linux"
@@ -16,15 +16,15 @@ IUSE="doc gtk"
 
 RDEPEND="
 		|| (
+			dev-db/postgresql-server:9.2
 			dev-db/postgresql-server:9.1
 			dev-db/postgresql-server:9.0
 			dev-db/postgresql-server:8.4
-			dev-db/postgresql-server:9.2
 		)
 		dev-libs/libxml2:2
-		>=sci-libs/geos-3.3.2
+		>=sci-libs/geos-3.3.3
 		>=sci-libs/proj-4.6.0
-		sci-libs/gdal
+		>=sci-libs/gdal-1.9
 		gtk? ( x11-libs/gtk+:2 )
 "
 
@@ -34,8 +34,8 @@ DEPEND="${RDEPEND}
 				app-text/docbook-xml-dtd:4.3
 				dev-libs/libxslt
 				|| (
-					media-gfx/imagemagick
-					media-gfx/graphicsmagick[imagemagick]
+					media-gfx/imagemagick[png]
+					media-gfx/graphicsmagick[imagemagick,png]
 				)
 		)
 "
@@ -43,9 +43,6 @@ DEPEND="${RDEPEND}
 RESTRICT="test"
 
 PGIS="$(get_version_component_range 1-2)"
-
-# not parallel safe
-MAKEOPTS+=" -j1"
 
 pkg_setup() {
 	export PGSLOT="$(postgresql-config show)"
@@ -60,8 +57,7 @@ pkg_setup() {
 src_configure() {
 	local myargs=""
 	use gtk && myargs+=" --with-gui"
-	econf \
-		${myargs}
+	econf ${myargs}
 }
 
 src_compile() {
@@ -69,32 +65,24 @@ src_compile() {
 	# Otherwise, it'd be fine.
 	emake
 	emake -C topology
-	use doc && emake -C doc
+	use doc && emake -C doc html
 }
 
 src_install() {
 	emake DESTDIR="${D}" install
+	emake DESTDIR="${D}" comments-install
 	emake -C topology DESTDIR="${D}" install
+	dobin ./utils/postgis_restore.pl
 
-	cd "${S}"
 	dodoc CREDITS TODO loader/README.* doc/*txt
+
+	use doc && dohtml -r doc/html/*
 
 	docinto topology
 	dodoc topology/{TODO,README}
-	dobin ./utils/postgis_restore.pl
-
-	if use doc; then
-		cd doc/html
-		dohtml -r *
-	fi
 
 	insinto /etc
 	doins "${FILESDIR}/postgis_dbs"
-
-	cd "${S}/doc"
-	doman man/*
-	insinto /usr/share/postgresql-${PGSLOT}/contrib/postgis-${PGIS}/
-	doins postgis_comments.sql
 }
 
 pkg_postinst() {
@@ -207,10 +195,13 @@ pkg_config(){
 
 	for db in ${comment_databases[@]} ; do
 		ebegin "Adding comments on ${db}"
-		psql -q -U ${pguser} -p ${PGPORT} -d ${db} \
-			-f "${postgis_path}/postgis_comments.sql"
-		retval=$?
-		[[ $retval == 0 ]] && eend 0 || safe_exit
+		local comment_file
+		for comment_file in "${postgis_path}"/*_comments.sql ; do
+			psql -q -U ${pguser} -p ${PGPORT} -d ${db} -f "${comment_file}"
+			retval=$?
+			[[ $retval == 0 ]] && continue || safe_exit
+		done
+		eend 0
 	done
 
 	for db in ${upgrade_from_1_3[@]} ; do
