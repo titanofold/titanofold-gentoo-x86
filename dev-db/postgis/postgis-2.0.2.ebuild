@@ -1,4 +1,4 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-db/postgis/postgis-2.0.1.ebuild,v 1.2 2012/08/20 01:46:29 ottxor Exp $
 
@@ -40,9 +40,14 @@ DEPEND="${RDEPEND}
 		)
 "
 
+PGIS="$(get_version_component_range 1-2)"
+
 RESTRICT="test"
 
-PGIS="$(get_version_component_range 1-2)"
+# These modules are built using the same *FLAGS that were used to build
+# dev-db/postgresql. The right thing to do is to ignore the current
+# *FLAGS settings.
+QA_FLAGS_IGNORED="usr/lib(64)?/(rt)?postgis-${PGIS}\.so"
 
 pkg_setup() {
 	export PGSLOT="$(postgresql-config show)"
@@ -52,6 +57,10 @@ pkg_setup() {
 		eerror "Set an appropriate slot with postgresql-config."
 		die 'Select a PostgreSQL slot between 8.4 and 9.2'
 	fi
+}
+
+src_prepare() {
+	epatch "${FILESDIR}/${PN}-ldflags.patch"
 }
 
 src_configure() {
@@ -65,7 +74,7 @@ src_compile() {
 	# Otherwise, it'd be fine.
 	emake
 	emake -C topology
-	use doc && emake -C doc html
+	use doc && emake -C doc html -j1
 }
 
 src_install() {
