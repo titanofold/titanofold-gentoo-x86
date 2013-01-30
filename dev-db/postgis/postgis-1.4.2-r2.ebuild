@@ -31,8 +31,8 @@ DEPEND="${RDEPEND}
 				app-text/docbook-xml-dtd:4.3
 				dev-libs/libxslt
 				|| (
-					media-gfx/imagemagick
-					media-gfx/graphicsmagick[imagemagick]
+					media-gfx/imagemagick[png]
+					media-gfx/graphicsmagick[imagemagick,png]
 				)
 		)
 "
@@ -47,10 +47,10 @@ MAKEOPTS+=" -j1"
 pkg_setup() {
 	export PGSLOT="$(postgresql-config show)"
 
-	if [[ ${PGSLOT//.} < 82 || ${PGSLOT//.} > 90 ]] ; then
-		eerror "You must build ${CATEGORY}/${P} against PostgreSQL 8.2 - 9.0."
+	if [[ ${PGSLOT//.} < 82 || ${PGSLOT//.} > 84 ]] ; then
+		eerror "You must build ${CATEGORY}/${P} against PostgreSQL 8.2 - 8.4."
 		eerror "Set an appropriate slot with postgresql-config."
-		die 'Select a PostgreSQL slot between 8.4 and 9.2'
+		die 'Select a PostgreSQL slot between 8.2 and 8.4'
 	fi
 }
 
