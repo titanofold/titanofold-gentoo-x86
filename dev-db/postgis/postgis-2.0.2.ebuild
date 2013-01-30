@@ -60,7 +60,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/${PN}-ldflags.patch"
+	epatch "${FILESDIR}/${PN}-${PGIS}-ldflags.patch"
 }
 
 src_configure() {

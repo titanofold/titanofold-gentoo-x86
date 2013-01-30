@@ -56,6 +56,10 @@ pkg_setup() {
 	fi
 }
 
+src_prepare() {
+	epatch "${FILESDIR}/${PN}-${PGIS}-ldflags.patch"
+}
+
 src_configure() {
 	local myargs=""
 	use gtk && myargs+=" --with-gui"
