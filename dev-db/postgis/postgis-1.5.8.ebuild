@@ -52,15 +52,14 @@ pkg_setup() {
 	if [[ ${PGSLOT//.} < 83 || ${PGSLOT//.} > 91 ]] ; then
 		eerror "You must build ${CATEGORY}/${P} against PostgreSQL 8.3 - 9.1."
 		eerror "Set an appropriate slot with postgresql-config."
-		die 'Select a PostgreSQL slot between 8.4 and 9.2'
+		die 'Select a PostgreSQL slot between 8.3 and 9.1'
 	fi
 }
 
 src_configure() {
 	local myargs=""
 	use gtk && myargs+=" --with-gui"
-	econf \
-		${myargs}
+	econf ${myargs}
 }
 
 src_compile() {
