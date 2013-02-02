@@ -68,6 +68,12 @@ src_prepare() {
 
 	eprefixify src/include/pg_config_manual.h
 
+	if use pam ; then
+		sed -e "s/\(#define PGSQL_PAME_SERVICE \"postgresql\)/\1-${SLOT}/" \
+			-i src/backend/libpq/auth.c \
+			|| die 'PGSQL_PAM_SERVICE rename failed.'
+	fi
+
 	if use test ; then
 		epatch "${WORKDIR}/regress.patch"
 		sed -e "s|@SOCKETDIR@|${T}|g" -i src/test/regress/pg_regress{,_main}.c
@@ -141,7 +147,7 @@ src_install() {
 	newconfd "${WORKDIR}/postgresql.confd" postgresql-${SLOT}
 	newinitd "${WORKDIR}/postgresql.init" postgresql-${SLOT}
 
-	use pam && pamd_mimic system-auth postgresql auth account session
+	use pam && pamd_mimic system-auth postgresql-${SLOT} auth account session
 
 	if use prefix ; then
 		keepdir ${RUNDIR}/run/postgresql

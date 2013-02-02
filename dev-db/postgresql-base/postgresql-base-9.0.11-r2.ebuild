@@ -80,6 +80,12 @@ src_prepare() {
 		-i src/include/pg_config_manual.h || \
 		die "RUNDIR sed failed"
 
+	if use pam ; then
+		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \
+			-i src/backend/libpq/auth.c \
+			|| die 'PGSQL_PAM_SERVICE rename failed.'
+	fi
+
 	eautoconf
 }
 
