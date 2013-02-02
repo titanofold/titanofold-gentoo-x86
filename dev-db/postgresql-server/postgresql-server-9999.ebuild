@@ -2,11 +2,12 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-server/postgresql-server-9999.ebuild,v 1.3 2012/07/28 12:34:49 titanofold Exp $
 
-EAPI="4"
-PYTHON_DEPEND="python? 2"
+EAPI="5"
 
+PYTHON_COMPAT=( python{2_{5,6,7},3_{1,2,3}} )
 WANT_AUTOMAKE="none"
-inherit autotools eutils flag-o-matic multilib pam prefix python user versionator base git-2
+
+inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 user versionator base git-2
 
 KEYWORDS=""
 
@@ -54,6 +55,7 @@ wanted_languages() {
 
 RDEPEND="~dev-db/postgresql-base-${PV}:${SLOT}[pam?,pg_legacytimestamp=,nls=]
 	perl? ( >=dev-lang/perl-5.8 )
+	python? ( ${PYTHON_DEPS} )
 	selinux? ( sec-policy/selinux-postgresql )
 	tcl? ( >=dev-lang/tcl-8 )
 	uuid? ( dev-libs/ossp-uuid )
@@ -75,7 +77,7 @@ pkg_setup() {
 	enewgroup postgres 70
 	enewuser postgres 70 /bin/bash /var/lib/postgresql postgres
 
-	use python && python_set_active_version 2
+	use python && python-single-r1_pkg_setup
 }
 
 src_prepare() {

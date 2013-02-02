@@ -2,10 +2,12 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-server/postgresql-server-8.3.22-r1.ebuild,v 1.2 2013/01/29 10:09:22 patrick Exp $
 
-EAPI="4"
+EAPI="5"
 
+PYTHON_COMPAT=( python2_{5,6,7} )
 WANT_AUTOMAKE="none"
-inherit autotools eutils multilib pam prefix user versionator
+
+inherit autotools eutils multilib pam prefix python-single-r1 user versionator
 
 SLOT="$(get_version_component_range 1-2)"
 
@@ -39,6 +41,7 @@ wanted_languages() {
 
 RDEPEND="~dev-db/postgresql-base-${PV}:${SLOT}[pam?,nls=]
 		 perl? ( >=dev-lang/perl-5.8 )
+		 python? ( ${PYTHON_DEPS} )
 		 selinux? ( sec-policy/selinux-postgresql )
 		 tcl? ( >=dev-lang/tcl-8 )
 		 uuid? ( dev-libs/ossp-uuid )
@@ -56,6 +59,8 @@ PDEPEND="doc? ( ~dev-db/postgresql-docs-${PV} )"
 pkg_setup() {
 	enewgroup postgres 70
 	enewuser postgres 70 /bin/bash /var/lib/postgresql postgres
+
+	use python && python-single-r1_pkg_setup
 }
 
 src_prepare() {
