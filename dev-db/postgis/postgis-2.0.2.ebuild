@@ -4,7 +4,7 @@
 
 EAPI="4"
 
-inherit eutils versionator
+inherit eutils flag-o-matic versionator
 
 DESCRIPTION="Geographic Objects for PostgreSQL"
 HOMEPAGE="http://postgis.net"
@@ -21,6 +21,7 @@ RDEPEND="
 			dev-db/postgresql-server:9.0
 			dev-db/postgresql-server:8.4
 		)
+		dev-libs/json-c
 		dev-libs/libxml2:2
 		>=sci-libs/geos-3.3.3
 		>=sci-libs/proj-4.6.0
@@ -38,6 +39,7 @@ DEPEND="${RDEPEND}
 					media-gfx/graphicsmagick[imagemagick,png]
 				)
 		)
+		virtual/pkgconfig
 "
 
 PGIS="$(get_version_component_range 1-2)"
@@ -61,6 +63,7 @@ pkg_setup() {
 
 src_prepare() {
 	epatch "${FILESDIR}/${PN}-${PGIS}-ldflags.patch"
+	append-flags $(pkg-config --cflags-only-I json)
 }
 
 src_configure() {
