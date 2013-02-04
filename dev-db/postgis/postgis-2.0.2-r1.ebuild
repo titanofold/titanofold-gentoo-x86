@@ -51,6 +51,10 @@ RESTRICT="test"
 # *FLAGS settings.
 QA_FLAGS_IGNORED="usr/lib(64)?/(rt)?postgis-${PGIS}\.so"
 
+# Because developers have been fooled into thinking recursive make is a
+# good thing.
+MAKEOPTS="-j1"
+
 pkg_setup() {
 	export PGSLOT="$(postgresql-config show)"
 
@@ -80,7 +84,7 @@ src_compile() {
 	# Otherwise, it'd be fine.
 	emake
 	emake -C topology
-	use doc && emake -C doc html -j1
+	use doc && emake -C doc html
 }
 
 src_install() {
