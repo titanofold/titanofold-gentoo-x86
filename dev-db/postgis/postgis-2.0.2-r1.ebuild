@@ -4,7 +4,7 @@
 
 EAPI="4"
 
-inherit eutils flag-o-matic versionator
+inherit autotools eutils versionator
 
 DESCRIPTION="Geographic Objects for PostgreSQL"
 HOMEPAGE="http://postgis.net"
@@ -62,8 +62,11 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/${PN}-${PGIS}-ldflags.patch"
-	append-flags $(pkg-config --cflags-only-I json)
+	epatch "${FILESDIR}/${PN}-${PGIS}-ldflags.patch" \
+		"${FILESDIR}/${PN}-${PGIS}-pkgconfig-json.patch"
+
+	local AT_M4DIR="macros"
+	eautoreconf
 }
 
 src_configure() {
