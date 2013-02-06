@@ -84,12 +84,17 @@ src_compile() {
 	# Otherwise, it'd be fine.
 	emake
 	emake -C topology
-	use doc && emake -C doc html
+
+	if use doc ; then
+		emake comments
+		emake cheatsheets
+		emake -C doc html
+	fi
 }
 
 src_install() {
 	emake DESTDIR="${D}" install
-	emake DESTDIR="${D}" comments-install
+	use doc && emake DESTDIR="${D}" comments-install
 	emake -C topology DESTDIR="${D}" install
 	dobin ./utils/postgis_restore.pl
 
