@@ -37,7 +37,7 @@ DESCRIPTION="PostgreSQL server"
 HOMEPAGE="http://www.postgresql.org/"
 
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN zh_TW"
-IUSE="doc kernel_linux nls pam perl -pg_legacytimestamp python selinux tcl uuid xml"
+IUSE="doc kernel_linux nls pam perl -pg_legacytimestamp python selinux tcl test uuid xml"
 
 for lingua in ${LINGUAS}; do
 	IUSE+=" linguas_${lingua}"
@@ -362,7 +362,7 @@ src_test() {
 	einfo ">>> Test phase [check]: ${CATEGORY}/${PF}"
 
 	if [ ${UID} -ne 0 ] ; then
-		emake check  || die "Make check failed. See above for details."
+		emake check
 
 		einfo "If you think other tests besides the regression tests are necessary, please"
 		einfo "submit a bug including a patch for this ebuild to enable them."
