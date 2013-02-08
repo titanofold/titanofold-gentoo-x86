@@ -61,9 +61,6 @@ DEPEND="${RDEPEND}
 
 PDEPEND="doc? ( ~dev-db/postgresql-docs-${PV} )"
 
-# Support /var/run or /run for the socket directory
-[[ ! -d /run ]] && RUNDIR=/var
-
 src_prepare() {
 	epatch "${WORKDIR}/autoconf.patch" "${WORKDIR}/base.patch" \
 		"${WORKDIR}/bool.patch" "${WORKDIR}/darwin.patch" \
@@ -77,9 +74,8 @@ src_prepare() {
 	# because psql/help.c includes the file
 	ln -s "${S}/src/include/libpq/pqsignal.h" "${S}/src/bin/psql/" || die
 
-	sed -e "s|@RUNDIR@|${RUNDIR}|g" \
-		-i src/include/pg_config_manual.h || \
-		die "RUNDIR sed failed"
+	sed -e "s|@RUNDIR@|/run/postgresql|g" \
+		-i src/include/pg_config_manual.h || die "RUNDIR sed failed"
 
 	if use pam ; then
 		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \
