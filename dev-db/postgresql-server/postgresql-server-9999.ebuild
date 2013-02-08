@@ -97,7 +97,7 @@ src_prepare() {
 		echo "all install:" > "${S}/src/test/regress/GNUmakefile"
 	fi
 
-	sed -e "s|@RUNDIR@|/run/postgresql|g" \
+	sed -e "s|@RUNDIR@||g" \
 		-i src/include/pg_config_manual.h || die "RUNDIR sed failed"
 	sed -e "s|@SLOT@|${SLOT}|g" \
 		-i "${WORKDIR}/postgresql.init" "${WORKDIR}/postgresql.confd" || \

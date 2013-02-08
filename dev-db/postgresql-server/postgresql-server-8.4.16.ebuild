@@ -16,7 +16,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86
 DESCRIPTION="PostgreSQL server"
 HOMEPAGE="http://www.postgresql.org/"
 SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2
-		 http://dev.gentoo.org/~titanofold/postgresql-patches-8.4-r2.tbz2
+		 http://dev.gentoo.org/~titanofold/postgresql-patches-8.4-r3.tbz2
 		 http://dev.gentoo.org/~titanofold/postgresql-initscript-pre92-2.4.tbz2"
 LICENSE="POSTGRESQL GPL-2"
 
@@ -84,8 +84,6 @@ src_prepare() {
 		echo "all install:" > "${S}/src/test/regress/GNUmakefile"
 	fi
 
-	sed -e "s|@RUNDIR@|/run/postgresql|g" \
-		-i src/include/pg_config_manual.h || die "RUNDIR sed failed"
 	sed -e "s|@SLOT@|${SLOT}|g" \
 		-i "${WORKDIR}/postgresql.init" "${WORKDIR}/postgresql.confd" || \
 		die "SLOT sed failed"

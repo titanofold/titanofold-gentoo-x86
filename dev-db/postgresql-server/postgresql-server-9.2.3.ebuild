@@ -24,7 +24,7 @@ SLOT="$(get_version_component_range 1-2)"
 # Comment the following four lines when a beta or rc.
 S="${WORKDIR}/postgresql-${PV}"
 SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2
-		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}beta3.tbz2
+		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}.tbz2
 		 http://dev.gentoo.org/~titanofold/postgresql-initscript-2.4.tbz2"
 
 LICENSE="POSTGRESQL GPL-2"
@@ -87,8 +87,6 @@ src_prepare() {
 		echo "all install:" > "${S}/src/test/regress/GNUmakefile"
 	fi
 
-	sed -e "s|@RUNDIR@|/run/postgresql|g" \
-		-i src/include/pg_config_manual.h || die "RUNDIR sed failed"
 	sed -e "s|@SLOT@|${SLOT}|g" \
 		-i "${WORKDIR}/postgresql.init" "${WORKDIR}/postgresql.confd" || \
 		die "SLOT sed failed"
