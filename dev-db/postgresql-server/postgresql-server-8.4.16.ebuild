@@ -17,7 +17,7 @@ DESCRIPTION="PostgreSQL server"
 HOMEPAGE="http://www.postgresql.org/"
 SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2
 		 http://dev.gentoo.org/~titanofold/postgresql-patches-8.4-r2.tbz2
-		 http://dev.gentoo.org/~titanofold/postgresql-initscript-2.1.1.tbz2"
+		 http://dev.gentoo.org/~titanofold/postgresql-initscript-pre92-2.4.tbz2"
 LICENSE="POSTGRESQL GPL-2"
 
 S="${WORKDIR}/postgresql-${PV}"
@@ -53,9 +53,6 @@ DEPEND="${RDEPEND}
 
 PDEPEND="doc? ( ~dev-db/postgresql-docs-${PV} )"
 
-# Support /var/run or /run for the socket directory
-[[ ! -d /run ]] && RUNDIR=/var
-
 pkg_setup() {
 	enewgroup postgres 70
 	enewuser postgres 70 /bin/bash /var/lib/postgresql postgres
@@ -83,15 +80,12 @@ src_prepare() {
 	if use test ; then
 		epatch "${WORKDIR}/regress.patch"
 		sed -e "s|@SOCKETDIR@|${T}|g" -i src/test/regress/pg_regress{,_main}.c
-		sed -e "s|/no/such/location|${S}/src/test/regress/tmp_check/no/such/location|g" \
-			-i src/test/regress/{input,output}/tablespace.source
 	else
 		echo "all install:" > "${S}/src/test/regress/GNUmakefile"
 	fi
 
-	sed -e "s|@RUNDIR@|${RUNDIR}|g" \
-		-i src/include/pg_config_manual.h "${WORKDIR}/postgresql.init" || \
-		die "RUNDIR sed failed"
+	sed -e "s|@RUNDIR@|/run/postgresql|g" \
+		-i src/include/pg_config_manual.h || die "RUNDIR sed failed"
 	sed -e "s|@SLOT@|${SLOT}|g" \
 		-i "${WORKDIR}/postgresql.init" "${WORKDIR}/postgresql.confd" || \
 		die "SLOT sed failed"
@@ -155,8 +149,8 @@ src_install() {
 	use pam && pamd_mimic system-auth postgresql-${SLOT} auth account session
 
 	if use prefix ; then
-		keepdir ${RUNDIR}/run/postgresql
-		fperms 0770 ${RUNDIR}/run/postgresql
+		keepdir /run/postgresql
+		fperms 0770 /run/postgresql
 	fi
 }
 
@@ -175,7 +169,7 @@ pkg_postinst() {
 	elog "http://www.postgresql.org/docs/${SLOT}/static/index.html"
 	elog
 	elog "The default location of the Unix-domain socket is:"
-	elog "    ${EROOT%/}${RUNDIR}/run/postgresql/"
+	elog "    ${EROOT%/}/run/postgresql/"
 	elog
 	elog "If you have users and/or services that you would like to utilize the"
 	elog "socket, you must add them to the 'postgres' system group:"
