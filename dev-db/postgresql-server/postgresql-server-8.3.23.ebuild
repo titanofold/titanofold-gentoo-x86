@@ -23,7 +23,7 @@ LICENSE="POSTGRESQL GPL-2"
 S="${WORKDIR}/postgresql-${PV}"
 
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN zh_TW"
-IUSE="doc kernel_linux nls pam perl python selinux tcl test uuid xml"
+IUSE="doc kerberos kernel_linux nls pam perl python selinux tcl test uuid xml"
 
 for lingua in ${LINGUAS} ; do
 	IUSE+=" linguas_${lingua}"
@@ -39,7 +39,7 @@ wanted_languages() {
 	echo -n ${enable_langs}
 }
 
-RDEPEND="~dev-db/postgresql-base-${PV}:${SLOT}[pam?,nls=]
+RDEPEND="~dev-db/postgresql-base-${PV}:${SLOT}[kerberos?,pam?,nls=]
 		 perl? ( >=dev-lang/perl-5.8 )
 		 python? ( ${PYTHON_DEPS} )
 		 selinux? ( sec-policy/selinux-postgresql )
