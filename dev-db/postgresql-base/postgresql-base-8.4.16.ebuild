@@ -15,7 +15,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86
 DESCRIPTION="PostgreSQL libraries and clients"
 HOMEPAGE="http://www.postgresql.org/"
 SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2
-		 http://dev.gentoo.org/~titanofold/postgresql-patches-8.4-r2.tbz2"
+		 http://dev.gentoo.org/~titanofold/postgresql-patches-8.4-r3.tbz2"
 LICENSE="POSTGRESQL"
 
 S="${WORKDIR}/postgresql-${PV}"
@@ -73,9 +73,6 @@ src_prepare() {
 
 	# because psql/help.c includes the file
 	ln -s "${S}/src/include/libpq/pqsignal.h" "${S}/src/bin/psql/" || die
-
-	sed -e "s|@RUNDIR@|/run/postgresql|g" \
-		-i src/include/pg_config_manual.h || die "RUNDIR sed failed"
 
 	if use pam ; then
 		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \

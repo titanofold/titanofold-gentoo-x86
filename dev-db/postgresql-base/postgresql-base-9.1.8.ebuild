@@ -16,7 +16,7 @@ S="${WORKDIR}/postgresql-${PV}"
 DESCRIPTION="PostgreSQL libraries and clients"
 HOMEPAGE="http://www.postgresql.org/"
 SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2
-		 http://dev.gentoo.org/~titanofold/postgresql-patches-9.1-r1.tbz2"
+		 http://dev.gentoo.org/~titanofold/postgresql-patches-9.1-r2.tbz2"
 LICENSE="POSTGRESQL"
 
 # No tests to be done for clients and libraries
@@ -74,9 +74,6 @@ src_prepare() {
 
 	# because psql/help.c includes the file
 	ln -s "${S}/src/include/libpq/pqsignal.h" "${S}/src/bin/psql/" || die
-
-	sed -e "s|@RUNDIR@|/run/postgresql|g" \
-		-i src/include/pg_config_manual.h || die "RUNDIR sed failed"
 
 	if use pam ; then
 		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \

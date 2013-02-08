@@ -17,7 +17,7 @@ SLOT="$(get_version_component_range 1-2)"
 #MY_FILE_PV="${SLOT}$(get_version_component_range 4)"
 #S="${WORKDIR}/postgresql-${MY_FILE_PV}"
 SRC_URI="mirror://postgresql/source/v${MY_FILE_PV}/postgresql-${MY_FILE_PV}.tar.bz2
-		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}beta3.tbz2"
+		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}.tbz2"
 
 # Comment the following three lines when a beta or rc.
 S="${WORKDIR}/postgresql-${PV}"
@@ -84,9 +84,6 @@ src_prepare() {
 
 	# because psql/help.c includes the file
 	ln -s "${S}/src/include/libpq/pqsignal.h" "${S}/src/bin/psql/" || die
-
-	sed -e "s|@RUNDIR@|/run/postgresql|g" \
-		-i src/include/pg_config_manual.h || die "RUNDIR sed failed"
 
 	if use pam ; then
 		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \

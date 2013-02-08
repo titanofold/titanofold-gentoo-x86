@@ -94,7 +94,7 @@ src_prepare() {
 	# because psql/help.c includes the file
 	ln -s "${S}/src/include/libpq/pqsignal.h" "${S}/src/bin/psql/" || die
 
-	sed -e "s|@RUNDIR@|/run/postgresql|g" \
+	sed -e "s|@RUNDIR@||g" \
 		-i src/include/pg_config_manual.h || die "RUNDIR sed failed"
 
 	if use pam ; then
