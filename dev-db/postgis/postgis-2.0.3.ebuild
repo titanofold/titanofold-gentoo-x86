@@ -23,7 +23,7 @@ RDEPEND="
 		)
 		dev-libs/json-c
 		dev-libs/libxml2:2
-		>=sci-libs/geos-3.3.3
+		>=sci-libs/geos-3.3.8
 		>=sci-libs/proj-4.6.0
 		>=sci-libs/gdal-1.9
 		gtk? ( x11-libs/gtk+:2 )
