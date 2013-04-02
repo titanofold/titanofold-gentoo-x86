@@ -4,22 +4,16 @@
 
 EAPI=4
 
-[[ ${PV} == 9999 ]] && MY_P=${PN/2/-II} || MY_P="${PN/2/-II}-${PV}"
+MY_P="${PN/2/-II}-${PV}"
 
-ECVS_SERVER="cvs.pgfoundry.org:/cvsroot/pgpool"
-ECVS_MODULE="pgpool-II"
-[[ ${PV} == 9999 ]] && SCM_ECLASS="cvs"
-inherit base autotools ${SCM_ECLASS}
-unset SCM_ECLASS
+inherit base autotools
 
 DESCRIPTION="Connection pool server for PostgreSQL"
 HOMEPAGE="http://www.pgpool.net/"
-[[ ${PV} == 9999 ]] || SRC_URI="http://www.pgpool.net/download.php?f=${MY_P}.tar.gz -> ${MY_P}.tar.gz"
+SRC_URI="http://www.pgpool.net/download.php?f=${MY_P}.tar.gz -> ${MY_P}.tar.gz"
 LICENSE="BSD"
 SLOT="0"
 
-# Don't move KEYWORDS on the previous line or ekeyword won't work # 399061
-[[ ${PV} == 9999 ]] || \
 KEYWORDS="~amd64 ~x86"
 
 IUSE="memcached pam ssl static-libs"
@@ -34,8 +28,6 @@ DEPEND="${RDEPEND}
 	sys-devel/bison
 	!!dev-db/pgpool
 "
-
-AUTOTOOLS_IN_SOURCE_BUILD="1"
 
 S=${WORKDIR}/${MY_P}
 
@@ -81,15 +73,13 @@ src_configure() {
 src_compile() {
 	emake
 
-	cd sql
-	emake
+	emake -C sql
 }
 
 src_install() {
 	emake DESTDIR="${D}" install
 
-	cd sql
-	emake DESTDIR="${D}" install
+	emake DESTDIR="${D}" -C sql install
 	cd "${S}"
 
 	# `contrib' moved to `extension' with PostgreSQL 9.1
