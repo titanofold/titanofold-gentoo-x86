@@ -16,13 +16,13 @@ SLOT="$(get_version_component_range 1-2)"
 #MY_PV="${PV//_}"
 #MY_FILE_PV="${SLOT}$(get_version_component_range 4)"
 #S="${WORKDIR}/postgresql-${MY_FILE_PV}"
-SRC_URI="mirror://postgresql/source/v${MY_FILE_PV}/postgresql-${MY_FILE_PV}.tar.bz2
-		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}.tbz2"
+#SRC_URI="mirror://postgresql/source/v${MY_FILE_PV}/postgresql-${MY_FILE_PV}.tar.bz2
+#		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}.tbz2"
 
 # Comment the following three lines when a beta or rc.
 S="${WORKDIR}/postgresql-${PV}"
 SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2
-		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}beta3.tbz2"
+		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}.tbz2"
 
 LICENSE="POSTGRESQL"
 DESCRIPTION="PostgreSQL libraries and clients"
