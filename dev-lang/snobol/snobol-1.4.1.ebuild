@@ -13,46 +13,38 @@ SRC_URI="mirror://snobol4/${MY_P}.tar.gz"
 LICENSE="BSD-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
+IUSE="doc"
 
 DEPEND="
 	sys-devel/gcc
 	sys-devel/m4
+	sys-libs/gdbm[berkdb]
 "
 S=${WORKDIR}/${MY_P}
 
 src_prepare() {
-	sed -i.orig -e '/autoconf/s:autoconf:./autoconf:g' \
-		-e '/ADD_LDFLAGS/s/-ldb/-lndbm/' \
-		"${S}"/configure
+	sed -e '/autoconf/s:autoconf:./autoconf:g' \
+		-i configure || die 'autoconf sed failed'
+	sed -e 's/$(INSTALL) -s/$(INSTALL)/' \
+		-i Makefile2.m4 || die 'strip sed failed'
 	echo "ADD_OPT([${CFLAGS}])" >>${S}/local-config
 	echo "ADD_CPPFLAGS([-DUSE_STDARG_H])" >>${S}/local-config
 	echo "ADD_CPPFLAGS([-DHAVE_STDARG_H])" >>${S}/local-config
-	echo "BINDEST=${EPREFIX}/usr/bin/snobol4" >>${S}/local-config
-	echo "MANDEST=${EPREFIX}/usr/share/man/man4/snobol4.1" >>${S}/local-config
-	echo "SNOLIB_DIR=${EPREFIX}/usr/lib/snobol4" >>${S}/local-config
 }
 
 src_configure() {
-	# WARNING
-	# The configure script is NOT what you expect
-	:
-}
-
-src_compile() {
-	emake
-	emake doc/snobol4.1
+	./configure --prefix="${EPREFIX%/}/usr" \
+		--snolibdir="${EPREFIX%/}/usr/lib/snobol4" \
+		--mandir="${EPREFIX%/}/usr/share/man" \
+		--add-cflags="${CFLAGS}"
 }
 
 src_install() {
-	into /usr
-	newbin xsnobol4 snobol4
-	dodir /usr/lib/snobol4
-	insinto /usr/lib/snobol4
-	doins snolib.a snolib/bq.sno
+	emake DESTDIR="${D}" install
 
-	doman doc/*.1
-	dohtml doc/*.html
-	rm doc/*.html
-	dodoc doc/*.ps doc/*.txt doc/*.pdf
+	rm "${ED%/}"/usr/lib/snobol4/{load.txt,README}
+
+	dodoc doc/*txt
+
+	use doc && dohtml doc/*html
 }
