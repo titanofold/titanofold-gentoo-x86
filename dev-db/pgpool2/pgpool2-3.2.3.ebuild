@@ -6,7 +6,7 @@ EAPI=4
 
 MY_P="${PN/2/-II}-${PV}"
 
-inherit base autotools
+inherit base
 
 DESCRIPTION="Connection pool server for PostgreSQL"
 HOMEPAGE="http://www.pgpool.net/"
