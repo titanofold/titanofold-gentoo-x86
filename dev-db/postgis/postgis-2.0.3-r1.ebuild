@@ -67,6 +67,7 @@ pkg_setup() {
 
 src_prepare() {
 	epatch "${FILESDIR}/${PN}-${PGIS}-ldflags.patch" \
+		"${FILESDIR}/${PN}-${PGIS}-arflags.patch" \
 		"${FILESDIR}/${PN}-${PGIS}-pkgconfig-json.patch"
 
 	local AT_M4DIR="macros"
