@@ -17,9 +17,9 @@ get_config() {
 PIDFILE="$(get_config pidfile)"
 
 prep() {
-    checkpath -o postgres:postgres -m 0770 \
+    checkpath -o postgres:postgres -m 0775 \
         -d $(dirname ${PIDFILE}) || return 1
-    checkpath -o postgres:postgres -m 0770 \
+    checkpath -o postgres:postgres -m 0750 \
         -d $(dirname $(get_config logfile)) || return 1
 }
 

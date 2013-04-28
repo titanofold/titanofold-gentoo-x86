@@ -1,13 +1,12 @@
 diff -Naurw pgtap-0.93.0.orig/Makefile pgtap-0.93.0/Makefile
 --- pgtap-0.93.0.orig/Makefile	2013-01-28 20:14:20.000000000 +0000
 +++ pgtap-0.93.0/Makefile	2013-03-30 16:02:45.077880109 +0000
-@@ -9,14 +9,15 @@
+@@ -9,14 +9,13 @@
  DOCS         = doc/pgtap.mmd
  REGRESS      = $(patsubst test/sql/%.sql,%,$(TESTS))
  REGRESS_OPTS = --inputdir=test --load-language=plpgsql
-+ifndef PG_CONFIG
- PG_CONFIG    = pg_config
-+endif
+-PG_CONFIG    = pg_config
++PG_CONFIG   ?= pg_config
  
  ifdef NO_PGXS
  top_builddir = ../..
