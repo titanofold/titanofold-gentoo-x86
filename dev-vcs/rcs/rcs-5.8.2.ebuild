@@ -12,17 +12,12 @@ SRC_URI="mirror://gnu/rcs/${P}.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 s390 sh sparc x86 ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris"
 IUSE="doc"
 
 RDEPEND="sys-apps/diffutils"
 
-#Anomoly occurs in test cases t510 & t511; an apparent bug related files in /tests.
-RESTRICT="test"
-
 src_prepare() {
-	epatch "${FILESDIR}/${P}-include.patch"
-
 	sed -i \
 		-e '/gets is a security hole/d' \
 		lib/stdio.in.h || die
