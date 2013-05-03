@@ -4,7 +4,8 @@
 
 EAPI="4"
 
-inherit eutils
+PYTHON_COMPAT=( python{2_6,2_7} )
+inherit python-any-r1
 
 KEYWORDS="~alpha ~amd64 ~hppa ~ia64 ~ppc ~ppc64 ~sparc ~x86 ~x86-fbsd"
 
@@ -15,8 +16,16 @@ LICENSE="BSD"
 SLOT="0"
 IUSE="doc static-libs"
 
-DEPEND="dev-db/postgresql-base"
-RDEPEND="${DEPEND}"
+RDEPEND="dev-db/postgresql-base"
+DEPEND="${PYTHON_DEPS}
+		${RDEPEND}
+"
+
+src_prepare() {
+	sed -e 's/python/python2/' \
+		-i tools/{splitconfig,template2mak.py} \
+		|| die "Couldn't fix Python shebangs"
+}
 
 src_configure() {
 	if use static-libs ; then
