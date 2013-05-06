@@ -13,7 +13,7 @@ HOMEPAGE="http://phppgadmin.sourceforge.net/"
 SRC_URI="mirror://sourceforge/${PN}/${MY_P}.tar.bz2"
 
 LICENSE="GPL-2"
-KEYWORDS="amd64 hppa ppc x86 ~x86-fbsd"
+KEYWORDS="~amd64 ~hppa ~ppc ~x86 ~x86-fbsd"
 IUSE=""
 
 RDEPEND="dev-lang/php[postgres,session]
