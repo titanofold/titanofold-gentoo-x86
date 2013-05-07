@@ -22,7 +22,7 @@ KEYWORDS="~amd64 ~x86"
 S=${WORKDIR}
 
 RDEPEND=">=dev-libs/glib-2
-		 =media-video/ffmpeg-0.10.6
+		 media-video/ffmpeg
 		 media-libs/alsa-lib
 		 media-libs/fontconfig
 		 media-libs/freetype
