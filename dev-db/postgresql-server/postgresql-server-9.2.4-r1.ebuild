@@ -7,7 +7,7 @@ EAPI="5"
 PYTHON_COMPAT=( python{2_{5,6,7},3_{1,2,3}} )
 WANT_AUTOMAKE="none"
 
-inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 user versionator
+inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 systemd user versionator
 
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
@@ -80,6 +80,11 @@ src_prepare() {
 			|| die 'PGSQL_PAM_SERVICE rename failed.'
 	fi
 
+	if use perl ; then
+		sed -e "s:\$(DESTDIR)\$(plperl_installdir):\$(plperl_installdir):" \
+			-i "${S}/src/pl/plperl/GNUmakefile" || die 'sed plperl failed'
+	fi
+
 	if use test ; then
 		epatch "${WORKDIR}/regress.patch"
 		sed -e "s|@SOCKETDIR@|${T}|g" -i src/test/regress/pg_regress{,_main}.c
@@ -88,7 +93,7 @@ src_prepare() {
 	fi
 
 	sed -e "s|@SLOT@|${SLOT}|g" \
-		-i "${WORKDIR}/postgresql.init" "${WORKDIR}/postgresql.confd" || \
+		-i "${WORKDIR}"/postgresql.{init,confd,service} || \
 		die "SLOT sed failed"
 
 	eautoconf
@@ -126,12 +131,6 @@ src_compile() {
 }
 
 src_install() {
-	if use perl ; then
-		mv -f "${S}/src/pl/plperl/GNUmakefile" "${S}/src/pl/plperl/GNUmakefile_orig"
-		sed -e "s:\$(DESTDIR)\$(plperl_installdir):\$(plperl_installdir):" \
-			"${S}/src/pl/plperl/GNUmakefile_orig" > "${S}/src/pl/plperl/GNUmakefile"
-	fi
-
 	local bd
 	for bd in . contrib $(use xml && echo contrib/xml2) ; do
 		PATH="${EROOT%/}/usr/$(get_libdir)/postgresql-${SLOT}/bin:${PATH}" \
@@ -142,16 +141,17 @@ src_install() {
 	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
 		"${ED}/etc/eselect/postgresql/slots/${SLOT}/server"
 
-	newconfd "${WORKDIR}/postgresql.confd" postgresql-${SLOT} || \
-		die "Inserting conf failed"
-	newinitd "${WORKDIR}/postgresql.init" postgresql-${SLOT} || \
-		die "Inserting conf failed"
+	newconfd "${WORKDIR}/postgresql.confd" postgresql-${SLOT}
+	newinitd "${WORKDIR}/postgresql.init" postgresql-${SLOT}
+
+	systemd_newunit "${WORKDIR}"/postgresql.service postgresql-${SLOT}.service
+	systemd_newtmpfilesd "${WORKDIR}"/postgresql.tmpfilesd postgresql-${SLOT}.conf
 
 	use pam && pamd_mimic system-auth postgresql-${SLOT} auth account session
 
 	if use prefix ; then
 		keepdir /run/postgresql
-		fperms 0770 /run/postgresql
+		fperms 0775 /run/postgresql
 	fi
 }
 
@@ -167,10 +167,6 @@ pkg_postinst() {
 	elog "The default location of the Unix-domain socket is:"
 	elog "    ${EROOT%/}/run/postgresql/"
 	elog
-	elog "If you have users and/or services that you would like to utilize the"
-	elog "socket, you must add them to the 'postgres' system group:"
-	elog "    usermod -a -G postgres <user>"
-	elog
 	elog "Before initializing the database, you may want to edit PG_INITDB_OPTS"
 	elog "so that it contains your preferred locale in:"
 	elog "    ${EROOT%/}/etc/conf.d/postgresql-${SLOT}"
@@ -185,7 +181,7 @@ pkg_prerm() {
 		ewarn "Have you dumped and/or migrated the ${SLOT} database cluster?"
 		ewarn "\thttp://www.gentoo.org/doc/en/postgres-howto.xml#doc_chap5"
 
-		ebegin "Resuming removal in 10 seconds. Control-C to cancel"
+		ebegin "Resuming removal in 10 seconds (Control-C to cancel)"
 		sleep 10
 		eend 0
 	fi
