@@ -40,24 +40,24 @@ wanted_languages() {
 	echo -n ${enable_langs}
 }
 
-RDEPEND=">=app-admin/eselect-postgresql-1.0.7
-		 virtual/libintl
-		 !!dev-db/libpq
-		 !!dev-db/postgresql
-		 !!dev-db/postgresql-client
-		 !!dev-db/postgresql-libs
-		 kerberos? ( virtual/krb5 )
-		 ldap? ( net-nds/openldap )
-		 pam? ( virtual/pam )
-		 readline? ( >=sys-libs/readline-4.1 )
-		 ssl? ( >=dev-libs/openssl-0.9.6-r1 )
-		 zlib? ( >=sys-libs/zlib-1.1.3 )"
+RDEPEND="
+>=app-admin/eselect-postgresql-1.0.7
+sys-apps/less
+virtual/libintl
+kerberos? ( virtual/krb5 )
+ldap? ( net-nds/openldap )
+pam? ( virtual/pam )
+readline? ( >=sys-libs/readline-4.1 )
+ssl? ( >=dev-libs/openssl-0.9.6-r1 )
+zlib? ( >=sys-libs/zlib-1.1.3 )
+"
 
 DEPEND="${RDEPEND}
-		!!<sys-apps/sandbox-2.0
-		>=sys-devel/bison-1.875
-		sys-devel/flex
-		nls? ( sys-devel/gettext )"
+!!<sys-apps/sandbox-2.0
+>=sys-devel/bison-1.875
+sys-devel/flex
+nls? ( sys-devel/gettext )
+"
 
 PDEPEND="doc? ( ~dev-db/postgresql-docs-${PV} )"
 
