@@ -11,7 +11,7 @@ inherit autotools eutils flag-o-matic multilib prefix versionator base git-2
 KEYWORDS=""
 
 # Fix if needed
-SLOT="9.3"
+SLOT="9.4"
 
 EGIT_REPO_URI="git://git.postgresql.org/git/postgresql.git"
 SRC_URI="http://dev.gentoo.org/~titanofold/postgresql-patches-9.2beta2.tbz2"

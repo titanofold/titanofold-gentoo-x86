@@ -32,7 +32,7 @@ DESCRIPTION="PostgreSQL server"
 HOMEPAGE="http://www.postgresql.org/"
 
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN zh_TW"
-IUSE="doc kerberos kernel_linux nls pam perl -pg_legacytimestamp python selinux tcl test uuid xml"
+IUSE="kerberos kernel_linux nls pam perl -pg_legacytimestamp python selinux tcl test uuid xml"
 
 for lingua in ${LINGUAS}; do
 	IUSE+=" linguas_${lingua}"
@@ -58,7 +58,7 @@ RDEPEND="~dev-db/postgresql-base-${PV}:${SLOT}[kerberos?,pam?,pg_legacytimestamp
 DEPEND="${RDEPEND}
 	sys-devel/flex
 	xml? ( virtual/pkgconfig )"
-PDEPEND="doc? ( ~dev-db/postgresql-docs-${PV} )"
+#PDEPEND="doc? ( ~dev-db/postgresql-docs-${PV} )"
 
 pkg_setup() {
 	enewgroup postgres 70
@@ -135,6 +135,12 @@ src_install() {
 	for bd in . contrib $(use xml && echo contrib/xml2) ; do
 		PATH="${EROOT%/}/usr/$(get_libdir)/postgresql-${SLOT}/bin:${PATH}" \
 			emake install -C $bd DESTDIR="${D}" || die "emake install in $bd failed"
+	done
+
+	# Avoid file collision with -base.
+	local l
+	for l in lib lib32 lib64 ; do
+		rm "${ED}/usr/${l}/postgresql-${SLOT}/${l}/libpgcommon.a"
 	done
 
 	dodir /etc/eselect/postgresql/slots/${SLOT}

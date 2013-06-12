@@ -35,6 +35,9 @@ src_install() {
 	done
 
 	webapp_configfile ${MY_HTDOCSDIR}/conf/config.inc.php
-	webapp_postinst_txt en "${FILESDIR}"/postinstall-en.txt
 	webapp_src_install
+}
+
+pkg_postinst() {
+	elog "Make sure you edit ${MY_INSTALLDIR}/conf/config.inc.php"
 }
