@@ -22,36 +22,36 @@ KEYWORDS="~amd64 ~x86"
 S=${WORKDIR}
 
 RDEPEND=">=dev-libs/glib-2
-		 media-video/ffmpeg
+		 app-arch/bzip2
+		 dev-libs/expat
+		 dev-libs/icu
+		 dev-libs/libxml2
+		 dev-libs/openssl:0
+		 dev-qt/qtcore:4[ssl]
+		 dev-qt/qtgui:4[dbus]
 		 media-libs/alsa-lib
 		 media-libs/fontconfig
 		 media-libs/freetype
 		 media-libs/libpng
 		 media-libs/openjpeg:0
-		 app-arch/bzip2
-		 dev-libs/expat
-		 dev-libs/libxml2
-		 dev-libs/openssl:0
-		 dev-libs/icu
-		 sys-apps/util-linux
+		 media-video/ffmpeg
 		 sys-apps/dbus
+		 sys-apps/util-linux
 		 sys-libs/zlib
 		 virtual/libffi
+		 x11-libs/libICE
+		 x11-libs/libSM
 		 x11-libs/libX11
 		 x11-libs/libXScrnSaver
 		 x11-libs/libXau
+		 x11-libs/libXcursor
 		 x11-libs/libXdmcp
 		 x11-libs/libXext
-		 x11-libs/libxcb
-		 x11-libs/libICE
-		 x11-libs/libSM
-		 x11-libs/libXcursor
 		 x11-libs/libXfixes
 		 x11-libs/libXi
 		 x11-libs/libXrandr
 		 x11-libs/libXrender
-		 dev-qt/qtcore:4[ssl]
-		 dev-qt/qtgui:4[dbus]
+		 x11-libs/libxcb
 "
 
 src_prepare() {
