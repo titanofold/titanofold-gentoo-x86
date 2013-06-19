@@ -1,10 +1,10 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-office/odeskteam/odeskteam-3.2.13.ebuild,v 1.2 2013/03/02 19:36:16 hwoarang Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-office/odeskteam/odeskteam-3.6.1.ebuild,v 1.6 2013/06/13 12:13:10 xmw Exp $
 
 EAPI=4
 
-inherit rpm
+inherit rpm eutils
 
 # Binary only distribution
 QA_PREBUILT="*"
@@ -27,7 +27,7 @@ RDEPEND=">=dev-libs/glib-2
 		 media-libs/fontconfig
 		 media-libs/freetype
 		 media-libs/libpng
-		 media-libs/openjpeg
+		 media-libs/openjpeg:0
 		 app-arch/bzip2
 		 dev-libs/expat
 		 dev-libs/libxml2
@@ -51,7 +51,7 @@ RDEPEND=">=dev-libs/glib-2
 		 x11-libs/libXrandr
 		 x11-libs/libXrender
 		 dev-qt/qtcore:4[ssl]
-		 dev-qt/qtgui:4
+		 dev-qt/qtgui:4[dbus]
 "
 
 src_prepare() {
