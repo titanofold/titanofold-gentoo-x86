@@ -18,7 +18,7 @@ MY_PV="${PV//_}"
 MY_FILE_PV="${SLOT}$(get_version_component_range 4)"
 S="${WORKDIR}/postgresql-${MY_PV}"
 SRC_URI="mirror://postgresql/source/v${MY_FILE_PV}/postgresql-${MY_PV}.tar.bz2
-		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}.tbz2
+		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}-r1.tbz2
 		 http://dev.gentoo.org/~titanofold/postgresql-initscript-2.5.tbz2"
 
 # Comment the following four lines when a beta or rc.
@@ -32,7 +32,7 @@ DESCRIPTION="PostgreSQL"
 HOMEPAGE="http://www.postgresql.org/"
 
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN zh_TW"
-IUSE="doc kerberos kernel_linux nls pam perl -pg_legacytimestamp python selinux server tcl test uuid xml"
+IUSE="doc kerberos kernel_linux ldap nls pam perl -pg_legacytimestamp python readline selinux server ssl tcl threads uuid xml zlib"
 
 for lingua in ${LINGUAS}; do
 	IUSE+=" linguas_${lingua}"
@@ -88,8 +88,8 @@ src_prepare() {
 			-i "${S}/src/pl/plperl/GNUmakefile" || die 'sed plperl failed'
 	fi
 
-	epatch "${WORKDIR}/regress.patch"
-	sed -e "s|@SOCKETDIR@|${T}|g" -i src/test/regress/pg_regress{,_main}.c
+#	epatch "${WORKDIR}/regress.patch"
+#	sed -e "s|@SOCKETDIR@|${T}|g" -i src/test/regress/pg_regress{,_main}.c
 
 	sed -e "s|@SLOT@|${SLOT}|g" \
 		-i "${WORKDIR}"/postgresql.{init,confd,service} || \
