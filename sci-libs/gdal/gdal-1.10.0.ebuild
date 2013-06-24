@@ -69,6 +69,7 @@ REQUIRED_USE="
 
 pkg_setup() {
 	use python && python_pkg_setup
+	java-pkg-opt-2_pkg_setup
 }
 
 src_unpack() {
@@ -77,6 +78,8 @@ src_unpack() {
 }
 
 src_prepare() {
+	java-pkg-opt-2_src_prepare
+
 	# fix datadir and docdir placement
 	sed -i \
 		-e "s:@datadir@:@datadir@/gdal:" \
@@ -95,9 +98,6 @@ src_prepare() {
 	[[ ${CHOST} == *-darwin* ]] \
 		&& epatch "${FILESDIR}"/${PN}-1.5.0-install_name.patch \
 		|| epatch "${FILESDIR}"/${PN}-1.5.0-soname.patch
-
-	# Update for zlib header changes (see bug #383569)
-	epatch "${FILESDIR}"/${PN}-1.8.1-zlib_header_fix.patch
 
 	# Fix spatialite/sqlite include issue
 	sed -i \
@@ -178,7 +178,6 @@ src_configure() {
 		--with-libz="${EPREFIX}/usr/" \
 		--with-ogr \
 		--with-grib \
-		--with-vfk \
 		--with-libtiff \
 		--with-geotiff \
 		$(use_enable debug) \
@@ -287,6 +286,12 @@ src_install() {
 		insinto /usr/share/${PN}/samples
 		doins swig/python/samples/*
 	fi
+
+	pushd man/man1 > /dev/null
+	for i in * ; do
+		newman ${i} ${i}
+	done
+	popd > /dev/null
 }
 
 pkg_postinst() {
