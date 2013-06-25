@@ -1,0 +1,15 @@
+--- gdal-1.10.0-orig/swig/ruby/RubyMakefile.mk
++++ gdal-1.10.0/swig/ruby/RubyMakefile.mk
+@@ -56,10 +56,10 @@
+ veryclean: clean
+ 	rm -f *_wrap.cpp
+ 
+-$(INSTALL_DIR):
++$(DESTDIR)$(INSTALL_DIR):
+ 	mkdir -p $(DESTDIR)$(INSTALL_DIR)
+ 
+-install: $(INSTALL_DIR) $(RUBY_MODULES)
++install: $(DESTDIR)$(INSTALL_DIR) $(RUBY_MODULES)
+ 	for i in $(RUBY_MODULES) ; do $(INSTALL) $$i $(DESTDIR)$(INSTALL_DIR) ; done
+ 
+ $(RUBY_MODULES_MAC): %.bundle: %_wrap.o
