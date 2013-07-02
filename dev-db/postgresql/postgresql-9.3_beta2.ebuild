@@ -17,7 +17,7 @@ SLOT="$(get_version_component_range 1-2)"
 MY_PV="${PV//_}"
 MY_FILE_PV="${SLOT}$(get_version_component_range 4)"
 S="${WORKDIR}/postgresql-${MY_PV}"
-SRC_URI="mirror://postgresql/source/v${MY_FILE_PV}/postgresql-${MY_PV}.tar.bz2
+SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2
 		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}-r1.tbz2
 		 http://dev.gentoo.org/~titanofold/postgresql-initscript-2.5.tbz2"
 

@@ -17,8 +17,8 @@ SLOT="$(get_version_component_range 1-2)"
 MY_PV="${PV//_}"
 MY_FILE_PV="${SLOT}$(get_version_component_range 4)"
 S="${WORKDIR}/postgresql-${MY_PV}"
-SRC_URI="mirror://postgresql/source/v${MY_FILE_PV}/postgresql-${MY_PV}.tar.bz2
-		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}.tbz2
+SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2
+		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}-r1.tbz2
 		 http://dev.gentoo.org/~titanofold/postgresql-initscript-2.5.tbz2"
 
 # Comment the following four lines when a beta or rc.
@@ -70,7 +70,8 @@ pkg_setup() {
 src_prepare() {
 	epatch "${WORKDIR}/autoconf.patch" \
 		"${WORKDIR}/bool.patch" \
-		"${WORKDIR}/server.patch"
+		"${WORKDIR}/server.patch" \
+		"${WORKDIR}/run-dir.patch"
 
 	eprefixify src/include/pg_config_manual.h
 

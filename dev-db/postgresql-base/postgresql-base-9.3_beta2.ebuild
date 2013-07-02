@@ -17,7 +17,7 @@ MY_PV="${PV//_}"
 MY_FILE_PV="${SLOT}$(get_version_component_range 4)"
 S="${WORKDIR}/postgresql-${MY_PV}"
 SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2
-		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}.tbz2"
+		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}-r1.tbz2"
 
 # Comment the following three lines when a beta or rc.
 #S="${WORKDIR}/postgresql-${PV}"
@@ -72,7 +72,8 @@ nls? ( sys-devel/gettext )
 src_prepare() {
 	epatch "${WORKDIR}/autoconf.patch" \
 		"${WORKDIR}/base.patch" \
-		"${WORKDIR}/bool.patch"
+		"${WORKDIR}/bool.patch" \
+		"${WORKDIR}/run-dir.patch"
 
 	eprefixify src/include/pg_config_manual.h
 
