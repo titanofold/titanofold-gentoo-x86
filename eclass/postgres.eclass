@@ -68,7 +68,6 @@ postgres_src_prepare() {
 	local MULTIBUILD_VARIANT
 	postgres_get_impls
 	multibuild_copy_sources
-	postgres_for_each_impl run_in_build_dir mkdir './image/'
 }
 
 postgres_src_compile() {
