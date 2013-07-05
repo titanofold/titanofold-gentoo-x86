@@ -64,10 +64,6 @@ postgres_get_impls() {
 	elog "Multibuild variants: ${MULTIBUILD_VARIANTS[@]}"
 }
 
-_postgres_make() {
-	emake PG_CONFIG=${PG_CONFIG}
-}
-
 postgres_src_prepare() {
 	local MULTIBUILD_VARIANT
 	postgres_get_impls
