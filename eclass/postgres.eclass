@@ -32,54 +32,6 @@ fi
 # This variable contains a list of all available slots
 _POSTGRES_ALL_SLOTS=$(eselect --brief postgresql list)
 
-# @FUNCTION: postgres_check_slot
-# @DESCRIPTION:
-# Determine if the currently selected slot is within the range specified
-# by the user. If the check fails, it dies unless
-# app-admin/eselect-postgresql is not installed. This is safe to call in
-# pkg_pretend.
-postgres_check_slot() {
-       local PGSLOT="$(postgresql-config show) 2> /dev/null"
-
-       # If app-admin/eselect-postgresql is not installed, or the slot
-       # hasn't been set before pkg_pretend is called, skip the rest of
-       # this function.
-       if [[ -z ${PGSLOT} -o "${PGSLOT}" = "(none)" ]] ; then
-               if [[ "$EBUILD_PHASE" = "pretend" ]] ; then
-                       return 1
-               else
-                       if [[ "${PGSLOT}" = "(none)" ]] ; then
-                               die "Please set a default slot with postgresql-config"
-                       elif [[ -z ${PGSLOT} ]] ; then
-                               die "This isn't supposed to happen."
-                       fi
-               fi
-       fi
-
-       if [[ -n $PG_SLOT_MIN && $PG_SLOT_MIN != -1 ]] ; then
-               if [[ ${PGSLOT//.} < ${PG_SLOT_MIN//.} ]] ; then
-                       eerror "You must build ${CATEGORY}/${PN} against PostgreSQL ${PG_SLOT_MIN} or higher."
-                       eerror "Set an appropriate slot with postgresql-config."
-                       die
-               fi
-       fi
-
-       if [[ -n $PG_SLOT_MAX && $PG_SLOT_MAX != -1 ]] ; then
-               if [[ ${PGSLOT//.} > ${PG_SLOT_MAX//.} ]] ; then
-                       eerror "You must build ${CATEGORY}/${PN} against PostgreSQL ${PG_SLOT_MAX} or lower."
-                       eerror "Set an appropriate slot with postgresql-config."
-               fi
-       fi
-
-       if [[ -n $PG_SLOT_SOFT_MAX ]] ; then
-               if [[ ${PGSLOT//.} > ${PG_SLOT_SOFT_MAX//.} ]] ; then
-                       ewarn "You are building ${CATEGORY}/${PN} against a version of PostgreSQL greater than ${PG_SLOT_SOFT_MAX}."
-                       ewarn "This is neither supported here nor upstream."
-                       ewarn "Any bugs you encounter should be reported upstream."
-               fi
-       fi
-
-
 _postgres_multibuild_wrapper() {
 	debug-print-function ${FUNCNAME} "${@}"
 	local PG_SLOT=${MULTIBUILD_VARIANT}
