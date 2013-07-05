@@ -3,16 +3,16 @@
 # $Header: $
 
 EAPI=5
-inherit eutils
+POSTGRES_COMPAT=( 9.{1,2,3} )
+inherit eutils postgres
 
 DESCRIPTION="Unit testing for PostgreSQL"
 HOMEPAGE="http://pgtap.org/"
 SRC_URI="http://api.pgxn.org/dist/${PN}/${PV}/${P}.zip"
-
 LICENSE="POSTGRESQL"
-SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
+SLOT="0"
 
 DEPEND=">=dev-db/postgresql-base-8.4
 		dev-perl/TAP-Parser-SourceHandler-pgTAP
@@ -20,34 +20,6 @@ DEPEND=">=dev-db/postgresql-base-8.4
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-	epatch "${FILESDIR}/pgtap-pg_config_override.patch"
-
-	local pgslots=$(eselect --brief postgresql list)
-	local pgslot
-	for pgslot in ${pgslots} ; do
-		mkdir -p "${WORKDIR}/${pgslot}"
-		cp -R "${S}" "${WORKDIR}/${pgslot}"
-	done
-}
-
-src_configure() {
-	:
-}
-
-src_compile() {
-	local pgslots=$(eselect --brief postgresql list)
-	local pgslot
-	for pgslot in ${pgslots} ; do
-		cd "${WORKDIR}/${pgslot}/${P}"
-		PG_CONFIG="pg_config${pgslot//.}" emake
-	done
-}
-
-src_install() {
-	local pgslots=$(eselect --brief postgresql list)
-	local pgslot
-	for pgslot in ${pgslots} ; do
-		cd "${WORKDIR}/${pgslot}/${P}"
-		PG_CONFIG="pg_config${pgslot//.}" emake DESTDIR="${D}" install
-	done
+	postgres_src_prepare
+	postgres_foreach_impl run_in_build_dir epatch "${FILESDIR}/pgtap-pg_config_override.patch"
 }
