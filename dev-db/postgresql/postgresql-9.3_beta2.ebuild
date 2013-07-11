@@ -124,7 +124,7 @@ src_configure() {
 		$(use_enable threads thread-safety) \
 		$(use_with kerberos gssapi) \
 		$(use_with kerberos krb5) \
-		$(use_with ldap)
+		$(use_with ldap) \
 		$(use_with pam) \
 		$(use_with perl) \
 		$(use_with python) \
