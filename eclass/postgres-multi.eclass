@@ -49,11 +49,10 @@ postgres_foreach_impl() {
 postgres_get_impls() {
 	debug-print-function ${FUNCNAME} "${@}"
 	MULTIBUILD_VARIANTS=( )
+	local user_slot
 	for user_slot in "${POSTGRES_COMPAT[@]}"; do
-		if has "${user_slot}" ${_POSTGRES_ALL_SLOTS}; then
-			# Check that pg_config is successfully installed for this version.
-			$(which pg_config${user_slot//./} &> /dev/null) && \
-				MULTIBUILD_VARIANTS+=( "${user_slot}" ) 
+		 has "${user_slot}" ${_POSTGRES_ALL_SLOTS} && \
+			 MULTIBUILD_VARIANTS+=( "${user_slot}" )
 		fi;
 	done;
 	if [[ -z ${MULTIBUILD_VARIANTS} ]]; then
