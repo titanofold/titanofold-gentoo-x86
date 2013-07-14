@@ -2,20 +2,18 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/eclass/python-single-r1.eclass,v 1.18 2013/05/21 01:31:02 floppym Exp $
 
-inherit multibuild
+inherit multibuild postgres
 EXPORT_FUNCTIONS src_compile src_install src_test foreach_impl
 
 
-# @ECLASS: postgres
+# @ECLASS: postgres-multi
 # @MAINTAINER:
 # PostgreSQL <pgsql-bugs@gentoo.org>
 # @AUTHOR: Aaron W. Swenson <titanofold@gentoo.org>
 # @BLURB: An eclass for PostgreSQL-related packages
 # @DESCRIPTION:
-# This eclass provides common utility functions that many
-# PostgreSQL-related packages perform, such as checking that the
-# currently selected PostgreSQL slot is within a range, adding a user,
-# and, eventually, installing against multiple slots.
+# This eclass provides default functions to build a package for all
+# compatible PostgreSQL slots.
 
 
 # @ECLASS-VARIABLE: POSTGRES_COMPAT
@@ -51,9 +49,8 @@ postgres_get_impls() {
 	MULTIBUILD_VARIANTS=( )
 	local user_slot
 	for user_slot in "${POSTGRES_COMPAT[@]}"; do
-		 has "${user_slot}" ${_POSTGRES_ALL_SLOTS} && \
-			 MULTIBUILD_VARIANTS+=( "${user_slot}" )
-		fi;
+		has "${user_slot}" ${_POSTGRES_ALL_SLOTS} && \
+			MULTIBUILD_VARIANTS+=( "${user_slot}" )
 	done;
 	if [[ -z ${MULTIBUILD_VARIANTS} ]]; then
 		die "You don't have any suitable postgresql slots installed. "\

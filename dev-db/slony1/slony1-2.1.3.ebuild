@@ -4,7 +4,8 @@
 
 EAPI="4"
 
-inherit eutils versionator
+POSTGRES_COMPAT=( 9.{2,1,0} 8.{4,3} )
+inherit eutils postgres-multi versionator
 
 IUSE="doc perl"
 
@@ -18,9 +19,10 @@ SRC_URI="http://main.slony.info/downloads/${MAJ_PV}/source/${P}.tar.bz2
 
 LICENSE="BSD GPL-2"
 SLOT="0"
-KEYWORDS="amd64 ppc x86"
+KEYWORDS="~amd64 ~ppc ~x86"
 
 DEPEND="|| (
+			dev-db/postgresql-server:9.2
 			dev-db/postgresql-server:9.1
 			dev-db/postgresql-server:9.0
 			dev-db/postgresql-server:8.4
@@ -29,34 +31,20 @@ DEPEND="|| (
 		dev-db/postgresql-base[threads]
 		perl? ( dev-perl/DBD-Pg )
 "
-
-pkg_setup() {
-	local PGSLOT="$(postgresql-config show)"
-	if [[ ${PGSLOT//.} < 83 ]] ; then
-		eerror "You must build ${CATEGORY}/${PN} against PostgreSQL 8.3 or higher."
-		eerror "Set an appropriate slot with postgresql-config."
-		die "postgresql-config not set to 8.3 or higher."
-	fi
-
-#	if [[ ${PGSLOT//.} > 90 ]] ; then
-#		ewarn "You are building ${CATEGORY}/${PN} against a version of PostgreSQL greater than 9.0."
-#		ewarn "This is neither supported here nor upstream."
-#		ewarn "Any bugs you encounter should be reported upstream."
-#	fi
-}
-
 src_prepare() {
-	epatch "${FILESDIR}/${PN}-${PV}-ldflags.patch"
+	postgres-multi_src_prepare
+	postgres-multi_foreach_impl run_in_build_dir epatch "${FILESDIR}/${PN}-2.1.2-ldflags.patch"
 }
 
 src_configure() {
 	local myconf
 	use perl && myconf='--with-perltools'
-	econf ${myconf}
+	postgres-multi_foreach_impl run_in_build_dir econf ${myconf} \
+		--with-pgconfigdir="/usr/lib/postgresql-@PG_SLOT@/bin/"
 }
 
 src_install() {
-	emake DESTDIR="${D}" install
+	postgres-multi_src_install
 
 	dodoc HISTORY-1.1 INSTALL README SAMPLE TODO UPGRADING doc/howto/*.txt
 
