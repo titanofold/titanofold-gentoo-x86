@@ -30,28 +30,28 @@ fi
 # This variable contains a list of all available slots
 _POSTGRES_ALL_SLOTS=$(eselect --brief postgresql list)
 
-_postgres_multibuild_wrapper() {
+_postgres-multi_multibuild_wrapper() {
 	debug-print-function ${FUNCNAME} "${@}"
 	local PG_SLOT=${MULTIBUILD_VARIANT}
 	export PG_CONFIG="pg_config${MULTIBUILD_VARIANT//./}"
-	"${@}"
+	$(echo "${@}" | sed "s/@PG_SLOT@/${PG_SLOT}/g")
 }
 
-postgres_foreach_impl() {
+postgres-multi_foreach_impl() {
 	debug-print-function ${FUNCNAME} "${@}"
 	local MULTIBUILD_VARIANTS
-	postgres_get_impls
-	multibuild_foreach_variant _postgres_multibuild_wrapper "${@}"
+	postgres-multi_get_impls
+	multibuild_foreach_variant _postgres-multi_multibuild_wrapper "${@}"
 }
 
-postgres_get_impls() {
+postgres-multi_get_impls() {
 	debug-print-function ${FUNCNAME} "${@}"
 	MULTIBUILD_VARIANTS=( )
 	local user_slot
 	for user_slot in "${POSTGRES_COMPAT[@]}"; do
 		has "${user_slot}" ${_POSTGRES_ALL_SLOTS} && \
 			MULTIBUILD_VARIANTS+=( "${user_slot}" )
-	done;
+	done
 	if [[ -z ${MULTIBUILD_VARIANTS} ]]; then
 		die "You don't have any suitable postgresql slots installed. "\
 			"You should install one of the following postgresql slots: "\
@@ -60,20 +60,20 @@ postgres_get_impls() {
 	elog "Multibuild variants: ${MULTIBUILD_VARIANTS[@]}"
 }
 
-postgres_src_prepare() {
+postgres-multi_src_prepare() {
 	local MULTIBUILD_VARIANT
-	postgres_get_impls
+	postgres-multi_get_impls
 	multibuild_copy_sources
 }
 
-postgres_src_compile() {
-	postgres_foreach_impl run_in_build_dir emake
+postgres-multi_src_compile() {
+	postgres-multi_foreach_impl run_in_build_dir emake
 }
 
-postgres_src_install() {
-	postgres_foreach_impl run_in_build_dir emake install DESTDIR="${D}"
+postgres-multi_src_install() {
+	postgres-multi_foreach_impl run_in_build_dir emake install DESTDIR="${D}"
 }
 
-postgres_src_test() {
-	postgres_foreach_impl run_in_build_dir emake installcheck
+postgres-multi_src_test() {
+	postgres-multi_foreach_impl run_in_build_dir emake installcheck
 }

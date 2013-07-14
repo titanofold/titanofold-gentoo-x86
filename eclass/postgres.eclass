@@ -3,8 +3,6 @@
 # $Header: $
 
 inherit user
-EXPORT_FUNCTIONS src_compile src_install src_test foreach_impl
-
 
 # @ECLASS: postgres
 # @MAINTAINER:
@@ -15,7 +13,7 @@ EXPORT_FUNCTIONS src_compile src_install src_test foreach_impl
 # This eclass provides common utility functions that many
 # PostgreSQL-related packages perform, such as checking that the
 # currently selected PostgreSQL slot is within a range, adding a user,
-# and, eventually, installing against multiple slots.
+# and generating dependencies.
 
 # @FUNCTION: postgres_check_slot
 # @DESCRIPTION:
@@ -50,7 +48,9 @@ postgres_new_user() {
 		if [[ "$1" = "postgres" ]] ; then
 			ewarn "Invalid username 'postgres', skipping"
 		else
-			enewuser $@ postgres
+			local groups=$5
+			[[ -n "${groups}" ]] && groups+=",postgres" || groups="postgres"
+			enewuser $1 $2 $3 $4 ${groups}
 		fi
 	fi
 }
