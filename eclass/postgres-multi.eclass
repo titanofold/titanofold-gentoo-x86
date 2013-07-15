@@ -60,6 +60,10 @@ postgres-multi_get_impls() {
 	elog "Multibuild variants: ${MULTIBUILD_VARIANTS[@]}"
 }
 
+postgres-multi_foreach() {
+	postgres-multi_foreach_impl run_in_build_dir ${@}
+}
+
 postgres-multi_src_prepare() {
 	local MULTIBUILD_VARIANT
 	postgres-multi_get_impls
@@ -67,13 +71,13 @@ postgres-multi_src_prepare() {
 }
 
 postgres-multi_src_compile() {
-	postgres-multi_foreach_impl run_in_build_dir emake
+	postgres-multi_foreach emake
 }
 
 postgres-multi_src_install() {
-	postgres-multi_foreach_impl run_in_build_dir emake install DESTDIR="${D}"
+	postgres-multi_foreach emake install DESTDIR="${D}"
 }
 
 postgres-multi_src_test() {
-	postgres-multi_foreach_impl run_in_build_dir emake installcheck
+	postgres-multi_foreach emake installcheck
 }
