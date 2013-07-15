@@ -4,9 +4,9 @@
 
 EAPI="4"
 
-PG_SLOT_MIN="9.0"
+POSTGRES_COMPAT=( 9.{0,1,2,3} )
 
-inherit autotools eutils versionator
+inherit autotools eutils postgres-multi versionator
 
 MY_PV=$(replace_version_separator 3 '')
 MY_P="${PN}-${MY_PV}"
@@ -61,88 +61,46 @@ QA_FLAGS_IGNORED="usr/lib(64)?/(rt)?postgis-${PGIS}\.so"
 # good thing.
 MAKEOPTS="-j1"
 
-postgres_check_slot() {
-	local pg_slot="$(postgresql-config show) 2> /dev/null"
-
-	# If app-admin/eselect-postgresql is not installed, or the slot
-	# hasn't been set before pkg_pretend is called, skip the rest of
-	# this function.
-	if [[ -z ${pg_slot} || "${pg_slot}" = "(none)" ]] ; then
-		if [[ "$EBUILD_PHASE" = "pretend" ]] ; then
-			return 1
-		else
-			if [[ "${pg_slot}" = "(none)" ]] ; then
-				die "Please set a default slot with postgresql-config"
-			elif [[ -z ${pg_slot} ]] ; then
-				die "This isn't supposed to happen."
-			fi
-		fi
-	fi
-
-	if [[ -n $PG_SLOT_MIN && $PG_SLOT_MIN != -1 ]] ; then
-		if [[ ${pg_slot//.} < ${PG_SLOT_MIN//.} ]] ; then
-			eerror "You must build ${CATEGORY}/${PN} against PostgreSQL ${PG_SLOT_MIN} or higher."
-			eerror "Set an appropriate slot with postgresql-config."
-			die
-		fi
-	fi
-
-	if [[ -n $PG_SLOT_MAX && $PG_SLOT_MAX != -1 ]] ; then
-		if [[ ${pg_slot//.} > ${PG_SLOT_MAX//.} ]] ; then
-			eerror "You must build ${CATEGORY}/${PN} against PostgreSQL ${PG_SLOT_MAX} or lower."
-			eerror "Set an appropriate slot with postgresql-config."
-		fi
-	fi
-
-	if [[ -n $PG_SLOT_SOFT_MAX ]] ; then
-		if [[ ${pg_slot//.} > ${PG_SLOT_SOFT_MAX//.} ]] ; then
-			ewarn "You are building ${CATEGORY}/${PN} against a version of PostgreSQL greater than ${PG_SLOT_SOFT_MAX}."
-			ewarn "This is not supported here."
-			ewarn "Any bugs you encounter should be reported upstream."
-		fi
-	fi
-}
-
-pkg_pretend() {
-	postgres_check_slot
-}
 pkg_setup() {
-	postgres_check_slot
 	export PGSLOT="$(postgresql-config show)"
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/${PN}-2.0-ldflags.patch" \
+	postgres-multi_src_prepare
+	postgres-multi_foreach \
+		epatch "${FILESDIR}/${PN}-2.1-ldflags.patch" \
 		"${FILESDIR}/${PN}-2.0-arflags.patch" \
 		"${FILESDIR}/${PN}-2.1-pkgconfig-json.patch"
 
 	local AT_M4DIR="macros"
-	eautoreconf
+	postgres-multi_foreach eautoreconf
 }
 
 src_configure() {
 	local myargs=""
 	use gtk && myargs+=" --with-gui"
-	econf ${myargs}
+	postgres-multi_foreach econf \
+		--with-pgconfig="/usr/lib/postgresql-@PG_SLOT@/bin/pg_config" \
+		${myargs}
 }
 
 src_compile() {
 	# Occasionally, builds fail because of out of order compilation.
 	# Otherwise, it'd be fine.
-	emake
-	emake -C topology
+	postgres-multi_foreach emake
+	postgres-multi_foreach emake -C topology
 
 	if use doc ; then
-		emake comments
-		emake cheatsheets
-		emake -C doc html
+		postgres-multi_foreach emake comments
+		postgres-multi_foreach emake cheatsheets
+		postgres-multi_foreach emake -C doc html
 	fi
 }
 
 src_install() {
-	emake DESTDIR="${D}" install
-	use doc && emake DESTDIR="${D}" comments-install
-	emake -C topology DESTDIR="${D}" install
+	postgres-multi_foreach emake DESTDIR="${D}" install
+	use doc && postgres-multi_foreach emake DESTDIR="${D}" comments-install
+	postgres-multi_foreach emake -C topology DESTDIR="${D}" install
 	dobin ./utils/postgis_restore.pl
 
 	dodoc CREDITS TODO loader/README.* doc/*txt
