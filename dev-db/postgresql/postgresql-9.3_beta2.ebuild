@@ -7,7 +7,7 @@ EAPI="5"
 PYTHON_COMPAT=( python{2_{5,6,7},3_{1,2,3}} )
 WANT_AUTOMAKE="none"
 
-inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 systemd user versionator
+inherit autotools eutils flag-o-matic multilib pam postgres prefix python-single-r1 systemd user versionator
 
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
@@ -62,8 +62,7 @@ DEPEND="${RDEPEND}
 "
 
 pkg_setup() {
-	enewgroup postgres 70
-	enewuser postgres 70 /bin/bash /var/lib/postgresql postgres
+	postgres_new_user
 
 	use python && python-single-r1_pkg_setup
 }
