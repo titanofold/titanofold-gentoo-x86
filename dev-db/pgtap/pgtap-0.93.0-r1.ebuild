@@ -3,8 +3,8 @@
 # $Header: $
 
 EAPI=5
-POSTGRES_COMPAT=( 9.{1,2,3} )
-inherit eutils postgres
+POSTGRES_COMPAT=( 8.4 9.{0,1,2,3} )
+inherit eutils postgres-multi
 
 DESCRIPTION="Unit testing for PostgreSQL"
 HOMEPAGE="http://pgtap.org/"
@@ -20,6 +20,6 @@ DEPEND=">=dev-db/postgresql-base-8.4
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-	postgres_src_prepare
-	postgres_foreach_impl run_in_build_dir epatch "${FILESDIR}/pgtap-pg_config_override.patch"
+	postgres-multi_src_prepare
+	postgres-multi_foreach_impl run_in_build_dir epatch "${FILESDIR}/pgtap-pg_config_override.patch"
 }
