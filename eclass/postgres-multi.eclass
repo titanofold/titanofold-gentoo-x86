@@ -3,7 +3,7 @@
 # $Header: /var/cvsroot/gentoo-x86/eclass/python-single-r1.eclass,v 1.18 2013/05/21 01:31:02 floppym Exp $
 
 inherit multibuild postgres
-EXPORT_FUNCTIONS src_compile src_install src_test foreach_impl
+EXPORT_FUNCTIONS src_compile src_install src_test foreach_impl foreach
 
 
 # @ECLASS: postgres-multi
@@ -30,6 +30,13 @@ fi
 # This variable contains a list of all available slots
 _POSTGRES_ALL_SLOTS=$(eselect --brief postgresql list)
 
+# @FUNCTION _postgres-multi_multibuild_wrapper
+# @USAGE: <command> [<args>]
+# @DESCRIPTION:
+# Run the given command in the currently selected multibuild variant,
+# after having set up the environment for the corresponding postgresql SLOT.
+# Run the given command for each supported postgresql slot.
+# For each slot, the PG_CONFIG and PG_SLOT variables are set.
 _postgres-multi_multibuild_wrapper() {
 	debug-print-function ${FUNCNAME} "${@}"
 	local PG_SLOT=${MULTIBUILD_VARIANT}
@@ -37,6 +44,11 @@ _postgres-multi_multibuild_wrapper() {
 	$(echo "${@}" | sed "s/@PG_SLOT@/${PG_SLOT}/g")
 }
 
+# @FUNCTION: postgres-multi_foreach
+# @USAGE: <command> [<args>...]
+# @DESCRIPTION:
+# Run the given command in each enabled postgresql slots.
+# The slots which are enabled are et in postgres-multi_get_impls.
 postgres-multi_foreach_impl() {
 	debug-print-function ${FUNCNAME} "${@}"
 	local MULTIBUILD_VARIANTS
@@ -44,6 +56,10 @@ postgres-multi_foreach_impl() {
 	multibuild_foreach_variant _postgres-multi_multibuild_wrapper "${@}"
 }
 
+# @FUNCTION: postgres-multi_get_impls
+# @DESCRIPTION:
+# Set the MULTIBUILD_VARIANTS to the union set of POSTGRES_COMPAT and
+# POSTGRES_ALL_SLOTS.
 postgres-multi_get_impls() {
 	debug-print-function ${FUNCNAME} "${@}"
 	MULTIBUILD_VARIANTS=( )
@@ -60,6 +76,11 @@ postgres-multi_get_impls() {
 	elog "Multibuild variants: ${MULTIBUILD_VARIANTS[@]}"
 }
 
+# @FUNCTION: postgres-multi_foreach
+# @USAGE: <command> [<args>...]
+# @DESCRIPTION:
+# Run the given command in the package build_dir for each supported postgresql
+# slot.
 postgres-multi_foreach() {
 	postgres-multi_foreach_impl run_in_build_dir ${@}
 }
