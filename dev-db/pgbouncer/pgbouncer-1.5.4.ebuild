@@ -34,6 +34,8 @@ RDEPEND="${DEPEND}"
 pkg_setup() {
 	enewgroup postgres 70
 	enewuser postgres 70 /bin/bash /var/lib/postgresql postgres
+
+	enewuser pgbouncer -1 -1 -1 postgres
 }
 
 src_prepare() {
