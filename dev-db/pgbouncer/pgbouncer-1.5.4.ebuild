@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-db/pgbouncer/pgbouncer-1.5.2.ebuild,v 1.1 2012/06/18 07:53:26 patrick Exp $
 
-EAPI="4"
+EAPI="5"
 
 # Upstream has *way* broken tests.
 RESTRICT="test"
@@ -19,7 +19,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="debug doc libevent udns"
 
 DEPEND="
-	>=dev-libs/glibc-2.10
+	>=sys-libs/glibc-2.10
 	doc? (
 			app-text/docbook-xml-dtd:4.5
 			app-text/xmlto
@@ -55,7 +55,8 @@ src_install() {
 
 	dodoc AUTHORS
 
-	newinitd "${FILESDIR}"/pgbouncer.initd "${PN}"
+	newconfd "${FILESDIR}/${PN}.confd" "${PN}"
+	newinitd "${FILESDIR}/${PN}.initd" "${PN}"
 
 	insinto /etc
 	doins etc/pgbouncer.ini
@@ -65,28 +66,14 @@ src_install() {
 }
 
 pkg_postinst() {
-	einfo "Please read the config.txt for Configuration Directives"
-	einfo
-	einfo "For Administration Commands, see:"
-	einfo "    man pgbouncer"
-	einfo
-	einfo "By default, PgBouncer does not have access to any database."
-	einfo "GRANT the permissions needed for your application and make sure that it"
-	einfo "exists in PgBouncer's auth_file."
-
-	if [[ -n ${REPLACING_VERSIONS} ]] ; then
-		local a
-		local b
-		local y
-		for a in ${REPLACING_VERSION} ; do
-			for b in 1.4.2 1.5 1.5.1 1.5.2 ; do
-				[[ "${a}" == "${b}" ]] && y=1
-			done
-		done
-		if [[ -n ${y} ]] ; then
-			elog "Previous versions of this ebuild created the 'pgbouncer' user and user"
-			elog "group. They can now be removed."
-			elog "    # userdel pgbouncer && groupdel pgbouncer"
-		fi
+	if [[ -z ${REPLACING_VERSIONS} ]] ; then
+		einfo "Please read the config.txt for Configuration Directives"
+		einfo
+		einfo "For Administration Commands, see:"
+		einfo "    man pgbouncer"
+		einfo
+		einfo "By default, PgBouncer does not have access to any database."
+		einfo "GRANT the permissions needed for your application and make sure that it"
+		einfo "exists in PgBouncer's auth_file."
 	fi
 }
