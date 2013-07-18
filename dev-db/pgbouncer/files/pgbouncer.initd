@@ -65,7 +65,7 @@ restart() {
             --user pgbouncer \
             --exec /usr/bin/pgbouncer -- -q -d -R "${INIFILE}"
         eend $?
-    elif
+    else
         stop && start
     fi
 }
