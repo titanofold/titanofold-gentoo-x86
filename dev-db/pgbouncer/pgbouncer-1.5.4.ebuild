@@ -1,6 +1,6 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/pgbouncer/pgbouncer-1.5.2.ebuild,v 1.1 2012/06/18 07:53:26 patrick Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/pgbouncer/pgbouncer-1.5.4.ebuild,v 1.2 2013/07/19 00:55:04 titanofold Exp $
 
 EAPI="5"
 
@@ -17,19 +17,24 @@ LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="debug doc libevent udns"
+REQUIRED_USE="
+	libevent? ( !udns )
+	udns? ( !libevent )
+"
+RDEPEND="
+	>=sys-libs/glibc-2.10
+	libevent? ( >=dev-libs/libevent-2.0 )
+	udns? ( >=net-libs/udns-0.1 )
+"
 
 DEPEND="
-	>=sys-libs/glibc-2.10
+	${RDEPEND}
 	doc? (
 			app-text/docbook-xml-dtd:4.5
 			app-text/xmlto
 			>=app-text/asciidoc-8.4
 	)
-	libevent? ( >=dev-libs/libevent-2.0 )
-	udns? ( >=net-libs/udns-0.1 )
 "
-
-RDEPEND="${DEPEND}"
 
 pkg_setup() {
 	enewgroup postgres 70
@@ -45,9 +50,11 @@ src_prepare() {
 src_configure() {
 	# --enable-debug is only used to disable stripping
 	econf \
+		--docdir=/usr/share/doc/${PF} \
 		--enable-debug \
 		$(use_enable debug cassert) \
-		--docdir=/usr/share/doc/${PF}
+		$(use_with libevent) \
+		$(use_with udns)
 }
 
 src_install() {
