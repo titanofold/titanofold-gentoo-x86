@@ -45,7 +45,6 @@ start() {
     start-stop-daemon --start \
         --pidfile ${PIDFILE} \
         --user pgbouncer \
-        --group postgres \
         --exec /usr/bin/pgbouncer -- -q -d "${INIFILE}"
     eend $?
 }
@@ -75,7 +74,6 @@ restart() {
         start-stop-daemon --start \
             --pidfile ${PIDFILE} \
             --user pgbouncer \
-            --group postgres \
             --exec /usr/bin/pgbouncer -- -q -d -R "${INIFILE}"
         eend $?
     else
