@@ -29,11 +29,9 @@ RDEPEND="
 
 DEPEND="
 	${RDEPEND}
-	doc? (
-			app-text/docbook-xml-dtd:4.5
-			app-text/xmlto
-			>=app-text/asciidoc-8.4
-	)
+	app-text/docbook-xml-dtd:4.5
+	app-text/xmlto
+	>=app-text/asciidoc-8.4
 "
 
 pkg_setup() {
