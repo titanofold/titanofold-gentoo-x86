@@ -2,12 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/sci-libs/geos/geos-3.3.7.ebuild,v 1.1 2013/02/02 06:04:19 patrick Exp $
 
-EAPI=4
+EAPI="5"
 
-PYTHON_DEPEND="python? 2"
-SUPPORT_PYTHON_ABIS="1"
-RESTRICT_PYTHON_ABIS="3.* *-jython 2.7-pypy-*"
-inherit autotools eutils python
+PYTHON_COMPAT=( python3_{1,2,3} )
+inherit autotools eutils python-single-r1
 
 DESCRIPTION="Geometry engine library for Geographic Information Systems"
 HOMEPAGE="http://trac.osgeo.org/geos/"
@@ -29,15 +27,9 @@ DEPEND="${RDEPEND}
 	ruby? ( dev-lang/swig )
 "
 
-pkg_setup() {
-	use python && python_pkg_setup
-}
-
 src_prepare() {
-	epatch \
-		"${FILESDIR}"/3.2.0-python.patch \
-		"${FILESDIR}"/3.2.0-darwin.patch \
-		"${FILESDIR}"/3.3.2-solaris-isnan.patch
+	epatch "${FILESDIR}"/3.4.0-solaris-isnan.patch #\
+		#"${FILESDIR}"/3.4.0-configure-macro.patch
 	eautoreconf
 	echo "#!${EPREFIX}/bin/bash" > py-compile
 }
@@ -53,47 +45,13 @@ src_configure() {
 src_compile() {
 	emake
 
-	if use python; then
-		emake -C swig/python clean
-		python_copy_sources swig/python
-		building() {
-			emake \
-				PYTHON_CPPFLAGS="-I${EPREFIX}$(python_get_includedir)" \
-				PYTHON_LDFLAGS="$(python_get_library -l)" \
-				SWIG_PYTHON_CPPFLAGS="-I${EPREFIX}$(python_get_includedir)" \
-				pyexecdir="${EPREFIX}$(python_get_sitedir)" \
-				pythondir="${EPREFIX}$(python_get_sitedir)"
-		}
-		python_execute_function -s --source-dir swig/python building
-	fi
-
 	use doc && emake -C "${S}/doc" doxygen-html
 }
 
 src_install() {
-	default
-
-	if use python; then
-		installation() {
-			emake \
-				DESTDIR="${D}" \
-				pyexecdir="${EPREFIX}$(python_get_sitedir)" \
-				pythondir="${EPREFIX}$(python_get_sitedir)" \
-				install
-		}
-		python_execute_function -s --source-dir swig/python installation
-		python_clean_installation_image
-	fi
+	emake DESTDIR="${D}" install
 
 	use doc && dohtml -r doc/doxygen_docs/html/*
 
 	find "${ED}" -name '*.la' -exec rm -f {} +
-}
-
-pkg_postinst() {
-	use python && python_mod_optimize geos/geos.py
-}
-
-pkg_postrm() {
-	use python && python_mod_cleanup geos/geos.py
 }

@@ -1,0 +1,11 @@
+diff -Naruw geos-3.4.0.orig/configure.in geos-3.4.0/configure.in
+--- geos-3.4.0.orig/configure.in	2013-08-11 04:23:48.000000000 +0000
++++ geos-3.4.0/configure.in	2013-08-11 12:00:56.574592752 +0000
+@@ -8,7 +8,6 @@
+ AC_INIT([include/geos.h])
+ AC_CANONICAL_SYSTEM
+ 
+-AC_CONFIG_MACRO_DIR([macros])
+ 
+ dnl -- JTS_PORT: the version of JTS this release is bound to
+ JTS_PORT=1.12.0
