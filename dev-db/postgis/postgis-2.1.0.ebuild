@@ -2,11 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-db/postgis/postgis-2.0.1.ebuild,v 1.2 2012/08/20 01:46:29 ottxor Exp $
 
-EAPI="4"
-
+EAPI="5"
 POSTGRES_COMPAT=( 9.{0,1,2,3} )
 
-inherit autotools eutils postgres-multi versionator
+inherit autotools eutils versionator
 
 MY_PV=$(replace_version_separator 3 '')
 MY_P="${PN}-${MY_PV}"
@@ -18,7 +17,7 @@ SRC_URI="http://download.osgeo.org/postgis/source/${MY_P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86 ~amd64-linux ~x86-linux"
-IUSE="doc gtk static-libs"
+IUSE="doc gtk"
 
 RDEPEND="
 		|| (
@@ -61,46 +60,70 @@ QA_FLAGS_IGNORED="usr/lib(64)?/(rt)?postgis-${PGIS}\.so"
 # good thing.
 MAKEOPTS="-j1"
 
+postgres_check_slot() {
+	if ! declare -p POSTGRES_COMPAT &>/dev/null; then
+		die 'POSTGRES_COMPAT not declared.'
+	fi
+
+# Don't die because we can't run postgresql-config during pretend.
+[[ "$EBUILD_PHASE" = "pretend" \
+	&& -z "$(which postgresql-config 2> /dev/null)" ]] && return 0
+
+	local res=$(echo ${POSTGRES_COMPAT[@]} \
+		| grep -c $(postgresql-config show 2> /dev/null) 2> /dev/null)
+
+	if [[ "$res" -eq "0" ]] ; then
+			eerror "PostgreSQL slot must be set to one of: "
+			eerror "    ${POSTGRES_COMPAT[@]}"
+			return 1
+	fi
+
+	return 0
+}
+
+pkg_pretend() {
+	postgres_check_slot || die
+}
+
 pkg_setup() {
+	postgres_check_slot || die
 	export PGSLOT="$(postgresql-config show)"
 }
 
 src_prepare() {
-	postgres-multi_src_prepare
-	postgres-multi_foreach \
-		epatch "${FILESDIR}/${PN}-2.1-ldflags.patch" \
+	epatch "${FILESDIR}/${PN}-2.1-ldflags.patch" \
 		"${FILESDIR}/${PN}-2.0-arflags.patch" \
 		"${FILESDIR}/${PN}-2.1-pkgconfig-json.patch"
 
 	local AT_M4DIR="macros"
-	postgres-multi_foreach eautoreconf
+	eautoreconf
 }
 
 src_configure() {
 	local myargs=""
 	use gtk && myargs+=" --with-gui"
-	postgres-multi_foreach econf \
-		--with-pgconfig="/usr/lib/postgresql-@PG_SLOT@/bin/pg_config" \
+	econf \
+		--with-pgconfig="/usr/lib/postgresql-${PGSLOT}/bin/pg_config" \
 		${myargs}
 }
 
 src_compile() {
 	# Occasionally, builds fail because of out of order compilation.
 	# Otherwise, it'd be fine.
-	postgres-multi_foreach emake
-	postgres-multi_foreach emake -C topology
+	emake
+	emake -C topology
 
 	if use doc ; then
-		postgres-multi_foreach emake comments
-		postgres-multi_foreach emake cheatsheets
-		postgres-multi_foreach emake -C doc html
+		emake comments
+		emake cheatsheets
+		emake -C doc html
 	fi
 }
 
 src_install() {
-	postgres-multi_foreach emake DESTDIR="${D}" install
-	use doc && postgres-multi_foreach emake DESTDIR="${D}" comments-install
-	postgres-multi_foreach emake -C topology DESTDIR="${D}" install
+	emake DESTDIR="${D}" install
+	use doc && emake DESTDIR="${D}" comments-install
+	emake -C topology DESTDIR="${D}" install
 	dobin ./utils/postgis_restore.pl
 
 	dodoc CREDITS TODO loader/README.* doc/*txt

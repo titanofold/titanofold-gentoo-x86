@@ -1,7 +1,7 @@
-diff -Naruw postgis-2.1.0rc1.orig/configure.ac postgis-2.1.0rc1/configure.ac
---- postgis-2.1.0rc1.orig/configure.ac	2013-07-09 03:36:15.000000000 +0000
-+++ postgis-2.1.0rc1/configure.ac	2013-07-14 17:11:27.631037652 +0000
-@@ -745,65 +745,14 @@
+diff -Naruw postgis-2.1.0.orig/configure.ac postgis-2.1.0/configure.ac
+--- postgis-2.1.0.orig/configure.ac	2013-07-09 03:36:15.000000000 +0000
++++ postgis-2.1.0/configure.ac	2013-08-18 18:14:23.263697970 +0000
+@@ -745,65 +745,21 @@
  dnl Detect if json-c installed
  dnl ===========================================================================
  
@@ -62,18 +62,25 @@ diff -Naruw postgis-2.1.0rc1.orig/configure.ac postgis-2.1.0rc1/configure.ac
 +                      HAVE_JSON=yes
  	AC_DEFINE([HAVE_LIBJSON], 1, [Define to 1 if libjson is present])
 -fi
-+                  ],
-+                  [HAVE_JSON=no])
- 
+-
 -AC_SUBST([JSON_CPPFLAGS])
 -AC_SUBST([JSON_LDFLAGS])
--
++                  ],
++                  [
++                      PKG_CHECK_MODULES([JSON], [json-c],
++                      [
++                          HAVE_JSON=yes
++	                  AC_DEFINE([HAVE_LIBJSON], 1, [Define to 1 if libjson is present])
++                      ],
++                      [HAVE_JSON=no])
++                  ])
+ 
 -fi dnl }
 +AC_SUBST([HAVE_JSON])
  
  dnl ===========================================================================
  dnl Detect GTK+2.0 for GUI
-@@ -896,7 +845,7 @@
+@@ -896,7 +852,7 @@
  CPPFLAGS="$PGSQL_CPPFLAGS $GEOS_CPPFLAGS $PROJ_CPPFLAGS $XML2_CPPFLAGS $SFCGAL_CPPFLAGS $CPPFLAGS"
  AC_MSG_RESULT([CPPFLAGS: $CPPFLAGS])
  
@@ -82,9 +89,9 @@ diff -Naruw postgis-2.1.0rc1.orig/configure.ac postgis-2.1.0rc1/configure.ac
  AC_SUBST([SHLIB_LINK])
  dnl AC_MSG_RESULT([SHLIB_LINK: $SHLIB_LINK])
  
-diff -Naruw postgis-2.1.0rc1.orig/liblwgeom/lwin_geojson.c postgis-2.1.0rc1/liblwgeom/lwin_geojson.c
---- postgis-2.1.0rc1.orig/liblwgeom/lwin_geojson.c	2013-02-28 17:42:49.000000000 +0000
-+++ postgis-2.1.0rc1/liblwgeom/lwin_geojson.c	2013-07-14 17:12:35.982848370 +0000
+diff -Naruw postgis-2.1.0.orig/liblwgeom/lwin_geojson.c postgis-2.1.0/liblwgeom/lwin_geojson.c
+--- postgis-2.1.0.orig/liblwgeom/lwin_geojson.c	2013-02-28 17:42:49.000000000 +0000
++++ postgis-2.1.0/liblwgeom/lwin_geojson.c	2013-08-18 18:11:52.473943571 +0000
 @@ -17,8 +17,8 @@
  
  #ifdef HAVE_LIBJSON
@@ -102,9 +109,9 @@ diff -Naruw postgis-2.1.0rc1.orig/liblwgeom/lwin_geojson.c postgis-2.1.0rc1/libl
  }
 -
 -
-diff -Naruw postgis-2.1.0rc1.orig/liblwgeom/Makefile.in postgis-2.1.0rc1/liblwgeom/Makefile.in
---- postgis-2.1.0rc1.orig/liblwgeom/Makefile.in	2013-05-09 19:38:17.000000000 +0000
-+++ postgis-2.1.0rc1/liblwgeom/Makefile.in	2013-07-14 17:13:14.378732347 +0000
+diff -Naruw postgis-2.1.0.orig/liblwgeom/Makefile.in postgis-2.1.0/liblwgeom/Makefile.in
+--- postgis-2.1.0.orig/liblwgeom/Makefile.in	2013-05-09 19:38:17.000000000 +0000
++++ postgis-2.1.0/liblwgeom/Makefile.in	2013-08-18 18:11:52.477943594 +0000
 @@ -11,8 +11,8 @@
  # **********************************************************************
  
