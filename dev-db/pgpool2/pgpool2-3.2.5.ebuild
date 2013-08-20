@@ -3,10 +3,11 @@
 # $Header: /var/cvsroot/gentoo-x86/dev-db/pgpool2/pgpool2-3.2.1.ebuild,v 1.2 2012/11/16 20:03:13 ago Exp $
 
 EAPI=4
-
-MY_P="${PN/2/-II}-${PV}"
+POSTGRES_COMPAT=( 8.4 9.{0,1,2} )
 
 inherit base
+
+MY_P="${PN/2/-II}-${PV}"
 
 DESCRIPTION="Connection pool server for PostgreSQL"
 HOMEPAGE="http://www.pgpool.net/"
@@ -19,7 +20,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="memcached pam ssl static-libs"
 
 RDEPEND="
-	dev-db/postgresql-base
+	<dev-db/postgresql-base-9.3
 	memcached? ( dev-libs/libmemcached )
 	pam? ( sys-auth/pambase )
 	ssl? ( dev-libs/openssl )
@@ -31,7 +32,31 @@ DEPEND="${RDEPEND}
 
 S=${WORKDIR}/${MY_P}
 
+postgres_check_slot() {
+	if ! declare -p POSTGRES_COMPAT &>/dev/null; then
+		die 'POSTGRES_COMPAT not declared.'
+	fi
+
+	local cur_slot=$(postgresql-config show 2> /dev/null)
+
+	# Don't fail because we can't run postgresql-config during pretend.
+	[[ "$EBUILD_PHASE" = "pretend" && -z "${cur_slot}" ]] && return 0
+
+	local res=$(echo ${POSTGRES_COMPAT[@]} | grep -c "${cur_slot}" 2> /dev/null)
+
+	if [[ "$res" -eq "0" ]] ; then
+			eerror "PostgreSQL slot must be set to one of: "
+			eerror "    ${POSTGRES_COMPAT[@]}"
+			return 1
+	fi
+
+	return 0
+}
+
+pkg_pretend() { postgres_check_slot || die; }
 pkg_setup() {
+	postgres_check_slot || die
+
 	enewgroup postgres 70
 	enewuser pgpool -1 -1 -1 postgres
 
