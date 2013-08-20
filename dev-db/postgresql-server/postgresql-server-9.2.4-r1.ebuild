@@ -93,7 +93,7 @@ src_prepare() {
 	fi
 
 	sed -e "s|@SLOT@|${SLOT}|g" \
-		-i "${WORKDIR}"/postgresql.{init,confd,service} || \
+		-i "${WORKDIR}"/postgresql.{init,confd} || \
 		die "SLOT sed failed"
 
 	eautoconf
@@ -144,8 +144,8 @@ src_install() {
 	newconfd "${WORKDIR}/postgresql.confd" postgresql-${SLOT}
 	newinitd "${WORKDIR}/postgresql.init" postgresql-${SLOT}
 
-	systemd_newunit "${WORKDIR}"/postgresql.service postgresql-${SLOT}.service
-	systemd_newtmpfilesd "${WORKDIR}"/postgresql.tmpfilesd postgresql-${SLOT}.conf
+#	systemd_newunit "${WORKDIR}"/postgresql.service postgresql-${SLOT}.service
+#	systemd_newtmpfilesd "${WORKDIR}"/postgresql.tmpfilesd postgresql-${SLOT}.conf
 
 	use pam && pamd_mimic system-auth postgresql-${SLOT} auth account session
 
