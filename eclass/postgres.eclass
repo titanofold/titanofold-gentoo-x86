@@ -40,6 +40,11 @@ postgres_check_slot() {
 	return 0
 }
 
+# @FUNCTION: postgres_new_user
+# @DESCRIPTION:
+# Creates the "postgres" system group and user -- which is separate from
+# the database user -- in addition to the developer defined user. Takes
+# the same arguments as "enewuser".
 postgres_new_user() {
 	enewgroup postgres 70
 	enewuser postgres 70 /bin/bash /var/lib/postgresql postgres
