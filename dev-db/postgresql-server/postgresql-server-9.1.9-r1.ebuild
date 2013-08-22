@@ -7,7 +7,7 @@ EAPI="5"
 PYTHON_COMPAT=( python{2_{5,6,7},3_{1,2,3}} )
 WANT_AUTOMAKE="none"
 
-inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 user versionator
+inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 systemd user versionator
 
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
@@ -18,7 +18,7 @@ DESCRIPTION="PostgreSQL server"
 HOMEPAGE="http://www.postgresql.org/"
 SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2
 		 http://dev.gentoo.org/~titanofold/postgresql-patches-9.1-r2.tbz2
-		 http://dev.gentoo.org/~titanofold/postgresql-initscript-pre92-2.4.tbz2"
+		 http://dev.gentoo.org/~titanofold/postgresql-initscript-pre92-2.6.tbz2"
 LICENSE="POSTGRESQL GPL-2"
 
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN zh_TW"
@@ -78,9 +78,11 @@ src_prepare() {
 		echo "all install:" > "${S}/src/test/regress/GNUmakefile"
 	fi
 
-	sed -e "s|@SLOT@|${SLOT}|g" \
-		-i "${WORKDIR}/postgresql.init" "${WORKDIR}/postgresql.confd" || \
-		die "SLOT sed failed"
+	for x in .init .confd .service -check-db-dir
+	do
+		sed -e "s|@SLOT@|${SLOT}|g" -i "${WORKDIR}"/postgresql${x}
+		[[ $? -ne 0 ]] && eerror "Failed sed on $x" && die 'Failed slot sed'
+	done
 
 	eautoconf
 }
@@ -133,10 +135,14 @@ src_install() {
 	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
 		"${ED}/etc/eselect/postgresql/slots/${SLOT}/server"
 
-	newconfd "${WORKDIR}/postgresql.confd" postgresql-${SLOT} || \
-		die "Inserting conf failed"
-	newinitd "${WORKDIR}/postgresql.init" postgresql-${SLOT} || \
-		die "Inserting conf failed"
+	newconfd "${WORKDIR}/postgresql.confd" postgresql-${SLOT}
+	newinitd "${WORKDIR}/postgresql.init" postgresql-${SLOT}
+
+	systemd_newunit "${WORKDIR}"/postgresql.service postgresql-${SLOT}.service
+	systemd_newtmpfilesd "${WORKDIR}"/postgresql.tmpfilesd postgresql-${SLOT}.conf
+
+	insinto /usr/bin/
+	newbin "${WORKDIR}"/postgresql-check-db-dir postgresql-${SLOT}-check-db-dir
 
 	use pam && pamd_mimic system-auth postgresql-${SLOT} auth account session
 

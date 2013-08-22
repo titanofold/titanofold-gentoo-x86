@@ -19,7 +19,7 @@ MY_FILE_PV="${SLOT}$(get_version_component_range 4)"
 S="${WORKDIR}/postgresql-${MY_PV}"
 SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2
 		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}-r1.tbz2
-		 http://dev.gentoo.org/~titanofold/postgresql-initscript-2.5.tbz2"
+		 http://dev.gentoo.org/~titanofold/postgresql-initscript-2.6.tbz2"
 
 # Comment the following four lines when a beta or rc.
 #S="${WORKDIR}/postgresql-${PV}"
@@ -93,9 +93,11 @@ src_prepare() {
 		echo "all install:" > "${S}/src/test/regress/GNUmakefile"
 	fi
 
-	sed -e "s|@SLOT@|${SLOT}|g" \
-		-i "${WORKDIR}"/postgresql.{init,confd,service} || \
-		die "SLOT sed failed"
+	for x in .init .confd .service -check-db-dir
+	do
+		sed -e "s|@SLOT@|${SLOT}|g" -i "${WORKDIR}"/postgresql${x}
+		[[ $? -ne 0 ]] && eerror "Failed sed on $x" && die 'Failed slot sed'
+	done
 
 	eautoconf
 }
@@ -153,6 +155,9 @@ src_install() {
 
 	systemd_newunit "${WORKDIR}"/postgresql.service postgresql-${SLOT}.service
 	systemd_newtmpfilesd "${WORKDIR}"/postgresql.tmpfilesd postgresql-${SLOT}.conf
+
+	insinto /usr/bin/
+	newbin "${WORKDIR}"/postgresql-check-db-dir postgresql-${SLOT}-check-db-dir
 
 	use pam && pamd_mimic system-auth postgresql-${SLOT} auth account session
 
