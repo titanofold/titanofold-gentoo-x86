@@ -7,7 +7,7 @@ EAPI="5"
 PYTHON_COMPAT=( python{2_{5,6,7},3_{1,2,3}} )
 WANT_AUTOMAKE="none"
 
-inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 user versionator base git-2
+inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 systemd user versionator base git-2
 
 KEYWORDS=""
 
@@ -15,7 +15,7 @@ SLOT="9.4"
 
 EGIT_REPO_URI="git://git.postgresql.org/git/postgresql.git"
 
-SRC_URI="http://dev.gentoo.org/~titanofold/postgresql-initscript-2.4.tbz2
+SRC_URI="http://dev.gentoo.org/~titanofold/postgresql-initscript-2.6.tbz2
 	http://dev.gentoo.org/~titanofold/postgresql-patches-9.2beta2.tbz2"
 
 # Comment the following six lines when not a beta or rc.
@@ -99,9 +99,12 @@ src_prepare() {
 
 	sed -e "s|@RUNDIR@||g" \
 		-i src/include/pg_config_manual.h || die "RUNDIR sed failed"
-	sed -e "s|@SLOT@|${SLOT}|g" \
-		-i "${WORKDIR}/postgresql.init" "${WORKDIR}/postgresql.confd" || \
-		die "SLOT sed failed"
+
+	for x in .init .confd .service -check-db-dir
+	do
+		sed -e "s|@SLOT@|${SLOT}|g" -i "${WORKDIR}"/postgresql${x}
+		[[ $? -ne 0 ]] && eerror "Failed sed on $x" && die 'Failed slot sed'
+	done
 
 	eautoconf
 }
@@ -154,10 +157,14 @@ src_install() {
 	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
 		"${ED}/etc/eselect/postgresql/slots/${SLOT}/server"
 
-	newconfd "${WORKDIR}/postgresql.confd" postgresql-${SLOT} || \
-		die "Inserting conf failed"
-	newinitd "${WORKDIR}/postgresql.init" postgresql-${SLOT} || \
-		die "Inserting conf failed"
+	newconfd "${WORKDIR}/postgresql.confd" postgresql-${SLOT}
+	newinitd "${WORKDIR}/postgresql.init" postgresql-${SLOT}
+
+	systemd_newunit "${WORKDIR}"/postgresql.service postgresql-${SLOT}.service
+	systemd_newtmpfilesd "${WORKDIR}"/postgresql.tmpfilesd postgresql-${SLOT}.conf
+
+	insinto /usr/bin/
+	newbin "${WORKDIR}"/postgresql-check-db-dir postgresql-${SLOT}-check-db-dir
 
 	use pam && pamd_mimic system-auth postgresql-${SLOT} auth account session
 
