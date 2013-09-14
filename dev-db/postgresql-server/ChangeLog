@@ -1,6 +1,264 @@
 # ChangeLog for dev-db/postgresql-server
-# Copyright 1999-2012 Gentoo Foundation; Distributed under the GPL v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-server/ChangeLog,v 1.227 2012/12/01 19:19:54 armin76 Exp $
+# Copyright 1999-2013 Gentoo Foundation; Distributed under the GPL v2
+# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-server/ChangeLog,v 1.264 2013/09/10 05:52:55 patrick Exp $
+
+*postgresql-server-9.3.0 (10 Sep 2013)
+
+  10 Sep 2013; Patrick Lauer <patrick@gentoo.org>
+  +postgresql-server-9.3.0.ebuild, -postgresql-server-9.3_beta1-r1.ebuild,
+  -postgresql-server-9.3_beta2.ebuild:
+  Bump
+
+  05 Sep 2013; Michał Górny <mgorny@gentoo.org> postgresql-server-8.4.17.ebuild,
+  postgresql-server-9.0.13.ebuild, postgresql-server-9.1.9.ebuild,
+  postgresql-server-9.2.4.ebuild, postgresql-server-9.3_beta1-r1.ebuild,
+  postgresql-server-9.3_beta2.ebuild, postgresql-server-9999.ebuild:
+  Clean up PYTHON_COMPAT from old implementations.
+
+  25 Jul 2013; Patrick Lauer <patrick@gentoo.org> postgresql-server-9999.ebuild:
+  Make -9999 compile again
+
+  24 Jul 2013; Patrick Lauer <patrick@gentoo.org> postgresql-server-9999.ebuild:
+  Fixing slot of -9999 ebuild
+
+*postgresql-server-9.3_beta2 (02 Jul 2013)
+
+  02 Jul 2013; Aaron W. Swenson <titanofold@gentoo.org>
+  +postgresql-server-9.3_beta2.ebuild:
+  Version bump.
+
+*postgresql-server-9.3_beta1-r1 (12 Jun 2013)
+
+  12 Jun 2013; Patrick Lauer <patrick@gentoo.org>
+  +postgresql-server-9.3_beta1-r1.ebuild, -postgresql-server-9.3_beta1.ebuild:
+  File collision fix for #473054
+
+*postgresql-server-9.3_beta1 (12 Jun 2013)
+
+  12 Jun 2013; Aaron W. Swenson <titanofold@gentoo.org>
+  +postgresql-server-9.3_beta1.ebuild:
+  Version bump.
+
+  05 Apr 2013; Agostino Sarubbo <ago@gentoo.org>
+  -postgresql-server-8.4.16-r1.ebuild, -postgresql-server-9.0.12-r1.ebuild,
+  -postgresql-server-9.1.8-r1.ebuild, -postgresql-server-9.2.3-r1.ebuild:
+  Remove old
+
+  05 Apr 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.4.17.ebuild, postgresql-server-9.0.13.ebuild,
+  postgresql-server-9.1.9.ebuild, postgresql-server-9.2.4.ebuild:
+  Stable for sparc, wrt bug #463884
+
+  05 Apr 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.4.17.ebuild, postgresql-server-9.0.13.ebuild,
+  postgresql-server-9.1.9.ebuild, postgresql-server-9.2.4.ebuild:
+  Stable for sh, wrt bug #463884
+
+  05 Apr 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.4.17.ebuild, postgresql-server-9.0.13.ebuild,
+  postgresql-server-9.1.9.ebuild, postgresql-server-9.2.4.ebuild:
+  Stable for s390, wrt bug #463884
+
+  05 Apr 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.4.17.ebuild, postgresql-server-9.0.13.ebuild,
+  postgresql-server-9.1.9.ebuild, postgresql-server-9.2.4.ebuild:
+  Stable for arm, wrt bug #463884
+
+  05 Apr 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.4.17.ebuild, postgresql-server-9.0.13.ebuild,
+  postgresql-server-9.1.9.ebuild, postgresql-server-9.2.4.ebuild:
+  Stable for ia64, wrt bug #463884
+
+  05 Apr 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.4.17.ebuild, postgresql-server-9.0.13.ebuild,
+  postgresql-server-9.1.9.ebuild, postgresql-server-9.2.4.ebuild:
+  Stable for alpha, wrt bug #463884
+
+  05 Apr 2013; Jeroen Roovers <jer@gentoo.org> postgresql-server-8.4.17.ebuild,
+  postgresql-server-9.0.13.ebuild, postgresql-server-9.1.9.ebuild,
+  postgresql-server-9.2.4.ebuild:
+  Stable for HPPA (bug #463884).
+
+  04 Apr 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.4.17.ebuild, postgresql-server-9.0.13.ebuild,
+  postgresql-server-9.1.9.ebuild, postgresql-server-9.2.4.ebuild:
+  Stable for ppc64, wrt bug #463884
+
+  04 Apr 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.4.17.ebuild, postgresql-server-9.0.13.ebuild,
+  postgresql-server-9.1.9.ebuild, postgresql-server-9.2.4.ebuild:
+  Stable for ppc, wrt bug #463884
+
+  04 Apr 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.4.17.ebuild, postgresql-server-9.0.13.ebuild,
+  postgresql-server-9.1.9.ebuild, postgresql-server-9.2.4.ebuild:
+  Stable for x86, wrt bug #463884
+
+  04 Apr 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.4.17.ebuild, postgresql-server-9.0.13.ebuild,
+  postgresql-server-9.1.9.ebuild, postgresql-server-9.2.4.ebuild:
+  Stable for amd64, wrt bug #463884
+
+*postgresql-server-9.2.4 (04 Apr 2013)
+*postgresql-server-9.1.9 (04 Apr 2013)
+*postgresql-server-9.0.13 (04 Apr 2013)
+*postgresql-server-8.4.17 (04 Apr 2013)
+
+  04 Apr 2013; Aaron W. Swenson <titanofold@gentoo.org>
+  -postgresql-server-8.3.23-r1.ebuild, +postgresql-server-8.4.17.ebuild,
+  +postgresql-server-9.0.13.ebuild, +postgresql-server-9.1.9.ebuild,
+  +postgresql-server-9.2.4.ebuild, postgresql-server-9999.ebuild:
+  Security bump. Bug 463884.
+
+  26 Feb 2013; Agostino Sarubbo <ago@gentoo.org>
+  -postgresql-server-8.3.20.ebuild, -postgresql-server-8.3.21.ebuild,
+  -postgresql-server-8.3.22-r1.ebuild, -postgresql-server-8.3.22.ebuild,
+  -postgresql-server-8.4.13.ebuild, -postgresql-server-8.4.14.ebuild,
+  -postgresql-server-8.4.15-r1.ebuild, -postgresql-server-8.4.15.ebuild,
+  -postgresql-server-9.0.10.ebuild, -postgresql-server-9.0.11-r1.ebuild,
+  -postgresql-server-9.0.11.ebuild, -postgresql-server-9.0.9.ebuild,
+  -postgresql-server-9.1.5.ebuild, -postgresql-server-9.1.6.ebuild,
+  -postgresql-server-9.1.7-r1.ebuild, -postgresql-server-9.1.7.ebuild,
+  -postgresql-server-9.2.1.ebuild, -postgresql-server-9.2.2-r1.ebuild,
+  -postgresql-server-9.2.2.ebuild:
+  Remove old
+
+  26 Feb 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.3.23-r1.ebuild, postgresql-server-8.4.16-r1.ebuild,
+  postgresql-server-9.0.12-r1.ebuild, postgresql-server-9.1.8-r1.ebuild,
+  postgresql-server-9.2.3-r1.ebuild:
+  Stable for sh, wrt bug #456080
+
+*postgresql-server-9.2.3-r1 (12 Feb 2013)
+*postgresql-server-9.1.8-r1 (12 Feb 2013)
+*postgresql-server-9.0.12-r1 (12 Feb 2013)
+*postgresql-server-8.4.16-r1 (12 Feb 2013)
+*postgresql-server-8.3.23-r1 (12 Feb 2013)
+
+  12 Feb 2013; Aaron W. Swenson <titanofold@gentoo.org>
+  -postgresql-server-8.3.23.ebuild, +postgresql-server-8.3.23-r1.ebuild,
+  -postgresql-server-8.4.16.ebuild, +postgresql-server-8.4.16-r1.ebuild,
+  -postgresql-server-9.0.12.ebuild, +postgresql-server-9.0.12-r1.ebuild,
+  -postgresql-server-9.1.8.ebuild, +postgresql-server-9.1.8-r1.ebuild,
+  -postgresql-server-9.2.3.ebuild, +postgresql-server-9.2.3-r1.ebuild,
+  postgresql-server-9999.ebuild:
+  Revision bump to fix typo in sed statement -- PGSQL_PAME_SERVICE should have
+  been PGSQL_PAM_SERVICE -- to fix bug 456964.
+
+  11 Feb 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.3.23.ebuild, postgresql-server-8.4.16.ebuild,
+  postgresql-server-9.0.12.ebuild, postgresql-server-9.1.8.ebuild,
+  postgresql-server-9.2.3.ebuild:
+  Stable for hppa, wrt bug #456080
+
+  11 Feb 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.3.23.ebuild, postgresql-server-8.4.16.ebuild,
+  postgresql-server-9.0.12.ebuild, postgresql-server-9.1.8.ebuild,
+  postgresql-server-9.2.3.ebuild:
+  Stable for sparc, wrt bug #456080
+
+  11 Feb 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.3.23.ebuild, postgresql-server-8.4.16.ebuild,
+  postgresql-server-9.0.12.ebuild, postgresql-server-9.1.8.ebuild,
+  postgresql-server-9.2.3.ebuild:
+  Stable for s390, wrt bug #456080
+
+  11 Feb 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.3.23.ebuild, postgresql-server-8.4.16.ebuild,
+  postgresql-server-9.0.12.ebuild, postgresql-server-9.1.8.ebuild,
+  postgresql-server-9.2.3.ebuild:
+  Stable for arm, wrt bug #456080
+
+  11 Feb 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.3.23.ebuild, postgresql-server-8.4.16.ebuild,
+  postgresql-server-9.0.12.ebuild, postgresql-server-9.1.8.ebuild,
+  postgresql-server-9.2.3.ebuild:
+  Stable for alpha, wrt bug #456080
+
+  11 Feb 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.3.23.ebuild, postgresql-server-8.4.16.ebuild,
+  postgresql-server-9.0.12.ebuild, postgresql-server-9.1.8.ebuild,
+  postgresql-server-9.2.3.ebuild:
+  Stable for ia64, wrt bug #456080
+
+  11 Feb 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.3.23.ebuild, postgresql-server-8.4.16.ebuild,
+  postgresql-server-9.0.12.ebuild, postgresql-server-9.1.8.ebuild,
+  postgresql-server-9.2.3.ebuild:
+  Stable for ppc64, wrt bug #456080
+
+  11 Feb 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.3.23.ebuild, postgresql-server-8.4.16.ebuild,
+  postgresql-server-9.0.12.ebuild, postgresql-server-9.1.8.ebuild,
+  postgresql-server-9.2.3.ebuild:
+  Stable for ppc, wrt bug #456080
+
+  11 Feb 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.3.23.ebuild, postgresql-server-8.4.16.ebuild,
+  postgresql-server-9.0.12.ebuild, postgresql-server-9.1.8.ebuild,
+  postgresql-server-9.2.3.ebuild:
+  Stable for x86, wrt bug #456080
+
+  11 Feb 2013; Agostino Sarubbo <ago@gentoo.org>
+  postgresql-server-8.3.23.ebuild, postgresql-server-8.4.16.ebuild,
+  postgresql-server-9.0.12.ebuild, postgresql-server-9.1.8.ebuild,
+  postgresql-server-9.2.3.ebuild:
+  Stable for amd64, wrt bug #456080
+
+*postgresql-server-9.2.3 (08 Feb 2013)
+*postgresql-server-9.1.8 (08 Feb 2013)
+*postgresql-server-9.0.12 (08 Feb 2013)
+*postgresql-server-8.4.16 (08 Feb 2013)
+*postgresql-server-8.3.23 (08 Feb 2013)
+
+  08 Feb 2013; Aaron W. Swenson <titanofold@gentoo.org>
+  +postgresql-server-8.3.23.ebuild, +postgresql-server-8.4.16.ebuild,
+  +postgresql-server-9.0.12.ebuild, +postgresql-server-9.1.8.ebuild,
+  +postgresql-server-9.2.3.ebuild, postgresql-server-9999.ebuild:
+  Added kerberos USE flag. (Bug 427948) Use python-single-r1.eclass to build
+  PL/Python against the Python of the users choosing. (Bug 427954) 'use'
+  instead of 'need' logger in /etc/init.d/postgresql-${SLOT}. (Bug 435280)
+  Default to sane character encoding default with --encoding=UTF-8 in
+  /etc/conf.d/postgresql-${SLOT}. (Bug 440258) Append ${SLOT} to PAM service
+  name; each slot now has its own PAM service file. (Bug 443113) Security
+  bump. (Bug 456080)
+
+  29 Jan 2013; Patrick Lauer <patrick@gentoo.org>
+  postgresql-server-8.3.20.ebuild, postgresql-server-8.3.21.ebuild,
+  postgresql-server-8.3.22-r1.ebuild, postgresql-server-8.3.22.ebuild,
+  postgresql-server-8.4.13.ebuild, postgresql-server-8.4.14.ebuild,
+  postgresql-server-8.4.15-r1.ebuild, postgresql-server-8.4.15.ebuild,
+  postgresql-server-9.0.10.ebuild, postgresql-server-9.0.11-r1.ebuild,
+  postgresql-server-9.0.11.ebuild, postgresql-server-9.0.9.ebuild,
+  postgresql-server-9.1.5.ebuild, postgresql-server-9.1.6.ebuild,
+  postgresql-server-9.1.7-r1.ebuild, postgresql-server-9.1.7.ebuild,
+  postgresql-server-9.2.1.ebuild, postgresql-server-9.2.2-r1.ebuild,
+  postgresql-server-9.2.2.ebuild, postgresql-server-9999.ebuild:
+  Fixing typo in pkg_prerm
+
+*postgresql-server-9.2.2-r1 (12 Jan 2013)
+*postgresql-server-9.1.7-r1 (12 Jan 2013)
+*postgresql-server-9.0.11-r1 (12 Jan 2013)
+*postgresql-server-8.4.15-r1 (12 Jan 2013)
+*postgresql-server-8.3.22-r1 (12 Jan 2013)
+
+  12 Jan 2013; Aaron W. Swenson <titanofold@gentoo.org>
+  +postgresql-server-8.3.22-r1.ebuild, +postgresql-server-8.4.15-r1.ebuild,
+  +postgresql-server-9.0.11-r1.ebuild, +postgresql-server-9.1.7-r1.ebuild,
+  +postgresql-server-9.2.2-r1.ebuild, postgresql-server-9999.ebuild:
+  Fixes bug 444214
+
+*postgresql-server-8.4.15 (10 Dec 2012)
+*postgresql-server-9.2.2 (10 Dec 2012)
+*postgresql-server-9.0.11 (10 Dec 2012)
+*postgresql-server-9.1.7 (10 Dec 2012)
+*postgresql-server-8.3.22 (10 Dec 2012)
+
+  10 Dec 2012; Patrick Lauer <patrick@gentoo.org>
+  +postgresql-server-8.3.22.ebuild, +postgresql-server-8.4.15.ebuild,
+  +postgresql-server-9.0.11.ebuild, +postgresql-server-9.1.7.ebuild,
+  +postgresql-server-9.2.2.ebuild:
+  Bump
 
   01 Dec 2012; Raúl Porcel <armin76@gentoo.org>
   postgresql-server-8.3.21.ebuild, postgresql-server-8.4.14.ebuild,
