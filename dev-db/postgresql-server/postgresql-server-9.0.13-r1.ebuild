@@ -39,17 +39,20 @@ wanted_languages() {
 	echo -n ${enable_langs}
 }
 
-RDEPEND="~dev-db/postgresql-base-${PV}:${SLOT}[kerberos?,pam?,pg_legacytimestamp=,nls=]
-		 perl? ( >=dev-lang/perl-5.8 )
-		 python? ( ${PYTHON_DEPS} )
-		 selinux? ( sec-policy/selinux-postgresql )
-		 tcl? ( >=dev-lang/tcl-8 )
-		 uuid? ( dev-libs/ossp-uuid )
-		 xml? ( dev-libs/libxml2 dev-libs/libxslt )"
+RDEPEND="
+~dev-db/postgresql-base-${PV}:${SLOT}[kerberos?,pam?,pg_legacytimestamp=,python=,nls=]
+perl? ( >=dev-lang/perl-5.8 )
+python? ( ${PYTHON_DEPS} )
+selinux? ( sec-policy/selinux-postgresql )
+tcl? ( >=dev-lang/tcl-8 )
+uuid? ( dev-libs/ossp-uuid )
+xml? ( dev-libs/libxml2 dev-libs/libxslt )
+"
 
 DEPEND="${RDEPEND}
-		sys-devel/flex
-		xml? ( virtual/pkgconfig )"
+sys-devel/flex
+xml? ( virtual/pkgconfig )
+"
 
 PDEPEND="doc? ( ~dev-db/postgresql-docs-${PV} )"
 
@@ -97,7 +100,6 @@ src_configure() {
 		--with-libraries="${EPREFIX%/}/usr/$(get_libdir)/postgresql-${SLOT}/$(get_libdir)" \
 		--with-system-tzdata="${EPREFIX%/}/usr/share/zoneinfo" \
 		$(use_with perl) \
-		$(use_with python) \
 		$(use_with tcl) \
 		$(use_with xml libxml) \
 		$(use_with xml libxslt) \

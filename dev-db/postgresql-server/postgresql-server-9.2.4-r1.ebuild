@@ -12,16 +12,6 @@ inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 syste
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
-
-# Comment the following six lines when not a beta or rc.
-#MY_PV="${PV//_}"
-#MY_FILE_PV="${SLOT}$(get_version_component_range 4)"
-#S="${WORKDIR}/postgresql-${MY_FILE_PV}"
-#SRC_URI="mirror://postgresql/source/v${MY_FILE_PV}/postgresql-${MY_FILE_PV}.tar.bz2
-#		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}beta3.tbz2
-#		 http://dev.gentoo.org/~titanofold/postgresql-initscript-2.3.tbz2"
-
-# Comment the following four lines when a beta or rc.
 S="${WORKDIR}/postgresql-${PV}"
 SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2
 		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}.tbz2
@@ -48,16 +38,21 @@ wanted_languages() {
 	echo -n ${enable_langs}
 }
 
-RDEPEND="~dev-db/postgresql-base-${PV}:${SLOT}[kerberos?,pam?,pg_legacytimestamp=,nls=]
-	perl? ( >=dev-lang/perl-5.8 )
-	python? ( ${PYTHON_DEPS} )
-	selinux? ( sec-policy/selinux-postgresql )
-	tcl? ( >=dev-lang/tcl-8 )
-	uuid? ( dev-libs/ossp-uuid )
-	xml? ( dev-libs/libxml2 dev-libs/libxslt )"
+RDEPEND="
+~dev-db/postgresql-base-${PV}:${SLOT}[kerberos?,pam?,pg_legacytimestamp=,python=,nls=]
+perl? ( >=dev-lang/perl-5.8 )
+python? ( ${PYTHON_DEPS} )
+selinux? ( sec-policy/selinux-postgresql )
+tcl? ( >=dev-lang/tcl-8 )
+uuid? ( dev-libs/ossp-uuid )
+xml? ( dev-libs/libxml2 dev-libs/libxslt )
+"
+
 DEPEND="${RDEPEND}
-	sys-devel/flex
-	xml? ( virtual/pkgconfig )"
+sys-devel/flex
+xml? ( virtual/pkgconfig )
+"
+
 PDEPEND="doc? ( ~dev-db/postgresql-docs-${PV} )"
 
 pkg_setup() {
@@ -114,7 +109,6 @@ src_configure() {
 	# eval is needed to get along with pg_config quotation of space-rich entities.
 	eval econf "$(${PO}/usr/$(get_libdir)/postgresql-${SLOT}/bin/pg_config --configure)" \
 		$(use_with perl) \
-		$(use_with python) \
 		$(use_with tcl) \
 		$(use_with xml libxml) \
 		$(use_with xml libxslt) \
