@@ -12,15 +12,6 @@ inherit autotools eutils flag-o-matic multilib prefix python-single-r1 versionat
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
-
-# Comment the following five lines when not a beta or rc.
-#MY_PV="${PV//_}"
-#MY_FILE_PV="${SLOT}$(get_version_component_range 4)"
-#S="${WORKDIR}/postgresql-${MY_PV}"
-#SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2
-#		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}-r1.tbz2"
-
-# Comment the following three lines when a beta or rc.
 S="${WORKDIR}/postgresql-${PV}"
 SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2
 		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}-r1.tbz2"
@@ -33,7 +24,7 @@ HOMEPAGE="http://www.postgresql.org/"
 RESTRICT="test"
 
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN zh_TW"
-IUSE="kerberos ldap nls pam pg_legacytimestamp readline ssl threads zlib"
+IUSE="doc kerberos ldap nls pam pg_legacytimestamp python readline ssl threads zlib"
 
 for lingua in ${LINGUAS} ; do
 	IUSE+=" linguas_${lingua}"
@@ -50,12 +41,13 @@ wanted_languages() {
 }
 
 RDEPEND="
->=app-admin/eselect-postgresql-1.0.10
+>=app-admin/eselect-postgresql-1.2.0
 sys-apps/less
 virtual/libintl
 kerberos? ( virtual/krb5 )
 ldap? ( net-nds/openldap )
 pam? ( virtual/pam )
+python? ( ${PYTHON_DEPS} )
 readline? ( sys-libs/readline )
 ssl? ( >=dev-libs/openssl-0.9.6-r1 )
 zlib? ( sys-libs/zlib )

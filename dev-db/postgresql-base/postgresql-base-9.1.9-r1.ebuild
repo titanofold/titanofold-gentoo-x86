@@ -24,7 +24,7 @@ LICENSE="POSTGRESQL"
 RESTRICT="test"
 
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN zh_TW"
-IUSE="doc kerberos ldap nls pam pg_legacytimestamp readline ssl threads zlib"
+IUSE="doc kerberos ldap nls pam pg_legacytimestamp python readline ssl threads zlib"
 
 for lingua in ${LINGUAS} ; do
 	IUSE+=" linguas_${lingua}"
@@ -41,12 +41,13 @@ wanted_languages() {
 }
 
 RDEPEND="
->=app-admin/eselect-postgresql-1.0.10
+>=app-admin/eselect-postgresql-1.2.0
 sys-apps/less
 virtual/libintl
 kerberos? ( virtual/krb5 )
 ldap? ( net-nds/openldap )
 pam? ( virtual/pam )
+python? ( ${PYTHON_DEPS} )
 readline? ( sys-libs/readline )
 ssl? ( >=dev-libs/openssl-0.9.6-r1 )
 zlib? ( sys-libs/zlib )

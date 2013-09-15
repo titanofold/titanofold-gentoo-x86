@@ -48,6 +48,7 @@ virtual/libintl
 kerberos? ( virtual/krb5 )
 ldap? ( net-nds/openldap )
 pam? ( virtual/pam )
+python? ( ${PYTHON_DEPS} )
 readline? ( sys-libs/readline )
 ssl? ( >=dev-libs/openssl-0.9.6-r1 )
 zlib? ( sys-libs/zlib )
