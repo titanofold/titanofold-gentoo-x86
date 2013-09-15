@@ -40,7 +40,8 @@ wanted_languages() {
 }
 
 RDEPEND="
-~dev-db/postgresql-base-${PV}:${SLOT}[kerberos?,pam?,pg_legacytimestamp=,python=,nls=]
+~dev-db/postgresql-base-${PV}[kerberos?,pam?,pg_legacytimestamp=,python=,nls=]
+!=dev-db/postgresql-base-${PV}-r0
 perl? ( >=dev-lang/perl-5.8 )
 selinux? ( sec-policy/selinux-postgresql )
 tcl? ( >=dev-lang/tcl-8 )
