@@ -22,7 +22,7 @@ DESCRIPTION="PostgreSQL server"
 HOMEPAGE="http://www.postgresql.org/"
 
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN zh_TW"
-IUSE="kerberos kernel_linux nls pam perl -pg_legacytimestamp python selinux tcl test uuid xml"
+IUSE="doc kerberos kernel_linux nls pam perl -pg_legacytimestamp python selinux tcl test uuid xml"
 
 for lingua in ${LINGUAS}; do
 	IUSE+=" linguas_${lingua}"
