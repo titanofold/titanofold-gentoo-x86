@@ -133,10 +133,7 @@ src_install() {
 	done
 
 	# Avoid file collision with -base.
-	local l
-	for l in lib lib32 lib64 ; do
-		rm "${ED}/usr/${l}/postgresql-${SLOT}/${l}/libpgcommon.a"
-	done
+	rm "${ED}/usr/$(get_libdir)/postgresql-${SLOT}/$(get_libdir)/libpgcommon.a"
 
 	dodir /etc/eselect/postgresql/slots/${SLOT}
 	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \

@@ -155,8 +155,8 @@ src_install() {
 		keepdir /run/postgresql
 		fperms 0770 /run/postgresql
 	fi
-	# collides with -base, might be unneeded even in base?
-	rm "${D}/usr/$(get_libdir)/postgresql-${SLOT}/$(get_libdir)/libpgcommon.a"
+	# collides with -base
+	rm "${ED}/usr/$(get_libdir)/postgresql-${SLOT}/$(get_libdir)/libpgcommon.a"
 }
 
 pkg_postinst() {
