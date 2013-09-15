@@ -2,11 +2,12 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-base/postgresql-base-9.2.1.ebuild,v 1.5 2012/12/01 19:10:30 armin76 Exp $
 
-EAPI="4"
+EAPI="5"
 
+PYTHON_COMPAT=( python{2_{5,6,7},3_{1,2,3}} )
 WANT_AUTOMAKE="none"
 
-inherit autotools eutils flag-o-matic multilib prefix versionator
+inherit autotools eutils flag-o-matic multilib prefix python-single-r1 versionator
 
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
@@ -69,6 +70,10 @@ nls? ( sys-devel/gettext )
 
 PDEPEND="doc? ( ~dev-db/postgresql-docs-${PV} )"
 
+pkg_setup() {
+	use python && python-single-r1_pkg_setup
+}
+
 src_prepare() {
 	epatch "${WORKDIR}/autoconf.patch" \
 		"${WORKDIR}/base.patch" \
@@ -112,13 +117,13 @@ src_configure() {
 		--mandir="${PO}/usr/share/postgresql-${SLOT}/man" \
 		--without-tcl \
 		--without-perl \
-		--without-python \
 		$(use_with readline) \
 		$(use_with kerberos krb5) \
 		$(use_with kerberos gssapi) \
 		"$(use_enable nls nls "$(wanted_languages)")" \
 		$(use_with pam) \
 		$(use_enable !pg_legacytimestamp integer-datetimes) \
+		$(use_with python) \
 		$(use_with ssl openssl) \
 		$(use_enable threads thread-safety) \
 		$(use_with zlib) \
