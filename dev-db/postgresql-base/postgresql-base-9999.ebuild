@@ -2,11 +2,12 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-base/postgresql-base-9999.ebuild,v 1.8 2013/08/14 09:28:16 patrick Exp $
 
-EAPI="4"
+EAPI="5"
 
+PYTHON_COMPAT=( python{2_{5,6,7},3_{1,2,3}} )
 WANT_AUTOMAKE="none"
 
-inherit autotools eutils flag-o-matic multilib prefix versionator base git-2
+inherit autotools eutils flag-o-matic multilib prefix python-single-r1 versionator base git-2
 
 KEYWORDS=""
 
@@ -76,6 +77,10 @@ DEPEND="${RDEPEND}
 
 #PDEPEND="doc? ( ~dev-db/postgresql-docs-${PV} )"
 
+pkg_setup() {
+	use python && python-single-r1_pkg_setup
+}
+
 src_unpack() {
 	base_src_unpack
 	git-2_src_unpack
@@ -130,13 +135,13 @@ src_configure() {
 		--mandir="${PO}/usr/share/postgresql-${SLOT}/man" \
 		--without-tcl \
 		--without-perl \
-		--without-python \
 		$(use_with readline) \
 		$(use_with kerberos krb5) \
 		$(use_with kerberos gssapi) \
 		"$(use_enable nls nls "$(wanted_languages)")" \
 		$(use_with pam) \
 		$(use_enable !pg_legacytimestamp integer-datetimes) \
+		$(use_with python) \
 		$(use_with ssl openssl) \
 		$(use_enable threads thread-safety) \
 		$(use_with zlib) \
