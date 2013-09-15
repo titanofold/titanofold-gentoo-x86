@@ -1,10 +1,10 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-server/postgresql-server-9.2.3.ebuild,v 1.11 2013/02/11 18:21:05 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-server/postgresql-server-9.3.0.ebuild,v 1.1 2013/09/10 05:52:55 patrick Exp $
 
 EAPI="5"
 
-PYTHON_COMPAT=( python{2_{5,6,7},3_{1,2,3}} )
+PYTHON_COMPAT=( python{2_{6,7},3_{2,3}} )
 WANT_AUTOMAKE="none"
 
 inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 systemd user versionator
@@ -14,15 +14,15 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86
 SLOT="$(get_version_component_range 1-2)"
 S="${WORKDIR}/postgresql-${PV}"
 SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2
-		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}.tbz2
-		 http://dev.gentoo.org/~titanofold/postgresql-initscript-2.6.tbz2"
+		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}-r1.tbz2
+		 http://dev.gentoo.org/~titanofold/postgresql-initscript-2.5.tbz2"
 
 LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL server"
 HOMEPAGE="http://www.postgresql.org/"
 
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN zh_TW"
-IUSE="doc kerberos kernel_linux nls pam perl -pg_legacytimestamp python selinux tcl test uuid xml"
+IUSE="kerberos kernel_linux nls pam perl -pg_legacytimestamp python selinux tcl test uuid xml"
 
 for lingua in ${LINGUAS}; do
 	IUSE+=" linguas_${lingua}"
@@ -65,7 +65,8 @@ pkg_setup() {
 src_prepare() {
 	epatch "${WORKDIR}/autoconf.patch" \
 		"${WORKDIR}/bool.patch" \
-		"${WORKDIR}/server.patch"
+		"${WORKDIR}/server.patch" \
+		"${WORKDIR}/run-dir.patch"
 
 	eprefixify src/include/pg_config_manual.h
 
@@ -82,17 +83,14 @@ src_prepare() {
 
 	if use test ; then
 		epatch "${WORKDIR}/regress.patch"
-		sed -e "s|@SOCKETDIR@|${T}|g" -i src/test/regress/pg_regress{,_main}.c \
-			|| die 'Failed regress sed'
+		sed -e "s|@SOCKETDIR@|${T}|g" -i src/test/regress/pg_regress{,_main}.c
 	else
 		echo "all install:" > "${S}/src/test/regress/GNUmakefile"
 	fi
 
-	for x in .init .confd .service -check-db-dir
-	do
-		sed -e "s|@SLOT@|${SLOT}|g" -i "${WORKDIR}"/postgresql${x}
-		[[ $? -ne 0 ]] && eerror "Failed sed on $x" && die 'Failed slot sed'
-	done
+	sed -e "s|@SLOT@|${SLOT}|g" \
+		-i "${WORKDIR}"/postgresql.{init,confd,service} || \
+		die "SLOT sed failed"
 
 	eautoconf
 }
@@ -134,6 +132,12 @@ src_install() {
 			emake install -C $bd DESTDIR="${D}" || die "emake install in $bd failed"
 	done
 
+	# Avoid file collision with -base.
+	local l
+	for l in lib lib32 lib64 ; do
+		rm "${ED}/usr/${l}/postgresql-${SLOT}/${l}/libpgcommon.a"
+	done
+
 	dodir /etc/eselect/postgresql/slots/${SLOT}
 	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
 		"${ED}/etc/eselect/postgresql/slots/${SLOT}/server"
@@ -143,9 +147,6 @@ src_install() {
 
 	systemd_newunit "${WORKDIR}"/postgresql.service postgresql-${SLOT}.service
 	systemd_newtmpfilesd "${WORKDIR}"/postgresql.tmpfilesd postgresql-${SLOT}.conf
-
-	insinto /usr/bin/
-	newbin "${WORKDIR}"/postgresql-check-db-dir postgresql-${SLOT}-check-db-dir
 
 	use pam && pamd_mimic system-auth postgresql-${SLOT} auth account session
 

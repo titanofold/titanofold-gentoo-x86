@@ -25,7 +25,7 @@ S="${WORKDIR}/postgresql-${PV}"
 RESTRICT="test"
 
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN zh_TW"
-IUSE="doc kerberos ldap nls pam pg_legacytimestamp readline ssl threads zlib"
+IUSE="doc kerberos ldap nls pam pg_legacytimestamp python readline ssl threads zlib"
 
 for lingua in ${LINGUAS} ; do
 	IUSE+=" linguas_${lingua}"
@@ -54,8 +54,7 @@ ssl? ( >=dev-libs/openssl-0.9.6-r1 )
 zlib? ( >=sys-libs/zlib-1.1.3 )
 "
 
-DEPEND="
-${RDEPEND}
+DEPEND="${RDEPEND}
 !!<sys-apps/sandbox-2.0
 >=sys-devel/bison-1.875
 sys-devel/flex

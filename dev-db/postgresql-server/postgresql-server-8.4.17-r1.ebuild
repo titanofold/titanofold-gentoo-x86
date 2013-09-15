@@ -39,16 +39,19 @@ wanted_languages() {
 	echo -n ${enable_langs}
 }
 
-RDEPEND="~dev-db/postgresql-base-${PV}:${SLOT}[kerberos?,pam?,pg_legacytimestamp=,python=,nls=]
-		 perl? ( >=dev-lang/perl-5.8 )
-		 selinux? ( sec-policy/selinux-postgresql )
-		 tcl? ( >=dev-lang/tcl-8 )
-		 uuid? ( dev-libs/ossp-uuid )
-		 xml? ( dev-libs/libxml2 dev-libs/libxslt )"
+RDEPEND="
+~dev-db/postgresql-base-${PV}:${SLOT}[kerberos?,pam?,pg_legacytimestamp=,python=,nls=]
+perl? ( >=dev-lang/perl-5.8 )
+selinux? ( sec-policy/selinux-postgresql )
+tcl? ( >=dev-lang/tcl-8 )
+uuid? ( dev-libs/ossp-uuid )
+xml? ( dev-libs/libxml2 dev-libs/libxslt )
+"
 
 DEPEND="${RDEPEND}
-		sys-devel/flex
-		xml? ( virtual/pkgconfig )"
+sys-devel/flex
+xml? ( virtual/pkgconfig )
+"
 
 PDEPEND="doc? ( ~dev-db/postgresql-docs-${PV} )"
 
