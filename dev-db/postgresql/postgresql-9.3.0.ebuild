@@ -13,26 +13,17 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86
 
 SLOT="$(get_version_component_range 1-2)"
 
-# Comment the following six lines when not a beta or rc.
-MY_PV="${PV//_}"
-MY_FILE_PV="${SLOT}$(get_version_component_range 4)"
-S="${WORKDIR}/postgresql-${MY_PV}"
-SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2
+S="${WORKDIR}/postgresql-${PV}"
+SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2
 		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}-r1.tbz2
 		 http://dev.gentoo.org/~titanofold/postgresql-initscript-2.5.tbz2"
-
-# Comment the following four lines when a beta or rc.
-#S="${WORKDIR}/postgresql-${PV}"
-#SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2
-#		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}.tbz2
-#		 http://dev.gentoo.org/~titanofold/postgresql-initscript-2.5.tbz2"
 
 LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL"
 HOMEPAGE="http://www.postgresql.org/"
 
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN zh_TW"
-IUSE="doc kerberos kernel_linux ldap nls pam perl -pg_legacytimestamp python readline selinux server ssl tcl threads uuid xml zlib"
+IUSE="doc kerberos kernel_linux ldap nls pam perl -pg_legacytimestamp python +readline selinux -server ssl tcl threads uuid xml +zlib"
 
 for lingua in ${LINGUAS}; do
 	IUSE+=" linguas_${lingua}"
@@ -86,9 +77,6 @@ src_prepare() {
 		sed -e "s:\$(DESTDIR)\$(plperl_installdir):\$(plperl_installdir):" \
 			-i "${S}/src/pl/plperl/GNUmakefile" || die 'sed plperl failed'
 	fi
-
-#	epatch "${WORKDIR}/regress.patch"
-#	sed -e "s|@SOCKETDIR@|${T}|g" -i src/test/regress/pg_regress{,_main}.c
 
 	sed -e "s|@SLOT@|${SLOT}|g" \
 		-i "${WORKDIR}"/postgresql.{init,confd,service} || \
@@ -327,11 +315,6 @@ pkg_config() {
 
 	mv "${DATA_DIR%/}"/*.conf "${PGDATA}"
 
-	einfo "The autovacuum function, which was in contrib, has been moved to the main"
-	einfo "PostgreSQL functions starting with 8.1, and starting with 8.4 is now enabled"
-	einfo "by default. You can disable it in the cluster's:"
-	einfo "    ${PGDATA%/}/postgresql.conf"
-	einfo
 	einfo "The PostgreSQL server, by default, will log events to:"
 	einfo "    ${DATA_DIR%/}/postmaster.log"
 	einfo
@@ -354,11 +337,15 @@ pkg_config() {
 src_test() {
 	einfo ">>> Test phase [check]: ${CATEGORY}/${PF}"
 
-	if [ ${UID} -ne 0 ] ; then
-		emake check
+	if [ ${UID} -ne 0 ]; then
+		if use server; then
+			EXTRA_REGRESS_OPTS="--temp-install=\"${T}\"" emake check
 
-		einfo "If you think other tests besides the regression tests are necessary, please"
-		einfo "submit a bug including a patch for this ebuild to enable them."
+			einfo "If you think other tests besides the regression tests are necessary, please"
+			einfo "submit a bug including a patch for this ebuild to enable them."
+		else
+			ewarn "'server' USE flag not enabled. Skipping tests."
+		fi
 	else
 		ewarn "Tests cannot be run as root. Skipping."
 		ewarn "HINT: FEATURES=\"userpriv\""
