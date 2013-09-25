@@ -33,6 +33,10 @@ pkg_setup() {
 	fi
 }
 
+src_prepare() {
+	epatch "${FILESDIR}/pgadmin3-desktop.patch"
+}
+
 src_configure() {
 	econf --with-wx-version=2.8 \
 		$(use_enable debug) \
