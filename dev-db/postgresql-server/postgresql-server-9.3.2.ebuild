@@ -1,6 +1,6 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-server/postgresql-server-9.3.0.ebuild,v 1.1 2013/09/10 05:52:55 patrick Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-server/postgresql-server-9.3.2.ebuild,v 1.10 2014/01/15 10:23:50 ago Exp $
 
 EAPI="5"
 
@@ -9,7 +9,7 @@ WANT_AUTOMAKE="none"
 
 inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 systemd user versionator
 
-KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
+KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 ~s390 ~sh sparc x86 ~amd64-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
 S="${WORKDIR}/postgresql-${PV}"
@@ -40,7 +40,6 @@ wanted_languages() {
 
 RDEPEND="
 ~dev-db/postgresql-base-${PV}[kerberos?,pam?,pg_legacytimestamp=,python=,nls=]
-!=dev-db/postgresql-base-${PV}-r0
 perl? ( >=dev-lang/perl-5.8 )
 python? ( ${PYTHON_DEPS} )
 selinux? ( sec-policy/selinux-postgresql )

@@ -1,6 +1,6 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-base/postgresql-base-9999.ebuild,v 1.8 2013/08/14 09:28:16 patrick Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-base/postgresql-base-9999.ebuild,v 1.10 2013/12/17 20:40:26 grobian Exp $
 
 EAPI="5"
 
@@ -140,7 +140,7 @@ src_compile() {
 }
 
 src_install() {
-	mkdir -p "${D}/usr/share/postgresql-${SLOT}"
+	mkdir -p "${ED}/usr/share/postgresql-${SLOT}"
 	emake DESTDIR="${D}" install
 	insinto /usr/include/postgresql-${SLOT}/postmaster
 	doins "${S}"/src/include/postmaster/*.h

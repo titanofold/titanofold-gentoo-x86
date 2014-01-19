@@ -1,6 +1,116 @@
 # ChangeLog for dev-db/postgresql-base
-# Copyright 1999-2013 Gentoo Foundation; Distributed under the GPL v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-base/ChangeLog,v 1.251 2013/09/10 05:50:50 patrick Exp $
+# Copyright 1999-2014 Gentoo Foundation; Distributed under the GPL v2
+# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-base/ChangeLog,v 1.268 2014/01/15 10:27:44 ago Exp $
+
+  15 Jan 2014; Agostino Sarubbo <ago@gentoo.org>
+  -postgresql-base-8.4.17-r1.ebuild, -postgresql-base-8.4.17.ebuild,
+  -postgresql-base-8.4.18.ebuild, -postgresql-base-9.0.13-r1.ebuild,
+  -postgresql-base-9.0.13.ebuild, -postgresql-base-9.0.14.ebuild,
+  -postgresql-base-9.1.10.ebuild, -postgresql-base-9.1.9-r1.ebuild,
+  -postgresql-base-9.1.9.ebuild, -postgresql-base-9.2.4-r1.ebuild,
+  -postgresql-base-9.2.4.ebuild, -postgresql-base-9.2.5.ebuild,
+  -postgresql-base-9.3.0-r1.ebuild, -postgresql-base-9.3.0.ebuild,
+  -postgresql-base-9.3.1.ebuild:
+  Remove old
+
+  15 Jan 2014; Agostino Sarubbo <ago@gentoo.org> postgresql-base-8.4.19.ebuild,
+  postgresql-base-9.0.15.ebuild, postgresql-base-9.1.11.ebuild,
+  postgresql-base-9.2.6.ebuild, postgresql-base-9.3.2.ebuild:
+  Stable for ia64, wrt bug #492558
+
+  22 Dec 2013; Agostino Sarubbo <ago@gentoo.org> postgresql-base-8.4.19.ebuild,
+  postgresql-base-9.0.15.ebuild, postgresql-base-9.1.11.ebuild,
+  postgresql-base-9.2.6.ebuild, postgresql-base-9.3.2.ebuild:
+  Stable for sparc, wrt bug #492558
+
+  22 Dec 2013; Agostino Sarubbo <ago@gentoo.org> postgresql-base-8.4.19.ebuild,
+  postgresql-base-9.0.15.ebuild, postgresql-base-9.1.11.ebuild,
+  postgresql-base-9.2.6.ebuild, postgresql-base-9.3.2.ebuild:
+  Stable for ppc64, wrt bug #492558
+
+  22 Dec 2013; Agostino Sarubbo <ago@gentoo.org> postgresql-base-8.4.19.ebuild,
+  postgresql-base-9.0.15.ebuild, postgresql-base-9.1.11.ebuild,
+  postgresql-base-9.2.6.ebuild, postgresql-base-9.3.2.ebuild:
+  Stable for ppc, wrt bug #492558
+
+  22 Dec 2013; Agostino Sarubbo <ago@gentoo.org> postgresql-base-8.4.19.ebuild,
+  postgresql-base-9.0.15.ebuild, postgresql-base-9.1.11.ebuild,
+  postgresql-base-9.2.6.ebuild, postgresql-base-9.3.2.ebuild:
+  Stable for arm, wrt bug #492558
+
+  22 Dec 2013; Agostino Sarubbo <ago@gentoo.org> postgresql-base-8.4.19.ebuild,
+  postgresql-base-9.0.15.ebuild, postgresql-base-9.1.11.ebuild,
+  postgresql-base-9.2.6.ebuild, postgresql-base-9.3.2.ebuild:
+  Stable for alpha, wrt bug #492558
+
+  19 Dec 2013; Pacho Ramos <pacho@gentoo.org> postgresql-base-8.4.19.ebuild,
+  postgresql-base-9.0.15.ebuild, postgresql-base-9.1.11.ebuild,
+  postgresql-base-9.2.6.ebuild, postgresql-base-9.3.2.ebuild:
+  amd64 stable, bug #492558
+
+  17 Dec 2013; Fabian Groffen <grobian@gentoo.org> postgresql-base-9999.ebuild:
+  Fix live ebuild for Prefix, thanks Chris in bug #491736
+
+  09 Dec 2013; Jeroen Roovers <jer@gentoo.org> postgresql-base-8.4.19.ebuild,
+  postgresql-base-9.0.15.ebuild, postgresql-base-9.1.11.ebuild,
+  postgresql-base-9.2.6.ebuild, postgresql-base-9.3.2.ebuild:
+  Stable for HPPA (bug #492558).
+
+  07 Dec 2013; Pacho Ramos <pacho@gentoo.org> postgresql-base-8.4.19.ebuild,
+  postgresql-base-9.0.15.ebuild, postgresql-base-9.1.11.ebuild,
+  postgresql-base-9.2.6.ebuild, postgresql-base-9.3.2.ebuild:
+  x86 stable, bug #492558
+
+*postgresql-base-8.4.19 (06 Dec 2013)
+*postgresql-base-9.1.11 (06 Dec 2013)
+*postgresql-base-9.2.6 (06 Dec 2013)
+*postgresql-base-9.0.15 (06 Dec 2013)
+*postgresql-base-9.3.2 (06 Dec 2013)
+
+  06 Dec 2013; Patrick Lauer <patrick@gentoo.org>
+  +postgresql-base-8.4.19.ebuild, +postgresql-base-9.0.15.ebuild,
+  +postgresql-base-9.1.11.ebuild, +postgresql-base-9.2.6.ebuild,
+  +postgresql-base-9.3.2.ebuild:
+  Bump
+
+  29 Nov 2013; Markus Meier <maekke@gentoo.org>
+  postgresql-base-8.4.17-r1.ebuild, postgresql-base-9.0.13-r1.ebuild,
+  postgresql-base-9.1.9-r1.ebuild, postgresql-base-9.2.4-r1.ebuild:
+  arm stable, bug #490304
+
+  16 Nov 2013; Pacho Ramos <pacho@gentoo.org> postgresql-base-8.4.17-r1.ebuild,
+  postgresql-base-9.0.13-r1.ebuild, postgresql-base-9.1.9-r1.ebuild,
+  postgresql-base-9.2.4-r1.ebuild:
+  amd64 stable, bug #490304
+
+  11 Nov 2013; Jeroen Roovers <jer@gentoo.org>
+  postgresql-base-8.4.17-r1.ebuild, postgresql-base-9.0.13-r1.ebuild,
+  postgresql-base-9.1.9-r1.ebuild, postgresql-base-9.2.4-r1.ebuild:
+  Stable for HPPA (bug #490304).
+
+*postgresql-base-9.2.5 (11 Oct 2013)
+*postgresql-base-9.0.14 (11 Oct 2013)
+*postgresql-base-8.4.18 (11 Oct 2013)
+*postgresql-base-9.1.10 (11 Oct 2013)
+*postgresql-base-9.3.1 (11 Oct 2013)
+
+  11 Oct 2013; Patrick Lauer <patrick@gentoo.org>
+  +postgresql-base-8.4.18.ebuild, +postgresql-base-9.0.14.ebuild,
+  +postgresql-base-9.1.10.ebuild, +postgresql-base-9.2.5.ebuild,
+  +postgresql-base-9.3.1.ebuild:
+  Bump
+
+*postgresql-base-9.3.0-r1 (15 Sep 2013)
+*postgresql-base-9.2.4-r1 (15 Sep 2013)
+*postgresql-base-9.1.9-r1 (15 Sep 2013)
+*postgresql-base-9.0.13-r1 (15 Sep 2013)
+*postgresql-base-8.4.17-r1 (15 Sep 2013)
+
+  15 Sep 2013; Aaron W. Swenson <titanofold@gentoo.org>
+  +postgresql-base-8.4.17-r1.ebuild, +postgresql-base-9.0.13-r1.ebuild,
+  +postgresql-base-9.1.9-r1.ebuild, +postgresql-base-9.2.4-r1.ebuild,
+  +postgresql-base-9.3.0-r1.ebuild, postgresql-base-9999.ebuild:
+  Add Python support for clients and libraries. Fixes bug 392673.
 
 *postgresql-base-9.3.0 (10 Sep 2013)
 
