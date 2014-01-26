@@ -169,58 +169,58 @@ gdal_src_configure() {
 	# podofo - we use poppler instead they are exclusive for each other
 	# tiff is a hard dep
 	ECONF_SOURCE="${S}" econf \
-		--enable-shared \
 		--disable-static \
+		--enable-shared \
 		--with-expat \
-		--without-grass \
-		--without-hdf4 \
-		--without-fme \
-		--without-pcraster \
-		--without-kakadu \
-		--without-mrsid \
-		--without-jp2mrsid \
-		--without-msg \
-		--without-bsb \
-		--without-dods-root \
-		--without-oci \
-		--without-ingres \
-		--without-dwgdirect \
-		--without-epsilon \
-		--without-idb \
-		--without-podofo \
-		--without-sde \
-		--without-libtool \
-		--with-libz="${EPREFIX}/usr/" \
-		--with-ogr \
+		--with-geotiff \
 		--with-grib \
 		--with-libtiff \
-		--with-geotiff \
+		--with-libz="${EPREFIX}/usr/" \
+		--with-ogr \
+		--without-bsb \
+		--without-dods-root \
+		--without-dwgdirect \
+		--without-epsilon \
+		--without-fme \
+		--without-grass \
+		--without-hdf4 \
+		--without-idb \
+		--without-ingres \
+		--without-jp2mrsid \
+		--without-kakadu \
+		--without-libtool \
+		--without-mrsid \
+		--without-msg \
+		--without-oci \
+		--without-pcraster \
+		--without-podofo \
+		--without-sde \
 		$(use_enable debug) \
 		$(use_with armadillo) \
-		$(use_with postgres pg) \
-		$(use_with fits cfitsio) \
-		$(use_with netcdf) \
-		$(use_with png) \
-		$(use_with jpeg) \
-		$(use_with jpeg pcidsk) \
-		$(use_with gif) \
-		$(use_with hdf5) \
-		$(use_with jpeg2k jasper) \
+		$(use_with aux_xml pam) \
+		$(use_with curl) \
 		$(use_with ecwj2k ecw) \
+		$(use_with fits cfitsio) \
+		$(use_with geos) \
+		$(use_with gif) \
 		$(use_with gml xerces) \
+		$(use_with hdf5) \
+		$(use_with jpeg pcidsk) \
+		$(use_with jpeg) \
+		$(use_with jpeg2k jasper) \
+		$(use_with mysql mysql "${EPREFIX}"/usr/bin/mysql_config) \
+		$(use_with netcdf) \
 		$(use_with odbc) \
 		$(use_with ogdi ogdi "${EPREFIX}"/usr) \
 		$(use_with opencl) \
-		$(use_with curl) \
-		$(use_with sqlite sqlite3 "${EPREFIX}"/usr) \
-		$(use_with spatialite) \
-		$(use_with mysql mysql "${EPREFIX}"/usr/bin/mysql_config) \
-		$(use_with geos) \
-		$(use_with aux_xml pam) \
 		$(use_with pdf poppler) \
 		$(use_with perl) \
-		$(use_with ruby) \
+		$(use_with png) \
+		$(use_with postgres pg) \
 		$(use_with python) \
+		$(use_with ruby) \
+		$(use_with spatialite) \
+		$(use_with sqlite sqlite3 "${EPREFIX}"/usr) \
 		$(use_with threads) \
 		$(use_with xls freexl) \
 		${myopts}
