@@ -44,11 +44,12 @@ RDEPEND="
 	odbc?   ( dev-db/unixODBC )
 	ogdi? ( sci-libs/ogdi )
 	opencl? ( virtual/opencl )
-	pdf? ( app-text/poppler:= )
+	pdf? ( >=app-text/poppler-0.24.3:= )
 	perl? ( dev-lang/perl:= )
 	png? ( media-libs/libpng )
 	postgres? ( >=dev-db/postgresql-base-8.4 )
-	python? ( ${PYTHON_DEPS}
+	python? (
+		${PYTHON_DEPS}
 		dev-python/setuptools[${PYTHON_USEDEP}]
 		dev-python/numpy[${PYTHON_USEDEP}]
 	)
@@ -67,7 +68,6 @@ DEPEND="${RDEPEND}
 	ruby? ( ${SWIG_DEP} )"
 
 AT_M4DIR="${S}/m4"
-MAKEOPTS+=" -j1"
 
 REQUIRED_USE="
 	spatialite? ( sqlite )
