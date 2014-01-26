@@ -1,6 +1,6 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-server/postgresql-server-9.2.3.ebuild,v 1.11 2013/02/11 18:21:05 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql-server/postgresql-server-9.2.6.ebuild,v 1.10 2014/01/15 10:23:50 ago Exp $
 
 EAPI="5"
 
@@ -13,33 +13,20 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86
 
 SLOT="$(get_version_component_range 1-2)"
 
-# Comment the following six lines when not a beta or rc.
-#MY_PV="${PV//_}"
-#MY_FILE_PV="${SLOT}$(get_version_component_range 4)"
-#S="${WORKDIR}/postgresql-${MY_PV}"
-#SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2"
-
-# Comment the following line when a beta or rc.
-SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2"
-
-# Add patch and initscript source.
-SRC_URI+=" http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}.tbz2
-		   http://dev.gentoo.org/~titanofold/postgresql-initscript-2.5.tbz2
-"
+SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2
+		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}.tbz2
+		 http://dev.gentoo.org/~titanofold/postgresql-initscript-2.6.tbz2"
 
 LICENSE="POSTGRESQL GPL-2"
-DESCRIPTION="PostgreSQL"
+DESCRIPTION="PostgreSQL server"
 HOMEPAGE="http://www.postgresql.org/"
 
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN zh_TW"
-IUSE="doc kerberos kernel_linux ldap nls pam perl -pg_legacytimestamp python readline selinux server ssl tcl threads uuid xml zlib"
+IUSE="doc kerberos kernel_linux nls pam perl -pg_legacytimestamp python selinux tcl test uuid xml"
 
 for lingua in ${LINGUAS}; do
 	IUSE+=" linguas_${lingua}"
 done
-
-# The only tests that can be run need the full server
-use server || RESTRICT="test"
 
 wanted_languages() {
 	local enable_langs
@@ -51,21 +38,26 @@ wanted_languages() {
 	echo -n ${enable_langs}
 }
 
-RDEPEND="perl? ( >=dev-lang/perl-5.8 )
-		 python? ( ${PYTHON_DEPS} )
-		 selinux? ( sec-policy/selinux-postgresql )
-		 tcl? ( >=dev-lang/tcl-8 )
-		 uuid? ( dev-libs/ossp-uuid )
-		 xml? ( dev-libs/libxml2 dev-libs/libxslt )
+RDEPEND="
+~dev-db/postgresql-base-${PV}[kerberos?,pam?,pg_legacytimestamp=,python=,nls=]
+perl? ( >=dev-lang/perl-5.8 )
+python? ( ${PYTHON_DEPS} )
+selinux? ( sec-policy/selinux-postgresql )
+tcl? ( >=dev-lang/tcl-8 )
+uuid? ( dev-libs/ossp-uuid )
+xml? ( dev-libs/libxml2 dev-libs/libxslt )
 "
 
 DEPEND="${RDEPEND}
-		sys-devel/flex
-		xml? ( virtual/pkgconfig )
+sys-devel/flex
+xml? ( virtual/pkgconfig )
 "
 
+PDEPEND="doc? ( ~dev-db/postgresql-docs-${PV} )"
+
 pkg_setup() {
-	postgres_new_user
+	enewgroup postgres 70
+	enewuser postgres 70 /bin/bash /var/lib/postgresql postgres
 
 	use python && python-single-r1_pkg_setup
 }
@@ -73,9 +65,7 @@ pkg_setup() {
 src_prepare() {
 	epatch "${WORKDIR}/autoconf.patch" \
 		"${WORKDIR}/bool.patch" \
-		"${WORKDIR}/run-dir.patch"
-
-	use server || epatch "${WORKDIR}/base.patch"
+		"${WORKDIR}/server.patch"
 
 	eprefixify src/include/pg_config_manual.h
 
@@ -90,12 +80,19 @@ src_prepare() {
 			-i "${S}/src/pl/plperl/GNUmakefile" || die 'sed plperl failed'
 	fi
 
-	epatch "${WORKDIR}/regress.patch"
-	sed -e "s|@SOCKETDIR@|${T}|g" -i src/test/regress/pg_regress{,_main}.c
+	if use test ; then
+		epatch "${WORKDIR}/regress.patch"
+		sed -e "s|@SOCKETDIR@|${T}|g" -i src/test/regress/pg_regress{,_main}.c \
+			|| die 'Failed regress sed'
+	else
+		echo "all install:" > "${S}/src/test/regress/GNUmakefile"
+	fi
 
-	sed -e "s|@SLOT@|${SLOT}|g" \
-		-i "${WORKDIR}"/postgresql.{init,confd,service} || \
-		die "SLOT sed failed"
+	for x in .init .confd .service -check-db-dir
+	do
+		sed -e "s|@SLOT@|${SLOT}|g" -i "${WORKDIR}"/postgresql${x}
+		[[ $? -ne 0 ]] && eerror "Failed sed on $x" && die 'Failed slot sed'
+	done
 
 	eautoconf
 }
@@ -107,36 +104,18 @@ src_configure() {
 			;;
 	esac
 
-	export LDFLAGS_SL="${LDFLAGS}"
-	export LDFLAGS_EX="${LDFLAGS}"
-
 	local PO="${EPREFIX%/}"
 
-	econf \
-		--prefix="${PO}/usr/$(get_libdir)/postgresql-${SLOT}" \
-		--datadir="${PO}/usr/share/postgresql-${SLOT}" \
-		--docdir="${PO}/usr/share/doc/postgresql-${SLOT}" \
-		--sysconfdir="${PO}/etc/postgresql-${SLOT}" \
-		--includedir="${PO}/usr/include/postgresql-${SLOT}" \
-		--mandir="${PO}/usr/share/postgresql-${SLOT}/man" \
+	# eval is needed to get along with pg_config quotation of space-rich entities.
+	eval econf "$(${PO}/usr/$(get_libdir)/postgresql-${SLOT}/bin/pg_config --configure)" \
+		$(use_with perl) \
+		$(use_with tcl) \
+		$(use_with xml libxml) \
+		$(use_with xml libxslt) \
+		$(use_with uuid ossp-uuid) \
 		--with-system-tzdata="${PO}/usr/share/zoneinfo" \
 		--with-includes="${PO}/usr/include/postgresql-${SLOT}/" \
 		--with-libraries="${PO}/usr/$(get_libdir)/postgresql-${SLOT}/$(get_libdir)" \
-		$(use_enable !pg_legacytimestamp integer-datetimes) \
-		$(use_enable threads thread-safety) \
-		$(use_with kerberos gssapi) \
-		$(use_with kerberos krb5) \
-		$(use_with ldap) \
-		$(use_with pam) \
-		$(use_with perl) \
-		$(use_with python) \
-		$(use_with readline) \
-		$(use_with ssl openssl) \
-		$(use_with tcl) \
-		$(use_with uuid ossp-uuid) \
-		$(use_with xml libxml) \
-		$(use_with xml libxslt) \
-		$(use_with zlib) \
 		"$(use_enable nls nls "$(wanted_languages)")"
 }
 
@@ -164,6 +143,9 @@ src_install() {
 
 	systemd_newunit "${WORKDIR}"/postgresql.service postgresql-${SLOT}.service
 	systemd_newtmpfilesd "${WORKDIR}"/postgresql.tmpfilesd postgresql-${SLOT}.conf
+
+	insinto /usr/bin/
+	newbin "${WORKDIR}"/postgresql-check-db-dir postgresql-${SLOT}-check-db-dir
 
 	use pam && pamd_mimic system-auth postgresql-${SLOT} auth account session
 

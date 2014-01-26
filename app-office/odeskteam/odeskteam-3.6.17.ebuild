@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/app-office/odeskteam/odeskteam-3.6.1.ebuild,v 1.6 2013/06/13 12:13:10 xmw Exp $
 
-EAPI=4
+EAPI=5
 
 inherit rpm eutils
 
@@ -28,6 +28,7 @@ RDEPEND=">=dev-libs/glib-2
 		 dev-libs/libxml2
 		 dev-libs/openssl:0
 		 dev-qt/qtcore:4[ssl]
+		 dev-qt/qtdbus:4
 		 dev-qt/qtgui:4[dbus]
 		 media-libs/alsa-lib
 		 media-libs/fontconfig
@@ -38,6 +39,7 @@ RDEPEND=">=dev-libs/glib-2
 		 sys-apps/dbus
 		 sys-apps/util-linux
 		 sys-libs/zlib
+		 virtual/ffmpeg
 		 virtual/libffi
 		 x11-libs/libICE
 		 x11-libs/libSM
@@ -55,7 +57,7 @@ RDEPEND=">=dev-libs/glib-2
 "
 
 src_prepare() {
-	epatch "${FILESDIR}/${P}_desktop_file.patch"
+	epatch "${FILESDIR}/${PN}-3.6.1_desktop_file.patch"
 }
 
 src_install() {

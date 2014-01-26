@@ -15,6 +15,22 @@ inherit user
 # currently selected PostgreSQL slot is within a range, adding a user,
 # and generating dependencies.
 
+if declare -p POSTGRES_COMPAT &> /dev/null ; then
+	# We prefer newer over older we have a choice.
+	POSTGRES_COMPAT=(`for i in ${POSTGRES_COMPAT[@]}; do echo $i; done | sort -nr`)
+
+	POSTGRES_DEP="|| ("
+	for slot in "${POSTGRES_COMPAT[@]}" ; do
+		POSTGRES_DEP+=" dev-db/postgresql:${slot}"
+		declare -p POSTGRES_IUSE &>/dev/null && POSTGRES_DEP+="[${POSTGRES_IUSE}]"
+	done
+	POSTGRES_DEP=" )"
+else
+	POSTGRES_DEP="dev-db/postgresql"
+	declare -p POSTGRES_IUSE &>/dev/null && POSTGRES_DEP+="[${POSTGRES_IUSE}]"
+fi
+
+
 # @FUNCTION: postgres_check_slot
 # @DESCRIPTION:
 # Verify that the currently selected PostgreSQL slot is set to one of
@@ -24,17 +40,17 @@ postgres_check_slot() {
 		die 'POSTGRES_COMPAT not declared.'
 	fi
 
-# Don't die because we can't run postgresql-config during pretend.
-[[ "$EBUILD_PHASE" = "pretend" && -z "$(which postgresql-config 2> /dev/null)" ]] \
-	&& return 0
+	# Don't die because we can't run postgresql-config during pretend.
+	[[ "$EBUILD_PHASE" = "pretend" && -z "$(which postgresql-config 2> /dev/null)" ]] \
+		&& return 0
 
 	local res=$(echo ${POSTGRES_COMPAT[@]} \
 		| grep -c $(postgresql-config show 2> /dev/null) 2> /dev/null)
 
 	if [[ "$res" -eq "0" ]] ; then
-			eerror "PostgreSQL slot must be set to one of: "
-			eerror "    ${POSTGRES_COMPAT[@]}"
-			return 1
+		eerror "PostgreSQL slot must be set to one of: "
+		eerror "    ${POSTGRES_COMPAT[@]}"
+		return 1
 	fi
 
 	return 0

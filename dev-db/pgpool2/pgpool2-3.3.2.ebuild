@@ -3,7 +3,7 @@
 # $Header: /var/cvsroot/gentoo-x86/dev-db/pgpool2/pgpool2-3.2.1.ebuild,v 1.2 2012/11/16 20:03:13 ago Exp $
 
 EAPI=4
-POSTGRES_COMPAT=( 8.4 9.{0,1,2} )
+POSTGRES_COMPAT=( 8.4 9.{0,1,2,3} )
 
 inherit base
 
