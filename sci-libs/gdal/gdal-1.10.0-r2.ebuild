@@ -6,6 +6,7 @@ EAPI=5
 
 WANT_AUTOCONF="2.5"
 
+GENTOO_DEPEND_ON_PERL="no"
 PYTHON_DEPEND="python? *"
 
 inherit autotools eutils libtool perl-module python toolchain-funcs java-pkg-opt-2
