@@ -22,6 +22,8 @@ IUSE="armadillo +aux_xml curl debug doc ecwj2k fits geos gif gml hdf5 java jpeg 
 
 RDEPEND="
 	dev-libs/expat
+	dev-libs/libpcre
+	dev-libs/libxml2
 	media-libs/tiff
 	sci-libs/libgeotiff
 	|| ( <sys-libs/zlib-1.2.5.1-r1 >=sys-libs/zlib-1.2.5.1-r2[minizip] )
