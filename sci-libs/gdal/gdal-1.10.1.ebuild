@@ -44,8 +44,8 @@ RDEPEND="
 	odbc?   ( dev-db/unixODBC )
 	ogdi? ( sci-libs/ogdi )
 	opencl? ( virtual/opencl )
-	pdf? ( app-text/poppler )
-	perl? ( dev-lang/perl )
+	pdf? ( app-text/poppler:= )
+	perl? ( dev-lang/perl:= )
 	png? ( media-libs/libpng )
 	postgres? ( >=dev-db/postgresql-base-8.4 )
 	python? ( ${PYTHON_DEPS}
