@@ -147,12 +147,6 @@ gdal_src_configure() {
 		echo "Ruby module dir is: $RUBY_MOD_DIR"
 	fi
 
-	if [[ -n use_python ]]; then
-		myopts+="
-			--with-pymoddir="${EPREFIX}/${PYTHON_SITEDIR}"
-		"
-	fi
-
 	if use java; then
 		myopts+="
 			--with-java=$(java-config --jdk-home 2>/dev/null)
