@@ -162,6 +162,10 @@ gdal_src_configure() {
 		use mdb && ewarn "mdb requires java use enabled. disabling"
 	fi
 
+	if use sqlite; then
+		myopts+=" LIBS=-lsqlite3"
+	fi
+
 	# pcidsk is internal, because there is no such library yet released
 	#     also that thing is developed by the gdal people
 	# kakadu, mrsid jp2mrsid - another jpeg2k stuff, ignore
