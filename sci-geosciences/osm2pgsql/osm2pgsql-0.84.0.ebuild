@@ -2,32 +2,30 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/sci-geosciences/osm2pgsql/osm2pgsql-20100413.ebuild,v 1.7 2011/11/27 13:54:44 swegener Exp $
 
-EAPI=4
+EAPI=5
 
 inherit autotools
 
 DESCRIPTION="Converts OSM data to SQL and insert into PostgreSQL db"
 HOMEPAGE="http://wiki.openstreetmap.org/wiki/Osm2pgsql"
-SRC_URI="http://gentoo.ccss.cz/${P}svn.tar.bz2"
+SRC_URI="https://github.com/openstreetmap/${PN}/archive/${PV}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE=""
+IUSE="lua +pbf"
 
 DEPEND="
 	app-arch/bzip2
+	dev-db/postgresql-base
 	dev-libs/libxml2:2
 	sci-libs/geos
 	sci-libs/proj
 	sys-libs/zlib
-	dev-db/postgresql-base
+	lua? ( dev-lang/lua )
+	pbf? ( dev-libs/protobuf-c )
 "
 RDEPEND="${DEPEND}"
-
-S="${WORKDIR}"/${PN}
-
-DOCS=( README.txt 900913.sql )
 
 src_prepare() {
 	eautoreconf
