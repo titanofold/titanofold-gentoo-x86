@@ -13,7 +13,7 @@ SRC_URI="https://github.com/openstreetmap/${PN}/archive/${PV}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="lua +pbf"
+IUSE="+lua +pbf"
 
 DEPEND="
 	app-arch/bzip2

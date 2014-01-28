@@ -16,7 +16,7 @@ SRC_URI=""
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS=""
-IUSE="lua +pbf"
+IUSE="+lua +pbf"
 
 DEPEND="
 	app-arch/bzip2
