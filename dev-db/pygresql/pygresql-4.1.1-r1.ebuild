@@ -4,7 +4,7 @@
 
 EAPI=5
 
-POSTGRES_COMPAT=( 8.{3,4} 9.{0,1,2,3} )
+POSTGRES_COMPAT=( 9.{0,1,2,3} )
 PYTHON_COMPAT=( python{2_6,2_7} )
 
 inherit distutils-r1
@@ -21,12 +21,10 @@ KEYWORDS="~alpha ~amd64 ~hppa ~ia64 ~ppc ~sparc ~x86"
 IUSE="doc"
 
 DEPEND="|| (
-	dev-db/postgresql-base:8.3
-	dev-db/postgresql-base:8.4
-	dev-db/postgresql-base:9.0
-	dev-db/postgresql-base:9.1
-	dev-db/postgresql-base:9.2
 	dev-db/postgresql-base:9.3
+	dev-db/postgresql-base:9.2
+	dev-db/postgresql-base:9.1
+	dev-db/postgresql-base:9.0
 )"
 
 RDEPEND="${DEPEND}"
