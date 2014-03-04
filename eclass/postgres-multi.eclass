@@ -16,16 +16,6 @@ EXPORT_FUNCTIONS src_compile src_install src_test
 # compatible PostgreSQL slots.
 
 
-# @ECLASS-VARIABLE: POSTGRES_COMPAT
-# @REQUIRED
-# @DESCRIPTION:
-# This variable contains a list of compatible PostgreSQL slots.
-if ! declare -p POSTGRES_COMPAT &>/dev/null; then
-	die 'POSTGRES_COMPAT not declared.'
-	# The POSTGRES_COMPAT array is sorted in postgres.eclass
-fi
-#readarray -t POSTGRES_COMPAT < <(printf '%s\n' "${POSTGRES_COMPAT[@]}" | sort -n)
-
 # @FUNCTION _postgres-multi_multibuild_wrapper
 # @USAGE: <command> [<args>]
 # @DESCRIPTION:
