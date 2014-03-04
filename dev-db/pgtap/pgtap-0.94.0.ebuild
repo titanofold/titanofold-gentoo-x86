@@ -3,7 +3,7 @@
 # $Header: $
 
 EAPI=5
-POSTGRES_COMPAT=( 8.4 9.{0,1,2,3} )
+POSTGRES_COMPAT=( 8.4 9.{0,1,2,3,4} )
 inherit eutils postgres-multi
 
 DESCRIPTION="Unit testing for PostgreSQL"
@@ -21,5 +21,5 @@ RDEPEND="${DEPEND}"
 
 src_prepare() {
 	postgres-multi_src_prepare
-	postgres-multi_foreach_impl run_in_build_dir epatch "${FILESDIR}/pgtap-pg_config_override.patch"
+#	postgres-multi_foreach_impl run_in_build_dir epatch "${FILESDIR}/pgtap-pg_config_override.patch"
 }
