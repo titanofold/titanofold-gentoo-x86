@@ -15,6 +15,7 @@ inherit user
 # slot is within a range, adding a user, and generating dependencies.
 
 # @ECLASS-VARIABLE: POSTGRES_COMPAT
+# @REQUIRED
 # @DESCRIPTION:
 # POSTGRES_COMPAT is an array containing the list of PostgreSQL slots with
 # which your ebuild is compatible.
@@ -40,8 +41,7 @@ if declare -p POSTGRES_COMPAT &> /dev/null ; then
 	done
 	POSTGRES_DEPEND+=" )"
 else
-	POSTGRES_DEPEND="dev-db/postgresql"
-	declare -p POSTGRES_USEDEP &>/dev/null && POSTGRES_DEPEND+="[${POSTGRES_USEDEP}]"
+	die 'POSTGRES_COMPAT not declared.'
 fi
 
 # @ECLASS-VARIABLE: _POSTGRES_ALL_SLOTS
@@ -49,7 +49,8 @@ fi
 # @DESCRIPTION:
 # This variable contains a list of all available slots installed on the system.
 
-_POSTGRES_ALL_SLOTS=$(eselect --brief postgresql list)
+_POSTGRES_ALL_SLOTS=( $(eselect --brief postgresql list) )
+readarray -t _POSTGRES_ALL_SLOTS < <(printf '%s\n' "${_POSTGRES_ALL_SLOTS[@]}" | sort -nr)
 
 # @FUNCTION: postgres_set_slot
 # @DESCRIPTION:
@@ -67,26 +68,23 @@ _POSTGRES_ALL_SLOTS=$(eselect --brief postgresql list)
 # Exported environment variable that contains the PostgreSQL slot selelected by
 # postgres_set_slot().
 
-postgres_set_slot() {
-	if ! declare -p POSTGRES_COMPAT &>/dev/null; then
-		die 'POSTGRES_COMPAT not declared.'
-	fi
-
+postgres_pkg_setup() {
 	local user_slot
 	for user_slot in "${POSTGRES_COMPAT[@]}"; do
 		if has "${user_slot}" ${_POSTGRES_ALL_SLOTS}; then
 			export PG_SLOT="${user_slot}"
 			export PG_CONFIG="pg_config${user_slot//./}"
+			# Stop after finding the highest installed slot.
+			break
 		fi
 	done
+
 	if [[ -z ${PG_SLOT} ]]; then
 		eerror "You don't have any suitable PostgreSQL slots installed. You should"
 		eerror "install one of the following PostgreSQL slots:"
 		eerror "    ${POSTGRES_COMPAT}"
 		die
 	fi
-
-	return 0
 }
 
 # @FUNCTION: postgres_new_user
