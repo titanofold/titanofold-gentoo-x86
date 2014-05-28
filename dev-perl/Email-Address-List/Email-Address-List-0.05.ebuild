@@ -18,7 +18,7 @@ IUSE="test"
 RDEPEND=""
 DEPEND="${RDEPEND}
 	dev-perl/Email-Address
-	test? ( dev-perl/Test-More )
+	test? ( virtual/perl-Test-Simple )
 "
 
 SRC_TEST="do"

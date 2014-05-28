@@ -20,7 +20,7 @@ DEPEND="${RDEPEND}
 	dev-perl/Class-Data-Inheritable
 	>=dev-perl/DateTime-Format-Natural-0.60
 	test? (
-		dev-perl/Test-More
+		virtual/perl-Test-Simple
 		dev-perl/Test-MockTime
 	)
 "

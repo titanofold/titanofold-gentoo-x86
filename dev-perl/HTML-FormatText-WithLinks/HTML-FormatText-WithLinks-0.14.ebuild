@@ -20,7 +20,7 @@ DEPEND="${RDEPEND}
 	>=dev-perl/HTML-Format-2
 	dev-perl/HTML-Tree
 	dev-perl/URI
-	test? ( dev-perl/Test-More )
+	test? ( virtual/perl-Test-Simple )
 "
 
 SRC_TEST="do"

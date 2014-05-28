@@ -19,7 +19,7 @@ RDEPEND=""
 DEPEND="${RDEPEND}
 	dev-perl/HTML-FormatText-WithLinks
 	dev-perl/HTML-Tree
-	test? ( dev-perl/Test-More )
+	test? ( virtual/perl-Test-Simple )
 "
 
 S="${WORKDIR}/${PN}"

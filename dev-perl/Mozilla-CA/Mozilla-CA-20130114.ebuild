@@ -10,7 +10,7 @@ inherit perl-module
 
 DESCRIPTION="Mozilla's CA cert bundle in PEM format"
 
-LICENSE="MPL"
+LICENSE="MPL-1.1"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
