@@ -10,7 +10,7 @@ DESCRIPTION="RT is an enterprise-grade ticketing system"
 HOMEPAGE="http://www.bestpractical.com/rt/"
 SRC_URI="http://download.bestpractical.com/pub/${PN}/release/${P}.tar.gz"
 
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="~amd64"
 LICENSE="GPL-2"
 IUSE="mysql +postgres fastcgi lighttpd"
 REQUIRED_USE="^^ ( mysql postgres )"
