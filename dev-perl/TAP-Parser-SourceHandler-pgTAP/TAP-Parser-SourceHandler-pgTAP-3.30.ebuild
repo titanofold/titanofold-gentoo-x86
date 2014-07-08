@@ -5,7 +5,7 @@
 EAPI=5
 
 MODULE_AUTHOR=DWHEELER
-MODULE_VERSION=3.29
+MODULE_VERSION="${PV}"
 inherit perl-module
 
 DESCRIPTION="Stream TAP from pgTAP test scripts"
