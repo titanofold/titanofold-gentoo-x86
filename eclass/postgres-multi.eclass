@@ -1,10 +1,9 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/eclass/python-single-r1.eclass,v 1.18 2013/05/21 01:31:02 floppym Exp $
+# $Header:  $
 
 inherit multibuild postgres
 EXPORT_FUNCTIONS src_compile src_install src_test
-
 
 # @ECLASS: postgres-multi
 # @MAINTAINER:
@@ -13,33 +12,20 @@ EXPORT_FUNCTIONS src_compile src_install src_test
 # @BLURB: An eclass for PostgreSQL-related packages
 # @DESCRIPTION:
 # This eclass provides default functions to build a package for all
-# compatible PostgreSQL slots.
-
+# compatible PostgreSQL slots as defined in POSTGRES_COMPAT.
 
 # @FUNCTION _postgres-multi_multibuild_wrapper
 # @USAGE: <command> [<args>]
 # @DESCRIPTION:
-# Run the given command in the currently selected multibuild variant,
-# after having set up the environment for the corresponding PostgreSQL SLOT.
-# Run the given command for each supported PostgreSQL slot.
-# For each slot, the PG_CONFIG and PG_SLOT variables are set.
+# Intended for internal use only. Updates the environment with the
+# respective PG_SLOT and PG_CONFIG for the currently selected multibuild
+# variant, and replaces instances of @PG_SLOT@ in the given command with
+# ${PG_SLOT}.
 _postgres-multi_multibuild_wrapper() {
 	debug-print-function ${FUNCNAME} "${@}"
 	local PG_SLOT=${MULTIBUILD_VARIANT}
 	export PG_CONFIG="pg_config${MULTIBUILD_VARIANT//./}"
 	$(echo "${@}" | sed "s/@PG_SLOT@/${PG_SLOT}/g")
-}
-
-# @FUNCTION: postgres-multi_foreach
-# @USAGE: <command> [<args>...]
-# @DESCRIPTION:
-# Run the given command in each enabled PostgreSQL slots.
-# The slots which are enabled are set in postgres-multi_get_impls.
-postgres-multi_foreach_impl() {
-	debug-print-function ${FUNCNAME} "${@}"
-	local MULTIBUILD_VARIANTS
-	postgres-multi_get_impls
-	multibuild_foreach_variant _postgres-multi_multibuild_wrapper "${@}"
 }
 
 # @FUNCTION: postgres-multi_get_impls
@@ -55,21 +41,37 @@ postgres-multi_get_impls() {
 			MULTIBUILD_VARIANTS+=( "${user_slot}" )
 	done
 	if [[ -z ${MULTIBUILD_VARIANTS} ]]; then
-		eerror "You don't have any suitable PostgreSQL slots installed. You should"
+		eerror "You don't have any suitable PostgreSQL slots installed. You must"
 		eerror "install one of the following PostgreSQL slots:"
 		eerror "    ${POSTGRES_COMPAT}"
 		die
 	fi
-	elog "Multibuild variants: ${MULTIBUILD_VARIANTS[@]}"
+
+	[[ "${EBUILD_PHASE}" = "prepare" ]] \
+		&& elog "Building for PostgreSQL slots: ${MULTIBUILD_VARIANTS[@]}"
+}
+
+# @FUNCTION: postgres-multi_foreach
+# @USAGE: <command> [<args>...]
+# @DESCRIPTION:
+# Run the given command for each supported PostgreSQL slot. If you need
+# a slot-specific path, @PG_SLOT@ will be replaced by the current slot.
+postgres-multi_foreach_impl() {
+	debug-print-function ${FUNCNAME} "${@}"
+	local MULTIBUILD_VARIANTS
+	postgres-multi_get_impls
+	multibuild_foreach_variant _postgres-multi_multibuild_wrapper "${@}"
 }
 
 # @FUNCTION: postgres-multi_foreach
 # @USAGE: <command> [<args>...]
 # @DESCRIPTION:
 # Run the given command in the package's source directory for each
-# supported PostgreSQL slot.
+# supported PostgreSQL slot. If you need a slot-specific path, @PG_SLOT@
+# will be replaced by the current slot.
 postgres-multi_foreach() {
-	postgres-multi_foreach_impl run_in_build_dir ${@}
+	postgres-multi_foreach_impl run_in_build_dir \
+		_postgres-multi_multibuild_wrapper "${@}"
 }
 
 postgres-multi_src_prepare() {
