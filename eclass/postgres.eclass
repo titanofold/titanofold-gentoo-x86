@@ -25,7 +25,7 @@ inherit user
 # @DESCRIPTION:
 # POSTGRES_USEDEP is a developer-defined, comma-seperated list of USE
 # flags in the same style as for Portage to toggle USE flag dependencies
-# for dev-db/postgresql{,-base,-docs,-server}
+# for dev-db/postgresql
 
 # @ECLASS-VARIABLE: POSTGRES_DEPEND
 # @DESCRIPTION:
@@ -34,11 +34,14 @@ inherit user
 # *DEPEND in your ebuild.
 
 if declare -p POSTGRES_COMPAT &> /dev/null ; then
-	# We prefer newer over older
-	readarray -t POSTGRES_COMPAT < <(printf '%s\n' "${POSTGRES_COMPAT[@]}" | sort -nr)
+	# Sort the list just in case the developer hadn't
+	readarray -t POSTGRES_COMPAT < <(printf '%s\n' "${POSTGRES_COMPAT[@]}" | sort -n)
+
+	# But for POSTGRES_DEPEND, prefer newer over older
+	readarray -t _rev_postgres_compat < <(printf '%s\n' "${POSTGRES_COMPAT[@]}" | sort -nr)
 
 	POSTGRES_DEPEND="|| ("
-	for _slot in "${POSTGRES_COMPAT[@]}" ; do
+	for _slot in "${_rev_postgres_compat[@]}" ; do
 		POSTGRES_DEPEND+=" dev-db/postgresql:${_slot}"
 		declare -p POSTGRES_USEDEP &> /dev/null \
 			&& POSTGRES_DEPEND+="[${POSTGRES_USEDEP}]"
@@ -55,8 +58,32 @@ fi
 
 _POSTGRES_ALL_SLOTS=( $(eselect --brief postgresql list) )
 
-# Reverse the list so that the first entry is the latest available release.
-readarray -t _POSTGRES_ALL_SLOTS < <(printf '%s\n' "${_POSTGRES_ALL_SLOTS[@]}" | sort -nr)
+# @FUNCTION: postgres_get_impls
+# @DESCRIPTION:
+# Set the MULTIBUILD_VARIANTS to the union set of POSTGRES_COMPAT and
+# _POSTGRES_ALL_SLOTS.
+postgres_get_impls() {
+	debug-print-function ${FUNCNAME} "${@}"
+
+	MULTIBUILD_VARIANTS=( )
+	local user_slot
+
+	for user_slot in "${POSTGRES_COMPAT[@]}"; do
+		has "${user_slot}" ${_POSTGRES_ALL_SLOTS} && \
+			MULTIBUILD_VARIANTS+=( "${user_slot}" )
+	done
+
+	if [[ -z ${MULTIBUILD_VARIANTS} ]]; then
+		eerror "You don't have any suitable PostgreSQL slots installed. You must"
+		eerror "install one of the following PostgreSQL slots:"
+		eerror "    ${POSTGRES_COMPAT}"
+		die
+	fi
+
+	if [[ "${EBUILD_PHASE}" = "prepare" ]] ; then
+		elog "Emerging for PostgreSQL slots: ${MULTIBUILD_VARIANTS[@]}"
+	fi
+}
 
 # @FUNCTION: postgres_single_slot_pkg_setup
 # @DESCRIPTION:
@@ -76,8 +103,10 @@ readarray -t _POSTGRES_ALL_SLOTS < <(printf '%s\n' "${_POSTGRES_ALL_SLOTS[@]}" |
 # selelected by postgres_single_slot_pkg_setup().
 
 postgres_single_slot_pkg_setup() {
-	export PG_SLOT="${_POSTGRES_ALL_SLOTS[0]}"
-	export PG_CONFIG="pg_config${_POSTGRES_ALL_SLOTS[0]//./}"
+	postgres_get_impls
+
+	export PG_SLOT="${MULTIBUILD_VARIANTS[-1]}"
+	export PG_CONFIG="pg_config${MULTIBUILD_VARIANTS[-1]//./}"
 
 	if [[ -z ${PG_SLOT} ]]; then
 		eerror "You don't have any suitable PostgreSQL slots installed. You should"
