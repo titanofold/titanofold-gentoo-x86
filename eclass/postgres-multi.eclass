@@ -28,29 +28,6 @@ _postgres-multi_multibuild_wrapper() {
 	$(echo "${@}" | sed "s/@PG_SLOT@/${PG_SLOT}/g")
 }
 
-# @FUNCTION: postgres-multi_get_impls
-# @DESCRIPTION:
-# Set the MULTIBUILD_VARIANTS to the union set of POSTGRES_COMPAT and
-# POSTGRES_ALL_SLOTS.
-postgres-multi_get_impls() {
-	debug-print-function ${FUNCNAME} "${@}"
-	MULTIBUILD_VARIANTS=( )
-	local user_slot
-	for user_slot in "${POSTGRES_COMPAT[@]}"; do
-		has "${user_slot}" ${_POSTGRES_ALL_SLOTS} && \
-			MULTIBUILD_VARIANTS+=( "${user_slot}" )
-	done
-	if [[ -z ${MULTIBUILD_VARIANTS} ]]; then
-		eerror "You don't have any suitable PostgreSQL slots installed. You must"
-		eerror "install one of the following PostgreSQL slots:"
-		eerror "    ${POSTGRES_COMPAT}"
-		die
-	fi
-
-	[[ "${EBUILD_PHASE}" = "prepare" ]] \
-		&& elog "Building for PostgreSQL slots: ${MULTIBUILD_VARIANTS[@]}"
-}
-
 # @FUNCTION: postgres-multi_foreach
 # @USAGE: <command> [<args>...]
 # @DESCRIPTION:
@@ -59,8 +36,21 @@ postgres-multi_get_impls() {
 postgres-multi_foreach_impl() {
 	debug-print-function ${FUNCNAME} "${@}"
 	local MULTIBUILD_VARIANTS
-	postgres-multi_get_impls
+	postgres_get_impls
 	multibuild_foreach_variant _postgres-multi_multibuild_wrapper "${@}"
+}
+
+# @FUNCTION: postgres-multi_foreach
+# @USAGE: <command> [<args>...]
+# @DESCRIPTION:
+# Run the given command for the highest available and supported
+# PostgreSQL slot. If you need a slot-specific path, @PG_SLOT@ will be
+# replaced by the highest slot.
+postgres-multi_for_best_impl() {
+	debug-print-function ${FUNCNAME} "${@}"
+	local MULTIBUILD_VARIANTS
+	postgres_get_impls
+	multibuild_for_best_variant _postgres-multi_multibuild_wrapper "${@}"
 }
 
 # @FUNCTION: postgres-multi_foreach
@@ -76,7 +66,7 @@ postgres-multi_foreach() {
 
 postgres-multi_src_prepare() {
 	local MULTIBUILD_VARIANT
-	postgres-multi_get_impls
+	postgres_get_impls
 	multibuild_copy_sources
 }
 
