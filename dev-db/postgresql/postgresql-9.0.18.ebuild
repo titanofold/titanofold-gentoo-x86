@@ -12,12 +12,11 @@ inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 syste
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
-S="${WORKDIR}/postgresql-${PV}"
 
 DESCRIPTION="PostgreSQL RDBMS"
 HOMEPAGE="http://www.postgresql.org/"
 SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2
-		 http://dev.gentoo.org/~titanofold/postgresql-patches-9.1-r2.tbz2
+		 http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}-r2.tbz2
 		 http://dev.gentoo.org/~titanofold/postgresql-initscript-pre92-2.6.tbz2"
 LICENSE="POSTGRESQL GPL-2"
 
@@ -47,7 +46,7 @@ ldap? ( net-nds/openldap )
 pam? ( virtual/pam )
 perl? ( >=dev-lang/perl-5.8 )
 python? ( ${PYTHON_DEPS} )
-+readline? ( sys-libs/+readline )
+readline? ( sys-libs/readline )
 selinux? ( sec-policy/selinux-postgresql )
 ssl? ( >=dev-libs/openssl-0.9.6-r1 )
 tcl? ( >=dev-lang/tcl-8 )
@@ -134,7 +133,7 @@ src_configure() {
 		$(use_with pam) \
 		$(use_with perl) \
 		$(use_with python) \
-		$(use_with +readline) \
+		$(use_with readline) \
 		$(use_with ssl openssl) \
 		$(use_with tcl) \
 		$(use_with uuid ossp-uuid) \
@@ -145,16 +144,10 @@ src_configure() {
 }
 
 src_compile() {
-	emake -j1
+	emake
 
 	cd "${S}/contrib"
 	emake
-
-	local bd
-	for bd in . contrib $(use xml && echo contrib/xml2); do
-		PATH="${EROOT%/}/usr/$(get_libdir)/postgresql-${SLOT}/bin:${PATH}" \
-			emake -C $bd || die "emake in $bd failed"
-	done
 }
 
 src_install() {
