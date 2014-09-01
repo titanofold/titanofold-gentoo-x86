@@ -67,10 +67,14 @@ postgres_get_impls() {
 
 	MULTIBUILD_VARIANTS=( )
 	local user_slot
+	local dep_check
 
 	for user_slot in "${POSTGRES_COMPAT[@]}"; do
-		has "${user_slot}" ${_POSTGRES_ALL_SLOTS} && \
-			MULTIBUILD_VARIANTS+=( "${user_slot}" )
+		if has ${user_slot} ${_POSTGRES_ALL_SLOTS} ; then
+			dep_check="dev-db/postgresql:${user_slot}"
+			[[ -n ${POSTGRES_USEDEP} ]] && dep_check+="[${POSTGRES_USEDEP}]"
+			has_version "${dep_check}" && MULTIBUILD_VARIANTS+=( "${user_slot}" )
+		fi
 	done
 
 	if [[ -z ${MULTIBUILD_VARIANTS} ]]; then
