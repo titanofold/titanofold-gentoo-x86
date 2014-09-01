@@ -178,7 +178,7 @@ src_install() {
 
 	if use doc; then
 		docinto html
-		dohtml doc/src/sgml/html/*
+		dodoc doc/src/sgml/html/*
 
 		docinto sgml
 		dodoc doc/src/sgml/*.{sgml,dsl}
