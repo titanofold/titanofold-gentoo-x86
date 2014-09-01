@@ -130,7 +130,7 @@ src_configure() {
 		$(use_with pam) \
 		$(use_with perl) \
 		$(use_with python) \
-		$(use_with +readline) \
+		$(use_with readline) \
 		$(use_with ssl openssl) \
 		$(use_with tcl) \
 		$(use_with uuid ossp-uuid) \
@@ -141,35 +141,58 @@ src_configure() {
 }
 
 src_compile() {
-	local bd
-	for bd in . contrib $(use xml && echo contrib/xml2); do
-		PATH="${EROOT%/}/usr/$(get_libdir)/postgresql-${SLOT}/bin:${PATH}" \
-			emake -C $bd || die "emake in $bd failed"
-	done
+	emake
+	emake -C contrib
 }
 
 src_install() {
-	local bd
-	for bd in . contrib $(use xml && echo contrib/xml2) ; do
-		PATH="${EROOT%/}/usr/$(get_libdir)/postgresql-${SLOT}/bin:${PATH}" \
-			emake install -C $bd DESTDIR="${D}" || die "emake install in $bd failed"
-	done
+	emake DESTDIR="${D}" install
+	emake DESTDIR="${D}" install -C contrib
+
+	dodoc README HISTORY doc/{TODO,bug.template}
+
+	# man pages are already built, but if we have the target make them,
+	# they'll be generated from source before being installed so we
+	# manually install man pages.
+	# We use ${SLOT} instead of doman for postgresql.eselect
+	insinto /usr/share/postgresql-${SLOT}/man/
+	doins -r doc/src/sgml/man{1,3,7}
+	if ! use server; then
+		for m in {initdb,pg_{controldata,ctl,resetxlog},post{gres,master}}; do
+			rm "${ED}/usr/share/postgresql-${SLOT}/man/man1/${m}.1"
+		done
+	fi
+	docompress /usr/share/postgresql-${SLOT}/man/man{1,3,7}
+
+	insinto /etc/postgresql-${SLOT}
+	doins src/bin/psql/psqlrc.sample
 
 	dodir /etc/eselect/postgresql/slots/${SLOT}
 	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
-		"${ED}/etc/eselect/postgresql/slots/${SLOT}/server"
+		"${ED}/etc/eselect/postgresql/slots/${SLOT}/base"
 
-	newconfd "${WORKDIR}/postgresql.confd" postgresql-${SLOT}
-	newinitd "${WORKDIR}/postgresql.init" postgresql-${SLOT}
+	if use doc ; then
+		docinto html
+		dohtml doc/src/sgml/html/*
 
-	systemd_newunit "${WORKDIR}"/postgresql.service postgresql-${SLOT}.service
-	systemd_newtmpfilesd "${WORKDIR}"/postgresql.tmpfilesd postgresql-${SLOT}.conf
+		docinto sgml
+		dodoc doc/src/sgml/*.{sgml,dsl}
+	fi
 
-	use pam && pamd_mimic system-auth postgresql-${SLOT} auth account session
+	if use server; then
+		newconfd "${WORKDIR}/postgresql.confd" postgresql-${SLOT}
+		newinitd "${WORKDIR}/postgresql.init" postgresql-${SLOT}
 
-	if use prefix ; then
-		keepdir /run/postgresql
-		fperms 0775 /run/postgresql
+		systemd_newunit "${WORKDIR}"/postgresql.service postgresql-${SLOT}.service
+		systemd_newtmpfilesd "${WORKDIR}"/postgresql.tmpfilesd postgresql-${SLOT}.conf
+		newbin "${WORKDIR}"/postgresql-check-db-dir postgresql-${SLOT}-check-db-dir
+
+		use pam && pamd_mimic system-auth postgresql-${SLOT} auth account session
+
+		if use prefix ; then
+			keepdir /run/postgresql
+			fperms 0775 /run/postgresql
+		fi
 	fi
 }
 

@@ -50,21 +50,24 @@ virtual/libintl
 kerberos? ( virtual/krb5 )
 ldap? ( net-nds/openldap )
 pam? ( virtual/pam )
-perl? ( >=dev-lang/perl-5.8 )
 python? ( ${PYTHON_DEPS} )
-+readline? ( sys-libs/+readline )
+readline? ( sys-libs/readline )
 selinux? ( sec-policy/selinux-postgresql )
 ssl? ( >=dev-libs/openssl-0.9.6-r1 )
 tcl? ( >=dev-lang/tcl-8 )
 uuid? ( dev-libs/ossp-uuid )
-xml? ( dev-libs/libxml2 dev-libs/libxslt )
 zlib? ( sys-libs/zlib )
 "
 
 DEPEND="${RDEPEND}
 !!<sys-apps/sandbox-2.0
+>=dev-lang/perl-5.8
+app-text/openjade
+dev-libs/libxml2
+dev-libs/libxslt
 sys-devel/bison
 sys-devel/flex
+doc? ( dev-libs/libxml2 dev-libs/libxslt )
 nls? ( sys-devel/gettext )
 xml? ( virtual/pkgconfig )
 "
@@ -81,24 +84,22 @@ pkg_setup() {
 }
 
 src_prepare() {
-	# silly version changes
-	sed -i -e 's/2012/2013/' -e 's/9.3beta2/9.4devel/' "${WORKDIR}/autoconf.patch" || die
+	# Eliminate autotools version check
+	sed '/m4_PACKAGE_VERSION/,+3d' -i configure.in || die
 
-	epatch "${WORKDIR}/autoconf.patch" \
-		"${WORKDIR}/bool.patch"
+	# Work around PPC compilation bug where bool is already defined
+	sed '/#ifndef __cplusplus/a #undef bool' -i src/include/c.h || die
+
+	# Set proper run directory
+	sed "s|\(PGSOCKET_DIR\s\+\)\"/tmp\"|\1\"${EPREFIX}/run/postgresql\"|" \
+		-i src/include/pg_config_manual.h || die
 
 	use server || epatch "${WORKDIR}/base.patch"
 
-	eprefixify src/include/pg_config_manual.h
-
-	if ! use server; then
-		# because psql/help.c includes the file
-		ln -s "${S}/src/include/libpq/pqsignal.h" "${S}/src/bin/psql/" || die
-	fi
 	if use pam ; then
 		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \
-			-i src/backend/libpq/auth.c \
-			|| die 'PGSQL_PAM_SERVICE rename failed.'
+			-i src/backend/libpq/auth.c || \
+			die 'PGSQL_PAM_SERVICE rename failed.'
 	fi
 
 	if use test ; then
@@ -107,11 +108,9 @@ src_prepare() {
 		echo "all install:" > "${S}/src/test/regress/GNUmakefile"
 	fi
 
-	sed -e "s|@RUNDIR@||g" \
-		-i src/include/pg_config_manual.h || die "RUNDIR sed failed"
-	sed -e "s|@SLOT@|${SLOT}|g" \
-		-i "${WORKDIR}/postgresql.init" "${WORKDIR}/postgresql.confd" || \
-		die "SLOT sed failed"
+	sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
+		-i "${WORKDIR}"/postgresql{.{init,confd,service},-check-db-dir} || \
+		die "SLOT/LIBDIR sed failed"
 
 	eautoconf
 }
@@ -146,7 +145,7 @@ src_configure() {
 		$(use_with pam) \
 		$(use_with perl) \
 		$(use_with python) \
-		$(use_with +readline) \
+		$(use_with readline) \
 		$(use_with ssl openssl) \
 		$(use_with tcl) \
 		$(use_with uuid ossp-uuid) \
@@ -157,59 +156,50 @@ src_configure() {
 }
 
 src_compile() {
-if use server; then
-	local bd
-	for bd in . contrib $(use xml && echo contrib/xml2); do
-		emake -C $bd || die "emake in $bd failed"
-	done
-else
 	emake
+	emake -C contrib
 
-	cd "${S}/contrib"
-	emake
-fi
+	use doc && emake -C doc || emake -C doc man
 }
 
 src_install() {
-	if use server; then
-		if use perl ; then
-			mv -f "${S}/src/pl/plperl/GNUmakefile" "${S}/src/pl/plperl/GNUmakefile_orig"
-			sed -e "s:\$(DESTDIR)\$(plperl_installdir):\$(plperl_installdir):" \
-				"${S}/src/pl/plperl/GNUmakefile_orig" > "${S}/src/pl/plperl/GNUmakefile"
-		fi
+	emake DESTDIR="${D}" install
+	emake DESTDIR="${D}" install -C contrib
 
-		local bd
-		for bd in . contrib $(use xml && echo contrib/xml2) ; do
-			PATH="${EROOT%/}/usr/$(get_libdir)/postgresql-${SLOT}/bin:${PATH}" \
-				emake install -C $bd DESTDIR="${D}" || die "emake install in $bd failed"
+	dodoc README doc/{TODO,bug.template}
+
+	# We use ${SLOT} instead of doman for postgresql.eselect
+	insinto /usr/share/postgresql-${SLOT}/man/
+	doins -r doc/src/sgml/man{1,3,7}
+	if ! use server; then
+		for m in {initdb,pg_{controldata,ctl,resetxlog},post{gres,master}}; do
+			rm "${ED}/usr/share/postgresql-${SLOT}/man/man1/${m}.1"
 		done
-	else
-		mkdir -p "${ED}/usr/share/postgresql-${SLOT}"
-		emake DESTDIR="${D}" install
-		insinto /usr/include/postgresql-${SLOT}/postmaster
-		doins "${S}"/src/include/postmaster/*.h
-
-		# Don't use ${PF} to get along with postgresql.eselect
-		insinto /usr/share/doc/postgresql-${SLOT}
-		doins README doc/{TODO,bug.template}
-
-		cd "${S}/contrib"
-		emake DESTDIR="${D}" install
-		cd "${S}"
 	fi
+	docompress /usr/share/postgresql-${SLOT}/man/man{1,3,7}
+
+	insinto /etc/postgresql-${SLOT}
+	doins src/bin/psql/psqlrc.sample
 
 	dodir /etc/eselect/postgresql/slots/${SLOT}
 	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
 		"${ED}/etc/eselect/postgresql/slots/${SLOT}/base"
 
+	if use doc ; then
+		docinto html
+		dodoc doc/src/sgml/html/*
 
-	keepdir /etc/postgresql-${SLOT}
+		docinto sgml
+		dodoc doc/src/sgml/*.{sgml,dsl}
+	fi
 
 	if use server; then
-		newconfd "${WORKDIR}/postgresql.confd" postgresql-${SLOT} || \
-			die "Inserting conf failed"
-		newinitd "${WORKDIR}/postgresql.init" postgresql-${SLOT} || \
-			die "Inserting conf failed"
+		newconfd "${WORKDIR}/postgresql.confd" postgresql-${SLOT}
+		newinitd "${WORKDIR}/postgresql.init" postgresql-${SLOT}
+
+		systemd_newunit "${WORKDIR}"/postgresql.service postgresql-${SLOT}.service
+		systemd_newtmpfilesd "${WORKDIR}"/postgresql.tmpfilesd postgresql-${SLOT}.conf
+		newbin "${WORKDIR}"/postgresql-check-db-dir postgresql-${SLOT}-check-db-dir
 
 		use pam && pamd_mimic system-auth postgresql-${SLOT} auth account session
 
