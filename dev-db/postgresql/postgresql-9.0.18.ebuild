@@ -96,11 +96,9 @@ src_prepare() {
 		echo "all install:" > "${S}/src/test/regress/GNUmakefile"
 	fi
 
-	for x in .init .confd .service -check-db-dir
-	do
-		sed -e "s|@SLOT@|${SLOT}|g" -i "${WORKDIR}"/postgresql${x}
-		[[ $? -ne 0 ]] && eerror "Failed sed on $x" && die 'Failed slot sed'
-	done
+	sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
+		-i "${WORKDIR}"/postgresql{.{init,confd,service},-check-db-dir} || \
+		die "SLOT/LIBDIR sed failed"
 
 	eautoconf
 }
