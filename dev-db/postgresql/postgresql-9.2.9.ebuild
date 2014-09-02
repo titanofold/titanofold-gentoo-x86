@@ -60,21 +60,22 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${WORKDIR}/autoconf.patch" \
-		"${WORKDIR}/bool.patch" \
-		"${WORKDIR}/server.patch"
+	# Eliminate autotools version check
+	sed '/m4_PACKAGE_VERSION/,+3d' -i configure.in || die
 
-	eprefixify src/include/pg_config_manual.h
+	# Work around PPC{,64} compilation bug where bool is already defined
+	sed '/#ifndef __cplusplus/a #undef bool' -i src/include/c.h || die
+
+	# Set proper run directory
+	sed "s|\(PGSOCKET_DIR\s\+\)\"/tmp\"|\1\"${EPREFIX}/run/postgresql\"|" \
+		-i src/include/pg_config_manual.h || die
+
+	use server || epatch "${WORKDIR}/base.patch"
 
 	if use pam ; then
 		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \
 			-i src/backend/libpq/auth.c \
 			|| die 'PGSQL_PAM_SERVICE rename failed.'
-	fi
-
-	if use perl ; then
-		sed -e "s:\$(DESTDIR)\$(plperl_installdir):\$(plperl_installdir):" \
-			-i "${S}/src/pl/plperl/GNUmakefile" || die 'sed plperl failed'
 	fi
 
 	if use test ; then
