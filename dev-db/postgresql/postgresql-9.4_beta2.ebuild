@@ -9,21 +9,23 @@ WANT_AUTOMAKE="none"
 
 inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 systemd user versionator
 
-KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~ppc-macos ~sparc-fbsd ~x86-fbsd ~x86-solaris"
 
 MY_PV=${PV/_/}
 SLOT="$(get_version_component_range 1-2)"
 S="${WORKDIR}/postgresql-${MY_PV}"
-SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2
-		 http://dev.gentoo.org/~patrick/postgresql-patches-${SLOT}-r1.tbz2
-		 http://dev.gentoo.org/~floppym/dist/postgresql-initscript-2.7.tbz2"
+SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2"
+
+# Add patch and initscript source.
+SRC_URI+=" http://dev.gentoo.org/~patrick/postgresql-patches-${SLOT}-r1.tbz2
+		   http://dev.gentoo.org/~floppym/dist/postgresql-initscript-2.7.tbz2"
 
 LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"
 HOMEPAGE="http://www.postgresql.org/"
 
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN zh_TW"
-IUSE="doc kerberos kernel_linux ldap nls pam perl -pg_legacytimestamp python +readlineselinux server ssl tcl threads test uuid xml zlib"
+IUSE="doc kerberos kernel_linux ldap nls pam perl -pg_legacytimestamp python +readline selinux server ssl tcl threads uuid xml zlib"
 
 for lingua in ${LINGUAS}; do
 	IUSE+=" linguas_${lingua}"
@@ -65,8 +67,6 @@ nls? ( sys-devel/gettext )
 xml? ( virtual/pkgconfig )
 "
 
-use server || RESTRICT="test"
-
 pkg_setup() {
 	enewgroup postgres 70
 	enewuser postgres 70 /bin/bash /var/lib/postgresql postgres
@@ -75,37 +75,27 @@ pkg_setup() {
 }
 
 src_prepare() {
+	# Eliminate autotools version check
+	sed '/m4_PACKAGE_VERSION/,+3d' -i configure.in || die
 
+	# Work around PPC{,64} compilation bug where bool is already defined
+	sed '/#ifndef __cplusplus/a #undef bool' -i src/include/c.h || die
 
-	epatch "${WORKDIR}/autoconf.patch" \
-		"${WORKDIR}/bool.patch" \
-		"${WORKDIR}/run-dir.patch"
+	# Set proper run directory
+	sed "s|\(PGSOCKET_DIR\s\+\)\"/tmp\"|\1\"${EPREFIX}/run/postgresql\"|" \
+		-i src/include/pg_config_manual.h || die
 
-		use server || epatch "${WORKDIR}/base.patch"
+	sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
+		-i "${WORKDIR}"/postgresql{.{init,confd,service},-check-db-dir} || \
+		die "SLOT/LIBDIR sed failed"
 
-	eprefixify src/include/pg_config_manual.h
+	use server || epatch "${WORKDIR}/base.patch"
 
 	if use pam ; then
 		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \
-			-i src/backend/libpq/auth.c \
-			|| die 'PGSQL_PAM_SERVICE rename failed.'
+			-i src/backend/libpq/auth.c || \
+			die 'PGSQL_PAM_SERVICE rename failed.'
 	fi
-
-	if use perl ; then
-		sed -e "s:\$(DESTDIR)\$(plperl_installdir):\$(plperl_installdir):" \
-			-i "${S}/src/pl/plperl/GNUmakefile" || die 'sed plperl failed'
-	fi
-
-	if use test ; then
-		sed -e "s|@SOCKETDIR@|${T}|g" -i src/test/regress/pg_regress{,_main}.c \
-			|| die 'Failed regress sed'
-	else
-		echo "all install:" > "${S}/src/test/regress/GNUmakefile"
-	fi
-
-	sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-		-i "${WORKDIR}"/postgresql{.{init,confd,service},-check-db-dir} ||
-		die "SLOT/LIBDIR sed failed"
 
 	eautoconf
 }
@@ -129,13 +119,11 @@ src_configure() {
 		--includedir="${PO}/usr/include/postgresql-${SLOT}" \
 		--mandir="${PO}/usr/share/postgresql-${SLOT}/man" \
 		--sysconfdir="${PO}/etc/postgresql-${SLOT}" \
-		--with-includes="${PO}/usr/include/postgresql-${SLOT}/" \
-		--with-libraries="${PO}/usr/$(get_libdir)/postgresql-${SLOT}/$(get_libdir)" \
 		--with-system-tzdata="${PO}/usr/share/zoneinfo" \
 		$(use_enable !pg_legacytimestamp integer-datetimes) \
 		$(use_enable threads thread-safety) \
 		$(use_with kerberos gssapi) \
-		$(use_with ldap)
+		$(use_with ldap) \
 		$(use_with pam) \
 		$(use_with perl) \
 		$(use_with python) \
@@ -167,6 +155,7 @@ src_install() {
 	insinto /usr/share/postgresql-${SLOT}/man/
 	doins -r doc/src/sgml/man{1,3,7}
 	if ! use server; then
+		# Remove man pages for non-existent binaries
 		for m in {initdb,pg_{controldata,ctl,resetxlog},post{gres,master}}; do
 			rm "${ED}/usr/share/postgresql-${SLOT}/man/man1/${m}.1"
 		done
@@ -174,19 +163,19 @@ src_install() {
 	docompress /usr/share/postgresql-${SLOT}/man/man{1,3,7}
 
 	insinto /etc/postgresql-${SLOT}
-	doins src/bin/psql/psqlrc.sample
+	newins src/bin/psql/psqlrc.sample psqlrc
 
-	if use doc; then
+	dodir /etc/eselect/postgresql/slots/${SLOT}
+	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
+		"${ED}/etc/eselect/postgresql/slots/${SLOT}/base"
+
+	if use doc ; then
 		docinto html
 		dodoc doc/src/sgml/html/*
 
 		docinto sgml
 		dodoc doc/src/sgml/*.{sgml,dsl}
 	fi
-
-	dodir /etc/eselect/postgresql/slots/${SLOT}
-	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
-		"${ED}/etc/eselect/postgresql/slots/${SLOT}/server"
 
 	if use server; then
 		newconfd "${WORKDIR}/postgresql.confd" postgresql-${SLOT}
@@ -211,7 +200,7 @@ pkg_postinst() {
 	elog "If you need a global psqlrc-file, you can place it in:"
 	elog "    ${EROOT%/}/etc/postgresql-${SLOT}/"
 
-	if use server; then
+	if use server ; then
 		elog
 		elog "Gentoo specific documentation:"
 		elog "http://www.gentoo.org/doc/en/postgres-howto.xml"
@@ -248,7 +237,7 @@ pkg_postrm() {
 }
 
 pkg_config() {
-	use server || die "USE flag 'server' not set. Nothing to configure."
+	use server || die "USE flag 'server' not enabled. Nothing to configure."
 
 	[[ -f "${EROOT%/}/etc/conf.d/postgresql-${SLOT}" ]] && source "${EROOT%/}/etc/conf.d/postgresql-${SLOT}"
 	[[ -z "${PGDATA}" ]] && PGDATA="${EROOT%/}/etc/postgresql-${SLOT}/"
@@ -397,13 +386,17 @@ pkg_config() {
 src_test() {
 	einfo ">>> Test phase [check]: ${CATEGORY}/${PF}"
 
-	if [ ${UID} -ne 0 ] ; then
+	if [[ $(use server) -eq 0 && ${UID} -ne 0 ]] ; then
 		emake check
 
 		einfo "If you think other tests besides the regression tests are necessary, please"
 		einfo "submit a bug including a patch for this ebuild to enable them."
 	else
-		ewarn "Tests cannot be run as root. Skipping."
-		ewarn "HINT: FEATURES=\"userpriv\""
+		use server || \
+			ewarn 'Tests cannot be run without the "server" use flag enabled.'
+		[[ ${UID} -eq 0 ]] || \
+			ewarn 'Tests cannot be run as root. Enable "userpriv" in FEATURES.'
+
+		ewarn 'Skipping.'
 	fi
 }

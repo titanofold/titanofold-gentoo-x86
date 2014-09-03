@@ -7,9 +7,7 @@ EAPI="5"
 PYTHON_COMPAT=( python{2_{6,7},3_{2,3,4}} )
 WANT_AUTOMAKE="none"
 
-RESTRICT="test" # too lazy to patch ;)
-
-inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 user versionator base git-2
+inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 systemd user versionator base git-2
 
 KEYWORDS=""
 
@@ -17,17 +15,16 @@ KEYWORDS=""
 SLOT="9.5"
 
 EGIT_REPO_URI="git://git.postgresql.org/git/postgresql.git"
-SRC_URI="http://dev.gentoo.org/~patrick/postgresql-patches-9.5.tbz2"
 
-SRC_URI="http://dev.gentoo.org/~titanofold/postgresql-initscript-2.4.tbz2
+SRC_URI="http://dev.gentoo.org/~floppym/dist/postgresql-initscript-2.7.tbz2
 	http://dev.gentoo.org/~patrick/postgresql-patches-9.5.tbz2"
 
 LICENSE="POSTGRESQL GPL-2"
-DESCRIPTION="PostgreSQL server"
+DESCRIPTION="PostgreSQL RDBMS"
 HOMEPAGE="http://www.postgresql.org/"
 
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN zh_TW"
-IUSE="doc kerberos kernel_linux ldap nls pam perl -pg_legacytimestamp python +readline selinux server ssl tcl test threads uuid xml zlib"
+IUSE="doc kerberos kernel_linux ldap nls pam perl -pg_legacytimestamp python +readline selinux server ssl tcl threads uuid xml zlib"
 
 for lingua in ${LINGUAS}; do
 	IUSE+=" linguas_${lingua}"
@@ -50,24 +47,29 @@ virtual/libintl
 kerberos? ( virtual/krb5 )
 ldap? ( net-nds/openldap )
 pam? ( virtual/pam )
+perl? ( >=dev-lang/perl-5.8 )
 python? ( ${PYTHON_DEPS} )
 readline? ( sys-libs/readline )
 selinux? ( sec-policy/selinux-postgresql )
 ssl? ( >=dev-libs/openssl-0.9.6-r1 )
 tcl? ( >=dev-lang/tcl-8 )
 uuid? ( dev-libs/ossp-uuid )
+xml? ( dev-libs/libxml2 dev-libs/libxslt )
 zlib? ( sys-libs/zlib )
 "
 
 DEPEND="${RDEPEND}
 !!<sys-apps/sandbox-2.0
 >=dev-lang/perl-5.8
+app-text/docbook-dsssl-stylesheets
+app-text/docbook-sgml-dtd:4.2
+app-text/docbook-xml-dtd:4.2
+app-text/docbook-xsl-stylesheets
 app-text/openjade
 dev-libs/libxml2
 dev-libs/libxslt
 sys-devel/bison
 sys-devel/flex
-doc? ( dev-libs/libxml2 dev-libs/libxslt )
 nls? ( sys-devel/gettext )
 xml? ( virtual/pkgconfig )
 "
@@ -87,12 +89,16 @@ src_prepare() {
 	# Eliminate autotools version check
 	sed '/m4_PACKAGE_VERSION/,+3d' -i configure.in || die
 
-	# Work around PPC compilation bug where bool is already defined
+	# Work around PPC{,64} compilation bug where bool is already defined
 	sed '/#ifndef __cplusplus/a #undef bool' -i src/include/c.h || die
 
 	# Set proper run directory
 	sed "s|\(PGSOCKET_DIR\s\+\)\"/tmp\"|\1\"${EPREFIX}/run/postgresql\"|" \
 		-i src/include/pg_config_manual.h || die
+
+	sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
+		-i "${WORKDIR}"/postgresql{.{init,confd,service},-check-db-dir} || \
+		die "SLOT/LIBDIR sed failed"
 
 	use server || epatch "${WORKDIR}/base.patch"
 
@@ -101,16 +107,6 @@ src_prepare() {
 			-i src/backend/libpq/auth.c || \
 			die 'PGSQL_PAM_SERVICE rename failed.'
 	fi
-
-	if use test ; then
-		sed -e "s|@SOCKETDIR@|${T}|g" -i src/test/regress/pg_regress{,_main}.c
-	else
-		echo "all install:" > "${S}/src/test/regress/GNUmakefile"
-	fi
-
-	sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-		-i "${WORKDIR}"/postgresql{.{init,confd,service},-check-db-dir} || \
-		die "SLOT/LIBDIR sed failed"
 
 	eautoconf
 }
@@ -134,14 +130,11 @@ src_configure() {
 		--includedir="${PO}/usr/include/postgresql-${SLOT}" \
 		--mandir="${PO}/usr/share/postgresql-${SLOT}/man" \
 		--sysconfdir="${PO}/etc/postgresql-${SLOT}" \
-		--with-includes="${PO}/usr/include/postgresql-${SLOT}/" \
-		--with-libraries="${PO}/usr/$(get_libdir)/postgresql-${SLOT}/$(get_libdir)" \
 		--with-system-tzdata="${PO}/usr/share/zoneinfo" \
 		$(use_enable !pg_legacytimestamp integer-datetimes) \
 		$(use_enable threads thread-safety) \
 		$(use_with kerberos gssapi) \
-		$(use_with kerberos krb5) \
-		$(use_with ldap)
+		$(use_with ldap) \
 		$(use_with pam) \
 		$(use_with perl) \
 		$(use_with python) \
@@ -159,6 +152,8 @@ src_compile() {
 	emake
 	emake -C contrib
 
+	# If use doc, generate all documentation, otherwise just the
+	# man pages
 	use doc && emake -C doc || emake -C doc man
 }
 
@@ -166,12 +161,13 @@ src_install() {
 	emake DESTDIR="${D}" install
 	emake DESTDIR="${D}" install -C contrib
 
-	dodoc README doc/{TODO,bug.template}
+	dodoc README HISTORY doc/{TODO,bug.template}
 
 	# We use ${SLOT} instead of doman for postgresql.eselect
 	insinto /usr/share/postgresql-${SLOT}/man/
 	doins -r doc/src/sgml/man{1,3,7}
 	if ! use server; then
+		# Remove man pages for non-existent binaries
 		for m in {initdb,pg_{controldata,ctl,resetxlog},post{gres,master}}; do
 			rm "${ED}/usr/share/postgresql-${SLOT}/man/man1/${m}.1"
 		done
@@ -179,7 +175,7 @@ src_install() {
 	docompress /usr/share/postgresql-${SLOT}/man/man{1,3,7}
 
 	insinto /etc/postgresql-${SLOT}
-	doins src/bin/psql/psqlrc.sample
+	newins src/bin/psql/psqlrc.sample psqlrc
 
 	dodir /etc/eselect/postgresql/slots/${SLOT}
 	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
@@ -205,7 +201,7 @@ src_install() {
 
 		if use prefix ; then
 			keepdir /run/postgresql
-			fperms 0770 /run/postgresql
+			fperms 0775 /run/postgresql
 		fi
 	fi
 }
@@ -216,7 +212,7 @@ pkg_postinst() {
 	elog "If you need a global psqlrc-file, you can place it in:"
 	elog "    ${EROOT%/}/etc/postgresql-${SLOT}/"
 
-	if use server; then
+	if use server ; then
 		elog
 		elog "Gentoo specific documentation:"
 		elog "http://www.gentoo.org/doc/en/postgres-howto.xml"
@@ -226,10 +222,6 @@ pkg_postinst() {
 		elog
 		elog "The default location of the Unix-domain socket is:"
 		elog "    ${EROOT%/}/run/postgresql/"
-		elog
-		elog "If you have users and/or services that you would like to utilize the"
-		elog "socket, you must add them to the 'postgres' system group:"
-		elog "    usermod -a -G postgres <user>"
 		elog
 		elog "Before initializing the database, you may want to edit PG_INITDB_OPTS"
 		elog "so that it contains your preferred locale in:"
@@ -246,7 +238,7 @@ pkg_prerm() {
 		ewarn "Have you dumped and/or migrated the ${SLOT} database cluster?"
 		ewarn "\thttp://www.gentoo.org/doc/en/postgres-howto.xml#doc_chap5"
 
-		ebegin "Resuming removal 10 seconds. Control-C to cancel"
+		ebegin "Resuming removal in 10 seconds (Control-C to cancel)"
 		sleep 10
 		eend 0
 	fi
@@ -406,14 +398,17 @@ pkg_config() {
 src_test() {
 	einfo ">>> Test phase [check]: ${CATEGORY}/${PF}"
 
-	if [ ${UID} -ne 0 ] ; then
+	if [[ $(use server) -eq 0 && ${UID} -ne 0 ]] ; then
 		emake check
 
 		einfo "If you think other tests besides the regression tests are necessary, please"
 		einfo "submit a bug including a patch for this ebuild to enable them."
 	else
-		ewarn "Tests cannot be run as root. Skipping."
-		ewarn "HINT: FEATURES=\"userpriv\""
+		use server || \
+			ewarn 'Tests cannot be run without the "server" use flag enabled.'
+		[[ ${UID} -eq 0 ]] || \
+			ewarn 'Tests cannot be run as root. Enable "userpriv" in FEATURES.'
+
+		ewarn 'Skipping.'
 	fi
-======= end
 }
