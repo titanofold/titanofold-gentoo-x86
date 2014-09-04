@@ -1,11 +1,10 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/slony1/slony1-2.1.1.ebuild,v 1.5 2012/07/28 12:24:08 titanofold Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/slony1/slony1-2.1.3.ebuild,v 1.4 2013/05/14 09:37:54 ago Exp $
 
 EAPI="4"
 
-POSTGRES_COMPAT=( 9.{2,1,0} 8.{4,3} )
-inherit eutils postgres-multi versionator
+inherit eutils versionator
 
 IUSE="doc perl"
 
@@ -19,7 +18,7 @@ SRC_URI="http://main.slony.info/downloads/${MAJ_PV}/source/${P}.tar.bz2
 
 LICENSE="BSD GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~ppc ~x86"
+KEYWORDS="amd64 ppc x86"
 
 DEPEND="|| (
 			dev-db/postgresql-server:9.2
@@ -31,20 +30,34 @@ DEPEND="|| (
 		dev-db/postgresql-base[threads]
 		perl? ( dev-perl/DBD-Pg )
 "
+
+pkg_setup() {
+	local PGSLOT="$(postgresql-config show)"
+	if [[ ${PGSLOT//.} < 83 ]] ; then
+		eerror "You must build ${CATEGORY}/${PN} against PostgreSQL 8.3 or higher."
+		eerror "Set an appropriate slot with postgresql-config."
+		die "postgresql-config not set to 8.3 or higher."
+	fi
+
+#	if [[ ${PGSLOT//.} > 90 ]] ; then
+#		ewarn "You are building ${CATEGORY}/${PN} against a version of PostgreSQL greater than 9.0."
+#		ewarn "This is neither supported here nor upstream."
+#		ewarn "Any bugs you encounter should be reported upstream."
+#	fi
+}
+
 src_prepare() {
-	postgres-multi_src_prepare
-	postgres-multi_foreach_impl run_in_build_dir epatch "${FILESDIR}/${PN}-2.1.2-ldflags.patch"
+	epatch "${FILESDIR}/${PN}-2.1.2-ldflags.patch"
 }
 
 src_configure() {
 	local myconf
 	use perl && myconf='--with-perltools'
-	postgres-multi_foreach_impl run_in_build_dir econf ${myconf} \
-		--with-pgconfigdir="/usr/lib/postgresql-@PG_SLOT@/bin/"
+	econf ${myconf}
 }
 
 src_install() {
-	postgres-multi_src_install
+	emake DESTDIR="${D}" install
 
 	dodoc HISTORY-1.1 INSTALL README SAMPLE TODO UPGRADING doc/howto/*.txt
 

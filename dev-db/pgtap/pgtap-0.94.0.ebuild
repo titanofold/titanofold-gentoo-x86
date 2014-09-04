@@ -1,18 +1,18 @@
 # Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/pgtap/pgtap-0.93.0.ebuild,v 1.2 2013/05/01 10:32:11 ago Exp $
 
 EAPI=5
-POSTGRES_COMPAT=( 8.4 9.{0,1,2,3,4} )
-inherit eutils postgres-multi
+inherit eutils
 
 DESCRIPTION="Unit testing for PostgreSQL"
 HOMEPAGE="http://pgtap.org/"
 SRC_URI="http://api.pgxn.org/dist/${PN}/${PV}/${P}.zip"
+
 LICENSE="POSTGRESQL"
-KEYWORDS="~amd64"
-IUSE=""
 SLOT="0"
+KEYWORDS="amd64"
+IUSE=""
 
 DEPEND=">=dev-db/postgresql-base-8.4
 		dev-perl/TAP-Parser-SourceHandler-pgTAP
@@ -20,6 +20,34 @@ DEPEND=">=dev-db/postgresql-base-8.4
 RDEPEND="${DEPEND}"
 
 src_prepare() {
-	postgres-multi_src_prepare
-#	postgres-multi_foreach_impl run_in_build_dir epatch "${FILESDIR}/pgtap-pg_config_override.patch"
+	epatch "${FILESDIR}/pgtap-pg_config_override.patch"
+
+	local pgslots=$(eselect --brief postgresql list)
+	local pgslot
+	for pgslot in ${pgslots} ; do
+		mkdir -p "${WORKDIR}/${pgslot}"
+		cp -R "${S}" "${WORKDIR}/${pgslot}"
+	done
+}
+
+src_configure() {
+	:
+}
+
+src_compile() {
+	local pgslots=$(eselect --brief postgresql list)
+	local pgslot
+	for pgslot in ${pgslots} ; do
+		cd "${WORKDIR}/${pgslot}/${P}"
+		PG_CONFIG="pg_config${pgslot//.}" emake
+	done
+}
+
+src_install() {
+	local pgslots=$(eselect --brief postgresql list)
+	local pgslot
+	for pgslot in ${pgslots} ; do
+		cd "${WORKDIR}/${pgslot}/${P}"
+		PG_CONFIG="pg_config${pgslot//.}" emake DESTDIR="${D}" install
+	done
 }
