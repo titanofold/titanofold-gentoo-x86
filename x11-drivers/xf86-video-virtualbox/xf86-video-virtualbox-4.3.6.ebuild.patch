@@ -1,0 +1,11 @@
+--- /var/cache/portage/tree/x11-drivers/xf86-video-virtualbox/xf86-video-virtualbox-4.3.6.ebuild	2013-12-18 20:54:59.000000000 +0000
++++ xf86-video-virtualbox-4.3.6.ebuild	2014-01-11 15:53:18.011557607 +0000
+@@ -87,7 +87,7 @@
+ 
+ 	# Patch to link with lazy on hardened #394757
+ 	if gcc-specs-now ; then
+-		epatch "${FILESDIR}/${PN}-link-lazy.patch"
++		epatch "${FILESDIR}/${PN}-4.3.6-link-lazy.patch"
+ 	fi
+ }
+ 
