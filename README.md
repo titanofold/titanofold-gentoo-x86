@@ -1,7 +1,7 @@
 TitanOfOld's Gentoo Developer Overlay
 =====================================
 
-This is Where I do my testing before moving packages into Gentoo's main
+This is where I do my testing before moving packages into Gentoo's main
 [Portage tree](http://sources.gentoo.org/cgi-bin/viewvc.cgi/gentoo-x86/).
 
 While I offer no guarantees, the master branch should be Portage ready.
