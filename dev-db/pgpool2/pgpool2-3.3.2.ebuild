@@ -1,13 +1,12 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/pgpool2/pgpool2-3.2.1.ebuild,v 1.2 2012/11/16 20:03:13 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/pgpool2/pgpool2-3.3.2.ebuild,v 1.1 2014/01/08 08:06:36 patrick Exp $
 
 EAPI=4
-POSTGRES_COMPAT=( 8.4 9.{0,1,2,3} )
-
-inherit base
 
 MY_P="${PN/2/-II}-${PV}"
+
+inherit base user
 
 DESCRIPTION="Connection pool server for PostgreSQL"
 HOMEPAGE="http://www.pgpool.net/"
@@ -20,7 +19,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="memcached pam ssl static-libs"
 
 RDEPEND="
-	<dev-db/postgresql-base-9.3
+	dev-db/postgresql-base
 	memcached? ( dev-libs/libmemcached )
 	pam? ( sys-auth/pambase )
 	ssl? ( dev-libs/openssl )
@@ -32,31 +31,7 @@ DEPEND="${RDEPEND}
 
 S=${WORKDIR}/${MY_P}
 
-postgres_check_slot() {
-	if ! declare -p POSTGRES_COMPAT &>/dev/null; then
-		die 'POSTGRES_COMPAT not declared.'
-	fi
-
-	local cur_slot=$(postgresql-config show 2> /dev/null)
-
-	# Don't fail because we can't run postgresql-config during pretend.
-	[[ "$EBUILD_PHASE" = "pretend" && -z "${cur_slot}" ]] && return 0
-
-	local res=$(echo ${POSTGRES_COMPAT[@]} | grep -c "${cur_slot}" 2> /dev/null)
-
-	if [[ "$res" -eq "0" ]] ; then
-			eerror "PostgreSQL slot must be set to one of: "
-			eerror "    ${POSTGRES_COMPAT[@]}"
-			return 1
-	fi
-
-	return 0
-}
-
-pkg_pretend() { postgres_check_slot || die; }
 pkg_setup() {
-	postgres_check_slot || die
-
 	enewgroup postgres 70
 	enewuser pgpool -1 -1 -1 postgres
 
@@ -107,13 +82,14 @@ src_install() {
 	emake DESTDIR="${D}" -C sql install
 	cd "${S}"
 
+	# 3.3 appears to have removed this
 	# `contrib' moved to `extension' with PostgreSQL 9.1
-	local pgslot=$(postgresql-config show)
-	if [[ ${pgslot//.} > 90 ]] ; then
-		cd "${ED%/}$(pg_config --sharedir)"
-		mv contrib extension || die
-		cd "${S}"
-	fi
+	#local pgslot=$(postgresql-config show)
+	#if [[ ${pgslot//.} > 90 ]] ; then
+	#	cd "${ED%/}$(pg_config --sharedir)"
+	#	mv contrib extension || die
+	#	cd "${S}"
+	#fi
 
 	newinitd "${FILESDIR}/${PN}.initd" ${PN}
 	newconfd "${FILESDIR}/${PN}.confd" ${PN}

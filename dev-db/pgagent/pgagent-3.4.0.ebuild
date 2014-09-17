@@ -1,6 +1,6 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/pgagent/pgagent-3.3.0.ebuild,v 1.3 2013/07/27 22:22:46 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/pgagent/pgagent-3.4.0.ebuild,v 1.1 2014/09/15 18:31:46 titanofold Exp $
 
 EAPI="5"
 CMAKE_IN_SOURCE_BUILD=1
@@ -8,7 +8,7 @@ inherit cmake-utils eutils wxwidgets
 
 MY_PN=${PN/a/A}
 
-KEYWORDS="amd64 x86"
+KEYWORDS="~amd64 ~x86"
 
 DESCRIPTION="${MY_PN} is a job scheduler for PostgreSQL"
 HOMEPAGE="http://www.pgadmin.org/download/pgagent.php"
@@ -17,7 +17,7 @@ LICENSE="POSTGRESQL GPL-2"
 SLOT="0"
 IUSE=""
 
-RDEPEND=">=dev-db/postgresql-8.3.0
+RDEPEND=">=dev-db/postgresql-base-9.0.0
 		 x11-libs/wxGTK:2.8
 "
 DEPEND="${RDEPEND}

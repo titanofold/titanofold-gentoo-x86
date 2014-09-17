@@ -1,6 +1,53 @@
 # ChangeLog for dev-db/pygresql
-# Copyright 1999-2012 Gentoo Foundation; Distributed under the GPL v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/pygresql/ChangeLog,v 1.59 2012/11/28 21:07:38 titanofold Exp $
+# Copyright 1999-2014 Gentoo Foundation; Distributed under the GPL v2
+# $Header: /var/cvsroot/gentoo-x86/dev-db/pygresql/ChangeLog,v 1.72 2014/08/10 20:02:23 slyfox Exp $
+
+  10 Aug 2014; Sergei Trofimovich <slyfox@gentoo.org> pygresql-4.1.1-r1.ebuild,
+  pygresql-4.1.1.ebuild:
+  QA: drop trailing '.' from DESCRIPTION
+
+*pygresql-4.1.1-r1 (11 Mar 2014)
+
+  11 Mar 2014; Aaron W. Swenson <titanofold@gentoo.org>
+  +pygresql-4.1.1-r1.ebuild:
+  4.1.1 is not actually compatible with <dev-db/postgresql-9.0. Updated
+  POSTGRES_COMPAT to include 9.3. Fixes bug 499006.
+
+  27 Jan 2014; Aaron W. Swenson <titanofold@gentoo.org> -pygresql-3.8.1.ebuild,
+  -pygresql-4.0.ebuild:
+  Clean out old versions.
+
+  26 Jan 2014; Agostino Sarubbo <ago@gentoo.org> pygresql-4.1.1.ebuild:
+  Stable for sparc, wrt bug #289228
+
+  26 Jan 2014; Agostino Sarubbo <ago@gentoo.org> pygresql-4.1.1.ebuild:
+  Stable for ia64, wrt bug #289228
+
+  19 Jan 2014; Agostino Sarubbo <ago@gentoo.org> pygresql-4.1.1.ebuild:
+  Stable for alpha, wrt bug #289228
+
+  17 Jan 2014; Agostino Sarubbo <ago@gentoo.org> pygresql-4.1.1.ebuild:
+  Stable for ppc, wrt bug #289228
+
+  17 Jan 2014; Agostino Sarubbo <ago@gentoo.org> pygresql-4.1.1.ebuild:
+  Stable for x86, wrt bug #289228
+
+  17 Jan 2014; Agostino Sarubbo <ago@gentoo.org> pygresql-4.1.1.ebuild:
+  Stable for amd64, wrt bug #289228
+
+  16 Jan 2014; Agostino Sarubbo <ago@gentoo.org> pygresql-4.0.ebuild:
+  Stable for x86, wrt bug #289228
+
+  16 Jan 2014; Agostino Sarubbo <ago@gentoo.org> pygresql-4.0.ebuild:
+  Stable for amd64, wrt bug #289228
+
+  16 Jan 2014; Jeroen Roovers <jer@gentoo.org> pygresql-4.1.1.ebuild:
+  Stable for HPPA (bug #289228).
+
+*pygresql-4.1.1 (16 Jan 2014)
+
+  16 Jan 2014; Aaron W. Swenson <titanofold@gentoo.org> +pygresql-4.1.1.ebuild:
+  Version bump. Fixes bug 289228 and 482704.
 
   28 Nov 2012; <titan@gentoo.org> pygresql-3.8.1.ebuild, pygresql-4.0.ebuild:
   Changed license from "as-is" to "POSTGRESQL". Fixes bug 444746.
@@ -214,4 +261,3 @@
 
   04 May 2004; Masatomo Nakano <nakano@gentoo.org> :
   Initial import. This modules was separated from PostgereSQL package.
-

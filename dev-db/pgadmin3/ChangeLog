@@ -1,6 +1,54 @@
 # ChangeLog for dev-db/pgadmin3
-# Copyright 1999-2012 Gentoo Foundation; Distributed under the GPL v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/pgadmin3/ChangeLog,v 1.88 2012/12/13 09:55:34 patrick Exp $
+# Copyright 1999-2014 Gentoo Foundation; Distributed under the GPL v2
+# $Header: /var/cvsroot/gentoo-x86/dev-db/pgadmin3/ChangeLog,v 1.100 2014/08/10 20:01:55 slyfox Exp $
+
+  10 Aug 2014; Sergei Trofimovich <slyfox@gentoo.org> pgadmin3-1.18.1.ebuild:
+  QA: drop trailing '.' from DESCRIPTION
+
+  27 Jan 2014; Aaron W. Swenson <titanofold@gentoo.org>
+  -pgadmin3-1.16.1-r1.ebuild, -files/ssl-detect-r1.patch,
+  -pgadmin3-1.18.0.ebuild, -files/cflags.patch, -files/ssl-detect.patch:
+  Clean out old versions and remove unused patches.
+
+  26 Jan 2014; Agostino Sarubbo <ago@gentoo.org> pgadmin3-1.18.1.ebuild:
+  Stable for x86, wrt bug #495364
+
+  20 Jan 2014; Agostino Sarubbo <ago@gentoo.org> pgadmin3-1.18.1.ebuild:
+  Stable for ppc, wrt bug #495364
+
+  18 Jan 2014; Pacho Ramos <pacho@gentoo.org> pgadmin3-1.18.1.ebuild:
+  amd64 stable, bug #495364
+
+*pgadmin3-1.18.1 (21 Oct 2013)
+
+  21 Oct 2013; Patrick Lauer <patrick@gentoo.org> +pgadmin3-1.18.1.ebuild:
+  Bump
+
+*pgadmin3-1.18.0 (25 Sep 2013)
+
+  25 Sep 2013; Aaron W. Swenson <titanofold@gentoo.org>
+  +files/pgadmin3-desktop.patch, +pgadmin3-1.18.0.ebuild:
+  Version bump fixes bug 485696 and includes patch from bug 472554.
+  pgadmin3-desktop.patch fixes bug 458172.
+
+  27 Feb 2013; Aaron W. Swenson <titanofold@gentoo.org>
+  -pgadmin3-1.14.2.ebuild, -pgadmin3-1.14.3.ebuild, -pgadmin3-1.16.0.ebuild:
+  Remove old versions.
+
+  20 Feb 2013; Agostino Sarubbo <ago@gentoo.org> pgadmin3-1.16.1-r1.ebuild:
+  Stable for x86, wrt bug #457264
+
+  20 Feb 2013; Agostino Sarubbo <ago@gentoo.org> pgadmin3-1.16.1-r1.ebuild:
+  Stable for amd64, wrt bug #457264
+
+  18 Feb 2013; Agostino Sarubbo <ago@gentoo.org> pgadmin3-1.16.1-r1.ebuild:
+  Stable for ppc, wrt bug #457264
+
+*pgadmin3-1.16.1-r1 (25 Dec 2012)
+
+  25 Dec 2012; <titan@gentoo.org> -pgadmin3-1.16.1.ebuild,
+  +pgadmin3-1.16.1-r1.ebuild, metadata.xml:
+  Fix bug 447206
 
 *pgadmin3-1.16.1 (13 Dec 2012)
 

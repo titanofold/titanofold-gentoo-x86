@@ -1,6 +1,41 @@
 # ChangeLog for dev-libs/libpqxx
-# Copyright 1999-2013 Gentoo Foundation; Distributed under the GPL v2
-# $Header: /var/cvsroot/gentoo-x86/dev-libs/libpqxx/ChangeLog,v 1.89 2013/02/02 07:58:25 patrick Exp $
+# Copyright 1999-2014 Gentoo Foundation; Distributed under the GPL v2
+# $Header: /var/cvsroot/gentoo-x86/dev-libs/libpqxx/ChangeLog,v 1.100 2014/08/10 20:37:35 slyfox Exp $
+
+  10 Aug 2014; Sergei Trofimovich <slyfox@gentoo.org> libpqxx-4.0.1.ebuild:
+  QA: drop trailing '.' from DESCRIPTION
+
+  02 Jul 2013; Aaron W. Swenson <titanofold@gentoo.org> -libpqxx-4.0-r1.ebuild:
+  Clean out cruft.
+
+  29 Jun 2013; Agostino Sarubbo <ago@gentoo.org> libpqxx-4.0.1.ebuild:
+  Stable for sparc, wrt bug #472450
+
+  26 Jun 2013; Agostino Sarubbo <ago@gentoo.org> libpqxx-4.0.1.ebuild:
+  Stable for ia64, wrt bug #472450
+
+  26 Jun 2013; Agostino Sarubbo <ago@gentoo.org> libpqxx-4.0.1.ebuild:
+  Stable for alpha, wrt bug #472450
+
+  25 Jun 2013; Agostino Sarubbo <ago@gentoo.org> libpqxx-4.0.1.ebuild:
+  Stable for amd64, wrt bug #472450
+
+  25 Jun 2013; Agostino Sarubbo <ago@gentoo.org> libpqxx-4.0.1.ebuild:
+  Stable for x86, wrt bug #472450
+
+  25 Jun 2013; Agostino Sarubbo <ago@gentoo.org> libpqxx-4.0.1.ebuild:
+  Stable for ppc64, wrt bug #472450
+
+  24 Jun 2013; Agostino Sarubbo <ago@gentoo.org> libpqxx-4.0.1.ebuild:
+  Stable for ppc, wrt bug #472450
+
+  06 Jun 2013; Jeroen Roovers <jer@gentoo.org> libpqxx-4.0.1.ebuild:
+  Stable for HPPA (bug #472450).
+
+  03 May 2013; Aaron W. Swenson <titanofold@gentoo.org> libpqxx-4.0.1.ebuild:
+  Inherit python-any-r1 to pull in a Python 2 interpreter. Use sed to fix
+  shebangs to call python2 instead of python which could be set to a
+  Python 3 interpreter. Fixes bug 455282.
 
 *libpqxx-4.0.1 (02 Feb 2013)
 
