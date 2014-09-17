@@ -19,7 +19,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="memcached pam ssl static-libs"
 
 RDEPEND="
-	dev-db/postgresql-base
+	dev-db/postgresql
 	memcached? ( dev-libs/libmemcached )
 	pam? ( sys-auth/pambase )
 	ssl? ( dev-libs/openssl )

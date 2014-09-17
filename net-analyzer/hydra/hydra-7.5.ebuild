@@ -28,7 +28,7 @@ RDEPEND="
 	ncp? ( net-fs/ncpfs )
 	oracle? ( dev-db/oracle-instantclient-basic )
 	pcre? ( dev-libs/libpcre )
-	postgres? ( dev-db/postgresql-base )
+	postgres? ( dev-db/postgresql )
 	ssl? ( >=net-libs/libssh-0.4.0 )
 	subversion? ( dev-vcs/subversion )
 "

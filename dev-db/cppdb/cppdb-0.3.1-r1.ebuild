@@ -18,7 +18,7 @@ IUSE="doc examples mysql mysql_internal odbc odbc_internal postgres postgres_int
 DEPEND="
 	mysql? ( virtual/mysql )
 	odbc? ( dev-db/unixODBC )
-	postgres? ( dev-db/postgresql-base )
+	postgres? ( dev-db/postgresql )
 	sqlite? ( dev-db/sqlite:3 )"
 RDEPEND="${DEPEND}"
 

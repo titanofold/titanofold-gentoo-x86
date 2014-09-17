@@ -27,7 +27,7 @@ KEYWORDS="~amd64 ~ppc ~sparc x86"
 RDEPEND="
 	mysql? ( virtual/mysql )
 	radius? ( >=net-dialup/radiusclient-ng-0.5.0 )
-	postgres? ( dev-db/postgresql-server )
+	postgres? ( dev-db/postgresql[server] )
 	jabber? ( dev-libs/expat )
 	ldap? (
 		net-nds/openldap

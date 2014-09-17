@@ -48,7 +48,7 @@ RDEPEND="
 		${TCL_DEPS}
 	)
 	png? ( media-libs/libpng )
-	postgres? ( >=dev-db/postgresql-base-8.4 )
+	postgres? ( >=dev-db/postgresql-8.4 )
 	readline? ( sys-libs/readline )
 	sqlite? ( dev-db/sqlite:3 )
 	tiff? ( media-libs/tiff )

@@ -21,7 +21,7 @@ DEPEND="caps? ( sys-libs/libcap )
 	ldap? ( >=net-nds/openldap-2.0.25 )
 	mysql? ( virtual/mysql )
 	pam? ( virtual/pam )
-	postgres? ( dev-db/postgresql-base )
+	postgres? ( dev-db/postgresql )
 	ssl? ( >=dev-libs/openssl-0.9.6g )
 	xinetd? ( virtual/inetd )"
 

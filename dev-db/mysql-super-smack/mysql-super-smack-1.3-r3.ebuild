@@ -22,7 +22,7 @@ IUSE="+mysql postgres"
 REQUIRED_USE="|| ( mysql postgres )"
 
 DEPEND="mysql? ( virtual/mysql )
-		postgres? ( dev-db/postgresql-server )"
+		postgres? ( dev-db/postgresql[server] )"
 RDEPEND="${DEPEND}"
 
 S="${WORKDIR}/${MY_P}"

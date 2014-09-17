@@ -17,7 +17,7 @@ DEPEND="berkdb? ( >=sys-libs/db-4 )
 	ldap? ( net-nds/openldap )
 	mysql? ( virtual/mysql )
 	pam? ( virtual/pam )
-	postgres? ( dev-db/postgresql-server )"
+	postgres? ( dev-db/postgresql[server] )"
 RDEPEND="${DEPEND}"
 
 src_unpack() {

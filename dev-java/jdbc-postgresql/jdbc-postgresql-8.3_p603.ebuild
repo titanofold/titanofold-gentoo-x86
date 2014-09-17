@@ -29,7 +29,7 @@ DEPEND=">=dev-java/java-config-2.0.31
 		=dev-java/junit-3.8*
 		>=dev-java/ant-1.6
 		dev-java/ant-junit
-		dev-db/postgresql-server
+		dev-db/postgresql[server]
 	)"
 RDEPEND=">=virtual/jre-1.5"
 

@@ -30,7 +30,7 @@ RDEPEND="dev-libs/expat
 	nss? ( dev-libs/nss )
 	odbc? ( dev-db/unixODBC )
 	openssl? ( dev-libs/openssl )
-	postgres? ( dev-db/postgresql-base )
+	postgres? ( dev-db/postgresql )
 	sqlite? ( dev-db/sqlite:3 )"
 DEPEND="${RDEPEND}
 	doc? ( app-doc/doxygen )"

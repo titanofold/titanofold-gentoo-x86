@@ -17,7 +17,7 @@ IUSE="postgres"
 # Not adding a mysql USE flag. The package defaults to it, so we will too.
 DEPEND="sys-libs/zlib
 	>=dev-libs/openssl-0.9.6
-	postgres? ( dev-db/postgresql-server )
+	postgres? ( dev-db/postgresql[server] )
 	!postgres? ( virtual/mysql )"
 RDEPEND="${DEPEND}"
 

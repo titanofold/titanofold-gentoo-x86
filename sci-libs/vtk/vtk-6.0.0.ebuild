@@ -65,7 +65,7 @@ RDEPEND="
 	mysql? ( virtual/mysql )
 	odbc? ( dev-db/unixODBC )
 	offscreen? ( media-libs/mesa[osmesa] )
-	postgres? ( dev-db/postgresql-base )
+	postgres? ( dev-db/postgresql )
 	python? (
 		${PYTHON_DEPS}
 		dev-python/sip[${PYTHON_USEDEP}]

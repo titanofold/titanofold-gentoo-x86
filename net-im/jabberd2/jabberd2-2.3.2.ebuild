@@ -27,7 +27,7 @@ DEPEND="dev-libs/expat
 	ldap? ( net-nds/openldap )
 	mysql? ( virtual/mysql )
 	pam? ( virtual/pam )
-	postgres? ( dev-db/postgresql-base )
+	postgres? ( dev-db/postgresql )
 	ssl? ( >=dev-libs/openssl-1.0.1:0 )
 	sqlite? ( dev-db/sqlite:3 )
 	zlib? ( sys-libs/zlib )"

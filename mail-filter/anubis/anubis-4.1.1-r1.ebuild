@@ -20,7 +20,7 @@ RDEPEND="sys-libs/gdbm
 	guile? ( >=dev-scheme/guile-1.8 )
 	mysql? ( virtual/mysql )
 	pam?   ( virtual/pam )
-	postgres? ( dev-db/postgresql-server )
+	postgres? ( dev-db/postgresql[server] )
 	nls? ( sys-devel/gettext )
 	pcre? ( >=dev-libs/libpcre-3.9 )
 	sasl? ( virtual/gsasl )

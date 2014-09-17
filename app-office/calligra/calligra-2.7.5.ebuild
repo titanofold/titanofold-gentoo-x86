@@ -116,7 +116,7 @@ RDEPEND="
 		media-gfx/pstoedit
 	)
 	postgres? (
-		dev-db/postgresql-base
+		dev-db/postgresql
 		dev-libs/libpqxx
 	)
 	semantic-desktop? (

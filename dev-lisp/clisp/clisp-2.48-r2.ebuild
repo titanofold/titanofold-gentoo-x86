@@ -23,7 +23,7 @@ RDEPEND="virtual/libiconv
 		 gdbm? ( sys-libs/gdbm )
 		 gtk? ( >=x11-libs/gtk+-2.10:2 >=gnome-base/libglade-2.6:2.0 )
 		 pari? ( >=sci-mathematics/pari-2.3.0 )
-		 postgres? ( >=dev-db/postgresql-base-8.0 )
+		 postgres? ( >=dev-db/postgresql-8.0 )
 		 readline? ( >=sys-libs/readline-5.0 )
 		 pcre? ( dev-libs/libpcre )
 		 svm? ( sci-libs/libsvm )

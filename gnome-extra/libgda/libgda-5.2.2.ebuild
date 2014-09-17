@@ -51,7 +51,7 @@ RDEPEND="
 	libsecret? ( app-crypt/libsecret )
 	mdb?      ( >app-office/mdbtools-0.5:= )
 	mysql?    ( virtual/mysql:= )
-	postgres? ( dev-db/postgresql-base:= )
+	postgres? ( dev-db/postgresql:= )
 	reports? (
 		${PYTHON_DEPS}
 		dev-java/fop

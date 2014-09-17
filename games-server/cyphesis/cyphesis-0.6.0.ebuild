@@ -25,7 +25,7 @@ RDEPEND=">=media-libs/skstream-0.3.9
 	sys-libs/readline
 	=media-libs/atlas-c++-0.6*
 	>=media-libs/varconf-0.6.4
-	dev-db/postgresql-base"
+	dev-db/postgresql"
 DEPEND="${RDEPEND}
 	>=dev-libs/boost-1.40
 	dev-libs/libxml2

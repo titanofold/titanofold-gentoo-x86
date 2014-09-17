@@ -11,7 +11,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 
-DEPEND=">=dev-db/postgresql-base-8.4
+DEPEND=">=dev-db/postgresql-8.4
 	>=dev-libs/libmemcached-0.39"
 RDEPEND="${DEPEND}"
 

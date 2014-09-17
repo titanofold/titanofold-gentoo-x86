@@ -24,7 +24,7 @@ DEPEND="${RDEPEND}
 		ldap? ( >=net-nds/openldap-1.2.11 )
 		mysql? ( virtual/mysql )
 		pam? ( virtual/pam )
-		postgres? ( >=dev-db/postgresql-base-8.4 )"
+		postgres? ( >=dev-db/postgresql-8.4 )"
 
 pkg_setup() {
 	enewuser mail -1 -1 /var/spool/mail

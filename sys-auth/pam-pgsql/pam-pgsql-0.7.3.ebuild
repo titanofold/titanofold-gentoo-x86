@@ -16,7 +16,7 @@ else
 fi
 
 RDEPEND="virtual/pam
-	>=dev-db/postgresql-base-8.0
+	>=dev-db/postgresql-8.0
 	>=dev-libs/libgcrypt-1.2.0:0"
 DEPEND="${RDEPEND}"
 

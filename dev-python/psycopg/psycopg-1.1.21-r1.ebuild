@@ -17,7 +17,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
 IUSE="examples"
 
 RDEPEND=">=dev-python/egenix-mx-base-2.0.3[${PYTHON_USEDEP}]
-	dev-db/postgresql-base
+	dev-db/postgresql
 	${PYTHON_DEPS}"
 DEPEND="${RDEPEND}"
 

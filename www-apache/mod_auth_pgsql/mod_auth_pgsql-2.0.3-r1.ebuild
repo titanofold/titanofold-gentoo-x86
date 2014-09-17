@@ -13,7 +13,7 @@ SLOT="2"
 KEYWORDS="amd64 ppc ~sparc x86"
 IUSE=""
 
-DEPEND="dev-db/postgresql-base"
+DEPEND="dev-db/postgresql"
 RDEPEND="${DEPEND}"
 
 APXS2_ARGS="-a -c -I/usr/include/postgresql -L/usr/$(get_libdir)/postgresql -lpq mod_auth_pgsql.c"

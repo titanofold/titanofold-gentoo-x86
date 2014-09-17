@@ -25,7 +25,7 @@ DEPEND=">=dev-libs/glib-2
 	mysql? ( virtual/mysql )
 	pam? ( sys-libs/pam )
 	pam_nuauth? ( sys-libs/pam )
-	postgres? ( dev-db/postgresql-server )
+	postgres? ( dev-db/postgresql[server] )
 	nfqueue? ( net-libs/libnfnetlink
 		net-libs/libnetfilter_queue )
 	nfconntrack? ( net-libs/libnetfilter_conntrack )

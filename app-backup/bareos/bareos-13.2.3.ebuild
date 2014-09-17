@@ -25,7 +25,7 @@ DEPEND="
 	!app-backup/bacula
 	dev-libs/gmp
 	!clientonly? (
-		postgres? ( dev-db/postgresql-base[threads] )
+		postgres? ( dev-db/postgresql[threads] )
 		mysql? ( virtual/mysql )
 		sqlite3? ( dev-db/sqlite:3 )
 		director? ( virtual/mta )

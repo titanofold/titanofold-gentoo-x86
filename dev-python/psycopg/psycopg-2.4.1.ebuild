@@ -20,7 +20,7 @@ SLOT="2"
 KEYWORDS="alpha amd64 ~arm ~hppa ia64 ppc ppc64 ~s390 ~sh sparc x86 ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~x86-solaris"
 IUSE="debug doc examples mxdatetime"
 
-RDEPEND=">=dev-db/postgresql-base-8.1
+RDEPEND=">=dev-db/postgresql-8.1
 	mxdatetime? ( dev-python/egenix-mx-base )"
 DEPEND="${RDEPEND}
 	doc? ( dev-python/sphinx )"

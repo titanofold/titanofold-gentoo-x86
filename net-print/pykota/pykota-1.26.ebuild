@@ -24,7 +24,7 @@ DEPEND="dev-lang/python
 	dev-python/pkipplib
 	ldap?     ( dev-python/python-ldap )
 	mysql?    ( dev-python/mysql-python )
-	postgres? ( dev-db/postgresql-server dev-db/pygresql )
+	postgres? ( dev-db/postgresql[server] dev-db/pygresql )
 	snmp?     ( net-analyzer/net-snmp =dev-python/pysnmp-3.4* )
 	xml?      ( dev-python/jaxml )"
 RDEPEND="${DEPEND}"

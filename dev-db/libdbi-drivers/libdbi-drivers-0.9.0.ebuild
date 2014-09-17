@@ -19,7 +19,7 @@ RDEPEND="
 	>=dev-db/libdbi-0.9.0
 	firebird? ( dev-db/firebird )
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql-base )
+	postgres? ( dev-db/postgresql )
 	sqlite? ( dev-db/sqlite:3 )
 "
 DEPEND="${RDEPEND}

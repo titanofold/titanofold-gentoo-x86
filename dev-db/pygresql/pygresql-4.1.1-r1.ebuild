@@ -21,10 +21,10 @@ KEYWORDS="~alpha ~amd64 ~hppa ~ia64 ~ppc ~sparc ~x86"
 IUSE="doc"
 
 DEPEND="|| (
-	dev-db/postgresql-base:9.3
-	dev-db/postgresql-base:9.2
-	dev-db/postgresql-base:9.1
-	dev-db/postgresql-base:9.0
+	dev-db/postgresql:9.3
+	dev-db/postgresql:9.2
+	dev-db/postgresql:9.1
+	dev-db/postgresql:9.0
 )"
 
 RDEPEND="${DEPEND}"

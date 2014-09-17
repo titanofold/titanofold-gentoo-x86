@@ -17,7 +17,7 @@ RDEPEND="dev-db/cdb"
 DEPEND="${RDEPEND}
 		>=dev-libs/bglibs-1.041
 		mysql? ( virtual/mysql )
-		postgres? ( dev-db/postgresql-server )
+		postgres? ( dev-db/postgresql[server] )
 		vpopmail? ( net-mail/vpopmail )
 		test? ( app-editors/vim )"
 # some of the testcases use ex/vi/xxd

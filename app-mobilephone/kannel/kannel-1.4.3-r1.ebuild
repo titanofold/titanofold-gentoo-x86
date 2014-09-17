@@ -25,7 +25,7 @@ RDEPEND="sys-libs/e2fsprogs-libs
 	ssl? ( dev-libs/openssl )
 	mysql? ( virtual/mysql )
 	sqlite? ( dev-db/sqlite:3 )
-	postgres? ( dev-db/postgresql-server )
+	postgres? ( dev-db/postgresql[server] )
 	pcre? ( dev-libs/libpcre )
 	pam? ( virtual/pam )"
 DEPEND="${RDEPEND}

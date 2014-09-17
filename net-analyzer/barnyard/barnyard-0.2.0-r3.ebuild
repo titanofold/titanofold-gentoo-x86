@@ -17,7 +17,7 @@ KEYWORDS="~amd64 -sparc ~x86"
 IUSE="mysql postgres sguil"
 
 DEPEND="net-libs/libpcap
-	postgres? ( dev-db/postgresql-server )
+	postgres? ( dev-db/postgresql[server] )
 	mysql? ( virtual/mysql )
 	sguil? ( dev-lang/tcl )"
 

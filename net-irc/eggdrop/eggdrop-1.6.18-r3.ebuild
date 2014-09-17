@@ -19,7 +19,7 @@ IUSE="debug static mysql postgres ssl vanilla"
 DEPEND="dev-lang/tcl
 	!vanilla? (
 		mysql? ( virtual/mysql )
-		postgres? ( dev-db/postgresql-server )
+		postgres? ( dev-db/postgresql[server] )
 		ssl? ( dev-libs/openssl )
 	)"
 

@@ -14,7 +14,7 @@ SLOT="0"
 KEYWORDS="amd64"
 IUSE=""
 
-DEPEND=">=dev-db/postgresql-base-8.4
+DEPEND=">=dev-db/postgresql-8.4
 		dev-perl/TAP-Parser-SourceHandler-pgTAP
 "
 RDEPEND="${DEPEND}"

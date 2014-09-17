@@ -14,7 +14,7 @@ KEYWORDS="~amd64"
 IUSE=""
 
 DEPEND="app-text/mecab
-		>=dev-db/postgresql-server-7.4" # pgmecab requires PGXS
+		>=dev-db/postgresql-7.4[server]" # pgmecab requires PGXS
 RDEPEND="${DEPEND}"
 
 src_compile() {

@@ -20,7 +20,7 @@ RDEPEND="sha1?		( >=dev-libs/openssl-0.9.6 )
 	ssl?		( >=dev-libs/openssl-0.9.6 )
 	ldap? 		( >=net-nds/openldap-2.0.7 )
 	mysql? 		( virtual/mysql )
-	postgres?	( dev-db/postgresql-server )
+	postgres?	( dev-db/postgresql[server] )
 	perl?		( >=dev-lang/perl-5.6.1 )
 	pam? 		( virtual/pam
 				  >=net-mail/mailbase-0.00-r8 )

@@ -39,7 +39,7 @@ RDEPEND="
 	)
 	gdal? ( sci-libs/gdal )
 	geos? ( sci-libs/geos )
-	postgres? ( >=dev-db/postgresql-base-8.3 )
+	postgres? ( >=dev-db/postgresql-8.3 )
 	sqlite? ( dev-db/sqlite:3 )
 "
 

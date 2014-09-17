@@ -23,7 +23,7 @@ RDEPEND="dev-libs/libevent
 	drizzle? ( dev-db/drizzle )
 	sqlite? ( dev-db/sqlite:3 )
 	tokyocabinet? ( dev-db/tokyocabinet )
-	postgres? ( >=dev-db/postgresql-base-9.0 )"
+	postgres? ( >=dev-db/postgresql-9.0 )"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 

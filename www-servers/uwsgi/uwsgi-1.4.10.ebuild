@@ -43,7 +43,7 @@ CDEPEND="caps? ( sys-libs/libcap )
 		php_targets_php5-4? ( dev-lang/php:5.4[embed] )
 		php_targets_php5-5? ( dev-lang/php:5.5[embed] )
 	)
-	probepg? ( dev-db/postgresql-base:= )
+	probepg? ( dev-db/postgresql:= )
 	ruby? ( $(ruby_implementations_depend) )
 	sqlite? ( dev-db/sqlite:3 )
 	rsyslog? ( app-admin/rsyslog )
@@ -165,8 +165,8 @@ EOF
 	use zeromq || sed -i -e 's|uuid/uuid.h|DISABLED|' uwsgiconfig.py || die "sed failed"
 
 	if use probepg ; then
-		PGPV="$(best_version dev-db/postgresql-base)"
-		PGSLOT="$(get_version_component_range 1-2 ${PGPV##dev-db/postgresql-base-})"
+		PGPV="$(best_version dev-db/postgresql)"
+		PGSLOT="$(get_version_component_range 1-2 ${PGPV##dev-db/postgresql-})"
 		sed -i \
 			-e "s|pg_config|pg_config${PGSLOT/.}|" \
 			plugins/probepg/uwsgiplugin.py || die "sed failed"

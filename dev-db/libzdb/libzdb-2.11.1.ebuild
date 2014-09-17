@@ -19,7 +19,7 @@ REQUIRED_USE=" || ( postgres mysql sqlite )"
 RESTRICT=test
 
 RDEPEND="mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql-base )
+	postgres? ( dev-db/postgresql )
 	sqlite? ( >=dev-db/sqlite-3.7:3[unlock-notify(+)] )
 	ssl? ( dev-libs/openssl )"
 DEPEND="${RDEPEND}

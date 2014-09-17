@@ -15,7 +15,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="berkdb postgres"
 
 DEPEND="berkdb? ( >=sys-libs/db-4 )
-	postgres? ( dev-db/postgresql-server )"
+	postgres? ( dev-db/postgresql[server] )"
 
 src_prepare() {
 	# Merged upstream

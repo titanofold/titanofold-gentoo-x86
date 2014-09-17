@@ -87,7 +87,7 @@ CDEPEND="
 	mysql? ( virtual/mysql )
 	odbc? ( || ( dev-db/libiodbc dev-db/unixODBC ) )
 	oracle? ( dev-db/oracle-instantclient-basic )
-	postgres? ( dev-db/postgresql-base )
+	postgres? ( dev-db/postgresql )
 	pythia6? ( sci-physics/pythia:6 )
 	pythia8? ( sci-physics/pythia:8 )
 	ruby? (

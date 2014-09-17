@@ -13,7 +13,7 @@ HOMEPAGE="http://libdbi-drivers.sourceforge.net/"
 LICENSE="LGPL-2.1"
 DEPEND=">=dev-db/libdbi-0.8.3
 		mysql? ( virtual/mysql )
-		postgres? ( dev-db/postgresql-base )
+		postgres? ( dev-db/postgresql )
 		sqlite? ( <dev-db/sqlite-3 )
 		sqlite3? ( >=dev-db/sqlite-3 )
 		!bindist? ( firebird? ( dev-db/firebird ) )

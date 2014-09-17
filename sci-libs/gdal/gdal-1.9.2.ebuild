@@ -42,7 +42,7 @@ RDEPEND="
 	pdf? ( app-text/poppler )
 	perl? ( dev-lang/perl )
 	png? ( media-libs/libpng )
-	postgres? ( >=dev-db/postgresql-base-8.4 )
+	postgres? ( >=dev-db/postgresql-8.4 )
 	python? ( dev-python/numpy )
 	ruby? ( dev-lang/ruby:1.9 )
 	sqlite? ( dev-db/sqlite:3 )

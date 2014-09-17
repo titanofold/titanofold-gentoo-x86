@@ -21,7 +21,7 @@ RDEPEND="bluetooth? ( net-wireless/bluez )
 	curl? ( net-misc/curl )
 	usb? ( virtual/libusb:1 )
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql-server )
+	postgres? ( dev-db/postgresql[server] )
 	dbi? ( >=dev-db/libdbi-0.8.3 )
 	dev-util/dialog
 	!dev-python/python-gammu" # needs to be removed from the tree
