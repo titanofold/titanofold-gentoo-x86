@@ -59,6 +59,7 @@ zlib? ( sys-libs/zlib )
 "
 
 DEPEND="${RDEPEND}
+!!dev-db/postgresql-{docs,base,server}:${SLOT}
 !!<sys-apps/sandbox-2.0
 >=dev-lang/perl-5.8
 app-text/docbook-dsssl-stylesheets

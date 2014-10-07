@@ -59,6 +59,7 @@ zlib? ( sys-libs/zlib )
 "
 
 DEPEND="${RDEPEND}
+!!dev-db/postgresql-{docs,base,server}:${SLOT}
 !!<sys-apps/sandbox-2.0
 sys-devel/bison
 sys-devel/flex
