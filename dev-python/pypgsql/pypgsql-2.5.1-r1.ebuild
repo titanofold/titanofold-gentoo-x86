@@ -20,7 +20,7 @@ SLOT="0"
 KEYWORDS="amd64 ia64 x86"
 IUSE=""
 
-DEPEND="dev-db/postgresql"
+DEPEND="virtual/postgresql"
 RDEPEND="${DEPEND}
 	dev-python/egenix-mx-base"
 

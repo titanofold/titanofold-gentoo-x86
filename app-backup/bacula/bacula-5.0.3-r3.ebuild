@@ -32,7 +32,7 @@ DEPEND="
 	>=sys-libs/zlib-1.1.4
 	dev-libs/gmp
 	!bacula-clientonly? (
-		postgres? ( dev-db/postgresql[threads] )
+		postgres? ( virtual/postgresql[threads] )
 		mysql? ( virtual/mysql )
 		sqlite3? ( dev-db/sqlite:3 )
 		!bacula-nodir? ( virtual/mta )

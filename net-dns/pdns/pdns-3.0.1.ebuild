@@ -16,7 +16,7 @@ KEYWORDS="amd64 x86"
 IUSE="debug doc ldap mysql postgres sqlite sqlite3 static opendbx"
 
 RDEPEND="mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	ldap? ( >=net-nds/openldap-2.0.27-r4 )
 	sqlite? ( =dev-db/sqlite-2.8* )
 	sqlite3? ( =dev-db/sqlite-3* )

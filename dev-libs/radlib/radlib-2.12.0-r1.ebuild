@@ -17,7 +17,7 @@ SLOT="0"
 IUSE="mysql postgres sqlite static-libs"
 
 RDEPEND="mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	sqlite? ( dev-db/sqlite:3 )"
 DEPEND="${RDEPEND}"
 

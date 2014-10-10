@@ -30,7 +30,7 @@ RDEPEND="net-libs/ptlib:=
 	lua? ( dev-lang/lua )
 	mysql? ( virtual/mysql )
 	odbc? ( dev-db/unixODBC )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	snmp? ( net-analyzer/net-snmp )
 	ssh? ( net-libs/libssh )
 	sqlite? ( dev-db/sqlite:3 )"

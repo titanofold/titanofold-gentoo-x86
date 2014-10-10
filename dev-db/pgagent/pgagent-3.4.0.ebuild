@@ -17,7 +17,7 @@ LICENSE="POSTGRESQL GPL-2"
 SLOT="0"
 IUSE=""
 
-RDEPEND=">=dev-db/postgresql-9.0.0
+RDEPEND=">=virtual/postgresql-9.0.0
 		 x11-libs/wxGTK:2.8
 "
 DEPEND="${RDEPEND}

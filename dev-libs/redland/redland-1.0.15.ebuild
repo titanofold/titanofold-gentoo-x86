@@ -24,7 +24,7 @@ RDEPEND=">=sys-devel/libtool-2.2.6b
 	ssl? ( dev-libs/openssl:0 )
 	>=media-libs/raptor-2.0.7
 	>=dev-libs/rasqal-0.9.28
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	iodbc? ( dev-db/libiodbc )
 	odbc? ( dev-db/unixODBC )"
 DEPEND="${RDEPEND}

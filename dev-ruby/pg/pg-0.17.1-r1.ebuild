@@ -22,10 +22,10 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ppc ~ppc64 ~x86 ~x86-fbsd ~amd64-linux ~x86-
 IUSE=""
 
 RDEPEND="${RDEPEND}
-	dev-db/postgresql"
+	virtual/postgresql"
 DEPEND="${DEPEND}
-	dev-db/postgresql
-	test? ( dev-db/postgresql[server,threads] )"
+	virtual/postgresql
+	test? ( virtual/postgresql[server,threads] )"
 
 ruby_add_bdepend "
 	doc? (

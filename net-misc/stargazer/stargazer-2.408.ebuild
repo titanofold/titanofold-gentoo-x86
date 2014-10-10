@@ -23,7 +23,7 @@ RDEPEND="module_config_rpcconfig? ( dev-libs/xmlrpc-c[abyss] sys-libs/zlib )
 	module_config_sgconfig? ( dev-libs/expat )
 	module_store_firebird? ( >=dev-db/firebird-2.0.3.12981.0-r6 )
 	module_store_mysql? ( virtual/mysql )
-	module_store_postgres? ( dev-db/postgresql dev-libs/openssl sys-libs/zlib )
+	module_store_postgres? ( virtual/postgresql dev-libs/openssl sys-libs/zlib )
 	sgconf? ( dev-libs/expat )
 	sgconf_xml? ( dev-libs/expat )"
 

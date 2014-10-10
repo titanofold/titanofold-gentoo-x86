@@ -24,7 +24,7 @@ DEPEND="net-mail/mailbase
 		ldap? ( >=net-nds/openldap-1.2.11 )
 		mysql? ( virtual/mysql )
 		pam? ( virtual/pam )
-		postgres? ( >=dev-db/postgresql-8.4 )
+		postgres? ( >=virtual/postgresql-8.4 )
 		sqlite? ( dev-db/sqlite:3 )"
 
 RDEPEND="${DEPEND}"

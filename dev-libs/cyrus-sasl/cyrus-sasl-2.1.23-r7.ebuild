@@ -27,7 +27,7 @@ DEPEND="authdaemond? ( || ( >=net-mail/courier-imap-3.0.7 >=mail-mta/courier-0.4
 	mysql? ( virtual/mysql )
 	ntlm_unsupported_patch? ( >=net-fs/samba-3.0.9 )
 	pam? ( virtual/pam )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	ssl? ( >=dev-libs/openssl-0.9.6d )
 	java? ( >=virtual/jdk-1.4 )"
 RDEPEND="${DEPEND}"

@@ -16,7 +16,7 @@ LICENSE="BSD"
 SLOT="0"
 IUSE="doc static-libs"
 
-RDEPEND="dev-db/postgresql"
+RDEPEND="virtual/postgresql"
 DEPEND="${PYTHON_DEPS}
 		${RDEPEND}
 "

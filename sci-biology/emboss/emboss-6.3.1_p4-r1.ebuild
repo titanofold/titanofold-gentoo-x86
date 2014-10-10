@@ -31,7 +31,7 @@ DEPEND="
 		media-libs/libpng
 		media-libs/gd
 		)
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	!minimal? (
 		sci-biology/primer3
 		sci-biology/clustalw

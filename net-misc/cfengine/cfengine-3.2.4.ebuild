@@ -23,7 +23,7 @@ IUSE="examples html mysql postgres qdbm selinux tests tokyocabinet vim-syntax"
 # libvirt? ( app-emulation/libvirt )
 DEPEND=">=sys-libs/db-4
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	selinux? ( sys-libs/libselinux )
 	tokyocabinet? ( dev-db/tokyocabinet )
 	!tokyocabinet? ( qdbm? ( dev-db/qdbm ) )

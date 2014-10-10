@@ -13,7 +13,7 @@ LICENSE="GPL-2"
 SLOT="0"
 IUSE=""
 
-DEPEND="dev-db/postgresql
+DEPEND="virtual/postgresql
 		app-text/xmlto"
 RDEPEND="${DEPEND}"
 

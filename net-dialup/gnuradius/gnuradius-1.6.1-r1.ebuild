@@ -26,7 +26,7 @@ DEPEND="
 	guile? ( >=dev-scheme/guile-1.4 )
 	mysql? ( virtual/mysql )
 	odbc? ( || ( dev-db/unixODBC dev-db/libiodbc ) )
-	postgres? ( dev-db/postgresql[server] )
+	postgres? ( virtual/postgresql[server] )
 	readline? ( sys-libs/readline )
 	snmp? ( net-analyzer/net-snmp )
 	virtual/pam

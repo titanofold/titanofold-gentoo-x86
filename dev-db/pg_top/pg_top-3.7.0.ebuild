@@ -16,7 +16,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="debug"
 
-RDEPEND="dev-db/postgresql"
+RDEPEND="virtual/postgresql"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 

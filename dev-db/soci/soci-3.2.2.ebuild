@@ -20,7 +20,7 @@ DEPEND="boost? ( dev-libs/boost )
 	mysql? ( virtual/mysql )
 	odbc? ( dev-db/unixODBC )
 	oracle? ( dev-db/oracle-instantclient-basic )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	sqlite? ( dev-db/sqlite:3 )
 "
 RDEPEND=${DEPEND}

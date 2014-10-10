@@ -21,7 +21,7 @@ IUSE="examples html libvirt mysql postgres +qdbm selinux tests tokyocabinet vim-
 
 DEPEND=">=sys-libs/db-4
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	selinux? ( sys-libs/libselinux )
 	tokyocabinet? ( dev-db/tokyocabinet )
 	qdbm? ( dev-db/qdbm )

@@ -30,7 +30,7 @@ RDEPEND="!app-mobilephone/smstools
 	sms? (
 		!app-mobilephone/smstools
 		>=dev-libs/glib-2
-		postgres? ( >=dev-db/postgresql-8.0 )
+		postgres? ( >=virtual/postgresql-8.0 )
 		mysql? ( >=virtual/mysql-4.1 )
 	)
 	ical? ( dev-libs/libical )

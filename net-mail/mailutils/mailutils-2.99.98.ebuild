@@ -35,7 +35,7 @@ RDEPEND="!mail-client/nmh
 	mysql? ( virtual/mysql )
 	nls? ( sys-devel/gettext )
 	pam? ( virtual/pam )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	sasl? ( virtual/gsasl )
 	ssl? ( net-libs/gnutls )
 	tcpd? ( sys-apps/tcp-wrappers )

@@ -25,7 +25,7 @@ DEPEND="
 	pam? ( virtual/pam )
 	mysql? ( virtual/mysql )
 	ldap? ( >=net-nds/openldap-1.2.11 )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	spell? ( app-text/aspell )
 	fam? ( virtual/fam )
 	!mail-filter/maildrop

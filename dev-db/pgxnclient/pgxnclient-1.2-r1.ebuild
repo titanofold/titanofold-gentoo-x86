@@ -17,7 +17,7 @@ LICENSE="BSD"
 SLOT="0"
 IUSE="test"
 
-RDEPEND=">=dev-db/postgresql-9.1[server]"
+RDEPEND=">=virtual/postgresql-9.1[server]"
 DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 
 python_test() {

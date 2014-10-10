@@ -23,7 +23,7 @@ RDEPEND="app-arch/bzip2
 	sys-libs/zlib
 	auth? (
 		mysql? ( virtual/mysql )
-		postgres? ( dev-db/postgresql )
+		postgres? ( virtual/postgresql )
 		sqlite? ( dev-db/sqlite:3 )
 		!mysql? ( !postgres? ( !sqlite? ( virtual/mysql ) ) )
 	)

@@ -14,7 +14,7 @@ IUSE="static debug gre mpls mysql odbc postgres"
 
 DEPEND="net-libs/libpcap
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql[server] )
+	postgres? ( virtual/postgresql[server] )
 	odbc? ( dev-db/unixODBC )"
 RDEPEND="${DEPEND}"
 

@@ -15,7 +15,7 @@ SLOT="0"
 KEYWORDS="amd64 ia64 sparc x86"
 IUSE=""
 
-DEPEND="dev-db/postgresql[server]
+DEPEND="virtual/postgresql[server]
 	dev-lang/perl"
 
 S=${WORKDIR}/Pg-${PV}

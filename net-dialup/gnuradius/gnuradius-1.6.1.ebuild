@@ -21,7 +21,7 @@ DEPEND="!net-dialup/freeradius
 	!net-dialup/cistronradius
 	guile? ( >=dev-scheme/guile-1.4 )
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql[server] )
+	postgres? ( virtual/postgresql[server] )
 	odbc? ( || ( dev-db/unixODBC dev-db/libiodbc ) )
 	readline? ( sys-libs/readline )
 	dbm? ( sys-libs/gdbm )

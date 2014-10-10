@@ -15,7 +15,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="berkdb postgres"
 
 DEPEND="berkdb? ( >=sys-libs/db-4 )
-	postgres? ( dev-db/postgresql[server] )"
+	postgres? ( virtual/postgresql[server] )"
 
 src_prepare() {
 	epatch "${FILESDIR}"/${P}-berkdb-5.0.patch

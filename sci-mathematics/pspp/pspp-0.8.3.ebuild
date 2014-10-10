@@ -31,7 +31,7 @@ RDEPEND="
 			x11-libs/gtk+:2
 			>=x11-libs/gtksourceview-2.2:2.0 )
 	ncurses? ( sys-libs/ncurses )
-	postgres? ( dev-db/postgresql:=[server] )"
+	postgres? ( virtual/postgresql:=[server] )"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig
 	doc? ( virtual/latex-base )"

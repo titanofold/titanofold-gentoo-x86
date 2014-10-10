@@ -19,7 +19,7 @@ KEYWORDS="amd64 ~ppc x86"
 IUSE="+mysql postgres"
 
 DEPEND="mysql? ( virtual/mysql )
-		postgres? ( dev-db/postgresql[server] )"
+		postgres? ( virtual/postgresql[server] )"
 RDEPEND="${DEPEND}"
 
 S="${WORKDIR}/${MY_P}"

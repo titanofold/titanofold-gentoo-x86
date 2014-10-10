@@ -21,13 +21,13 @@ SLOT="0"
 KEYWORDS="amd64 ppc x86"
 
 DEPEND="|| (
-			dev-db/postgresql:9.2[server]
-			dev-db/postgresql:9.1[server]
-			dev-db/postgresql:9.0[server]
-			dev-db/postgresql:8.4[server]
-			dev-db/postgresql:8.3[server]
+			virtual/postgresql:9.2[server]
+			virtual/postgresql:9.1[server]
+			virtual/postgresql:9.0[server]
+			virtual/postgresql:8.4[server]
+			virtual/postgresql:8.3[server]
 		)
-		dev-db/postgresql[threads]
+		virtual/postgresql[threads]
 		perl? ( dev-perl/DBD-Pg )
 "
 

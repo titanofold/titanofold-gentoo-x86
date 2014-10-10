@@ -21,10 +21,10 @@ IUSE="doc gtk"
 
 RDEPEND="
 		|| (
-			dev-db/postgresql:9.3[server]
-			dev-db/postgresql:9.2[server]
-			dev-db/postgresql:9.1[server]
-			dev-db/postgresql:9.0[server]
+			virtual/postgresql:9.3[server]
+			virtual/postgresql:9.2[server]
+			virtual/postgresql:9.1[server]
+			virtual/postgresql:9.0[server]
 		)
 		dev-libs/json-c
 		dev-libs/libxml2:2

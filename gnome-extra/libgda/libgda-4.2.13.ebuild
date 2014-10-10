@@ -41,7 +41,7 @@ RDEPEND="
 	ldap?	( net-nds/openldap )
 	mdb?	( >app-office/mdbtools-0.5 )
 	mysql?	( virtual/mysql )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	ssl?	( dev-libs/openssl )"
 
 DEPEND="${RDEPEND}

@@ -1,6 +1,6 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/mail-mta/exim/exim-4.82.1.ebuild,v 1.1 2014/05/28 12:56:48 grobian Exp $
+# $Header: /var/cvsroot/gentoo-x86/mail-mta/exim/exim-4.82.1.ebuild,v 1.2 2014/09/30 18:39:58 grobian Exp $
 
 EAPI="5"
 
@@ -35,7 +35,7 @@ COMMON_DEPEND=">=sys-apps/sed-4.0.5
 			  dev-libs/libtasn1 )
 	ldap? ( >=net-nds/openldap-2.0.7 )
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	sasl? ( >=dev-libs/cyrus-sasl-2.1.26-r2 )
 	redis? ( dev-libs/hiredis )
 	selinux? ( sec-policy/selinux-exim )
@@ -337,7 +337,7 @@ src_install () {
 
 	# conf files
 	insinto /etc/exim
-	newins "${S}"/src/configure.default.orig exim.conf.dist
+	newins "${S}"/src/configure.default exim.conf.dist
 	if use exiscan-acl; then
 		newins "${S}"/src/configure.default exim.conf.exiscan-acl
 	fi

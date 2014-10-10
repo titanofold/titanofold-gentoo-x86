@@ -18,7 +18,7 @@ RDEPEND="sys-libs/zlib
 	virtual/jpeg
 	ffmpeg? ( virtual/ffmpeg )
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql )"
+	postgres? ( virtual/postgresql )"
 # note: libv4l is only in dependencies for the libv4l1-videodev.h header file
 # used by the -workaround-v4l1_deprecation.patch.
 DEPEND="${RDEPEND}

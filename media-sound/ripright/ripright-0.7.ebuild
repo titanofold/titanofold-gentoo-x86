@@ -8,7 +8,7 @@ DESCRIPTION="RigRight is a minimal CD ripper for Linux modeled on autorip."
 HOMEPAGE="http://www.mcternan.me.uk/ripright/"
 SRC_URI="http://www.mcternan.me.uk/ripright/software/ripright-0.7.tar.gz"
 
-LICENSE="GPLv2"
+LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64"
 IUSE=""

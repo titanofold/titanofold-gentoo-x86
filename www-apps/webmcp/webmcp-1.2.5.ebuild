@@ -17,7 +17,7 @@ SLOT=0
 IUSE=""
 
 RDEPEND="dev-lang/lua
-	dev-db/postgresql"
+	virtual/postgresql"
 DEPEND="${RDEPEND}"
 
 S="${WORKDIR}"/${MY_P}

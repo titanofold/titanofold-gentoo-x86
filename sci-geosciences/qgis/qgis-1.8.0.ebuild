@@ -39,7 +39,7 @@ RDEPEND="
 	x11-libs/qwt:5[svg]
 	!bundled-libs? ( <x11-libs/qwtpolar-1 )
 	grass? ( >=sci-geosciences/grass-6.4.0_rc6[python?] )
-	postgres? ( >=dev-db/postgresql-8.4 )
+	postgres? ( >=virtual/postgresql-8.4 )
 	python? (
 		dev-python/PyQt4[X,sql,svg,${PYTHON_USEDEP}]
 		dev-python/sip[${PYTHON_USEDEP}]

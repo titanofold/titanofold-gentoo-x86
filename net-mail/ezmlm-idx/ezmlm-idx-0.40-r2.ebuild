@@ -27,8 +27,8 @@ RDEPEND="virtual/qmail"
 
 if [ "$PN" = "${PB}-pgsql" ]
 then
-	DEPEND="$DEPEND dev-db/postgresql[server]"
-	RDEPEND="$RDEPEND dev-db/postgresql[server]"
+	DEPEND="$DEPEND virtual/postgresql[server]"
+	RDEPEND="$RDEPEND virtual/postgresql[server]"
 elif [ "$PN" = "${PB}-mysql" ]
 then
 	DEPEND="$DEPEND virtual/mysql"

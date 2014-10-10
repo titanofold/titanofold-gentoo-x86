@@ -21,7 +21,7 @@ DEPEND="acl? ( virtual/acl )
 	mhash? ( >=app-crypt/mhash-0.9.2 )
 	!mhash? ( dev-libs/libgcrypt:0 )
 	nls? ( virtual/libintl )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	prelink? ( sys-devel/prelink )
 	selinux? (
 		sys-libs/libselinux

@@ -26,7 +26,7 @@ DEPEND="
 	mysql? ( virtual/mysql )
 	oci8? ( dev-db/oracle-instantclient-basic )
 	odbc? ( || ( dev-db/unixODBC dev-db/libiodbc ) )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	sqlite? ( dev-db/sqlite:3 )
 "
 RDEPEND="${DEPEND}"

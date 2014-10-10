@@ -23,7 +23,7 @@ REQUIRED_USE="vanilla? ( !mysql !postgres !ssl )"
 DEPEND="dev-lang/tcl
 	!vanilla? (
 		mysql? ( virtual/mysql )
-		postgres? ( dev-db/postgresql[server] )
+		postgres? ( virtual/postgresql[server] )
 		ssl? ( dev-libs/openssl )
 	)"
 RDEPEND="${DEPEND}"

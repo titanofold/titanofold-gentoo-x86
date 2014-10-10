@@ -25,7 +25,7 @@ DEPEND="
 		dev-db/oracle-instantclient-basic
 		dev-db/oracle-instantclient-sqlplus
 	)
-	postgres? ( dev-db/postgresql[server] )
+	postgres? ( virtual/postgresql[server] )
 "
 RDEPEND="${DEPEND}"
 

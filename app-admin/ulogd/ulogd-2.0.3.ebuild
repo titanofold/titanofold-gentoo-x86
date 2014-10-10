@@ -28,7 +28,7 @@ RDEPEND="net-firewall/iptables
 	nflog? ( >=net-libs/libnetfilter_log-1.0.0 )
 	mysql? ( virtual/mysql )
 	pcap? ( net-libs/libpcap )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	sqlite? ( dev-db/sqlite:3 )"
 
 DEPEND="${RDEPEND}

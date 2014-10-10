@@ -19,7 +19,7 @@ RDEPEND="
 	geoip? ( dev-libs/geoip )
 	mongodb? ( >=dev-libs/mongo-c-driver-0.8.1-r1 )
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	sqlite? ( =dev-db/sqlite-3* )
 "
 DEPEND="

@@ -16,7 +16,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 
-CDEPEND="dev-db/postgresql[server]
+CDEPEND="virtual/postgresql[server]
 	dev-python/egenix-mx-base
 	dev-python/lxml
 	dev-python/psycopg

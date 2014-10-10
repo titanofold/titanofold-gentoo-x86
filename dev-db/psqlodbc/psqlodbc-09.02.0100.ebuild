@@ -18,7 +18,7 @@ LICENSE="LGPL-2"
 KEYWORDS="~x86 ~amd64"
 IUSE="doc iodbc ssl threads unicode"
 
-DEPEND="dev-db/postgresql:${PGSLOT}
+DEPEND="virtual/postgresql:${PGSLOT}
 		!iodbc? ( dev-db/unixODBC )
 		iodbc? ( dev-db/libiodbc )
 		ssl? ( dev-libs/openssl )

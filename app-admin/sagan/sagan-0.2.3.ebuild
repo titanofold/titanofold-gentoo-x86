@@ -23,7 +23,7 @@ RDEPEND="dev-libs/libpcre
 	smtp? ( net-libs/libesmtp )
 	pcap? ( net-libs/libpcap )
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	lognorm? ( dev-libs/liblognorm )
 	libdnet? ( dev-libs/libdnet )
 	snort? ( >=net-analyzer/snortsam-2.50 )

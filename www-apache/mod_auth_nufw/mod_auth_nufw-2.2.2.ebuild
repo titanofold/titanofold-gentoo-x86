@@ -16,7 +16,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="+mysql postgres"
 
 DEPEND="mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql[server] )"
+	postgres? ( virtual/postgresql[server] )"
 RDEPEND="${DEPEND}"
 
 APACHE2_MOD_FILE="mod_auth_nufw.so"

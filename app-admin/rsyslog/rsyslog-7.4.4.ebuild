@@ -26,7 +26,7 @@ RDEPEND="
 	extras? ( net-libs/libnet )
 	kerberos? ( virtual/krb5 )
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	oracle? ( dev-db/oracle-instantclient-basic )
 	relp? ( >=dev-libs/librelp-1.0.3 )
 	snmp? ( net-analyzer/net-snmp )

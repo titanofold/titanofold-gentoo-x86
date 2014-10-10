@@ -25,7 +25,7 @@ RDEPEND="dev-libs/libpcre
 	smtp? ( net-libs/libesmtp )
 	pcap? ( net-libs/libpcap )
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	prelude? ( dev-libs/libprelude )
 	lognorm? ( dev-libs/liblognorm )
 	libdnet? ( dev-libs/libdnet )

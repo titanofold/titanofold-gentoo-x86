@@ -47,7 +47,7 @@ RDEPEND="
 	pdf? ( >=app-text/poppler-0.24.3:= )
 	perl? ( dev-lang/perl:= )
 	png? ( media-libs/libpng )
-	postgres? ( >=dev-db/postgresql-8.4 )
+	postgres? ( >=virtual/postgresql-8.4 )
 	python? (
 		${PYTHON_DEPS}
 		dev-python/setuptools[${PYTHON_USEDEP}]

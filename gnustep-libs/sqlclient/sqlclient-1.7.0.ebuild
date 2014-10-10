@@ -18,7 +18,7 @@ IUSE="java mysql postgres +sqlite"
 
 RDEPEND=">=gnustep-libs/performance-0.3.2
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	sqlite? ( >=dev-db/sqlite-3 )"
 DEPEND="${RDEPEND}"
 

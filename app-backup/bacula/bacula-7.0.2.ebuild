@@ -21,7 +21,7 @@ IUSE="acl bacula-clientonly bacula-nodir bacula-nosd examples ipv6 logwatch mysq
 DEPEND="
 	dev-libs/gmp
 	!bacula-clientonly? (
-		postgres? ( dev-db/postgresql[threads] )
+		postgres? ( virtual/postgresql[threads] )
 		mysql? ( virtual/mysql )
 		sqlite3? ( dev-db/sqlite:3 )
 		!bacula-nodir? ( virtual/mta )

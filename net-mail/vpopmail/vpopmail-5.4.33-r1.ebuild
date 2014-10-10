@@ -19,7 +19,7 @@ REQUIRED_USE="mysql? ( !postgres )"
 DEPEND="virtual/qmail
 	maildrop? ( mail-filter/maildrop )
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql[server] )
+	postgres? ( virtual/postgresql[server] )
 	spamassassin? ( mail-filter/spamassassin )"
 RDEPEND="${DEPEND}"
 

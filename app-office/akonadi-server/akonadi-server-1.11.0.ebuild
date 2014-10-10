@@ -56,7 +56,7 @@ DEPEND="${CDEPEND}
 	test? ( sys-apps/dbus )
 "
 RDEPEND="${CDEPEND}
-	postgres? ( dev-db/postgresql[server] )
+	postgres? ( virtual/postgresql[server] )
 "
 
 pkg_setup() {

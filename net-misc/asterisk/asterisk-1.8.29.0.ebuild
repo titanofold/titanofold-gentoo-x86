@@ -1,6 +1,6 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/net-misc/asterisk/asterisk-1.8.29.0.ebuild,v 1.1 2014/07/14 20:13:36 chainsaw Exp $
+# $Header: /var/cvsroot/gentoo-x86/net-misc/asterisk/asterisk-1.8.29.0.ebuild,v 1.2 2014/09/18 10:29:46 chainsaw Exp $
 
 EAPI=5
 inherit autotools base eutils linux-info multilib user
@@ -61,7 +61,7 @@ RDEPEND="dev-libs/popt
 	odbc? ( dev-db/unixODBC )
 	osplookup? ( net-libs/osptoolkit )
 	portaudio? ( media-libs/portaudio )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	radius? ( net-dialup/radiusclient-ng )
 	selinux? ( sec-policy/selinux-asterisk )
 	snmp? ( net-analyzer/net-snmp )
@@ -75,7 +75,8 @@ RDEPEND="dev-libs/popt
 DEPEND="${RDEPEND}
 	voicemail_storage_imap? ( virtual/imap-c-client )
 	!net-libs/openh323
-	!net-libs/pjsip"
+	!net-libs/pjsip
+	virtual/pkgconfig"
 
 RDEPEND="${RDEPEND}
 	syslog? ( virtual/logger )"

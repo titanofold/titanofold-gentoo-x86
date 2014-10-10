@@ -125,7 +125,7 @@ DEPEND="
 	nls? ( sys-devel/gettext )
 	oci8-instant-client? ( dev-db/oracle-instantclient-basic )
 	odbc? ( >=dev-db/unixODBC-1.8.13 )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	qdbm? ( dev-db/qdbm )
 	readline? ( sys-libs/readline )
 	recode? ( app-text/recode )

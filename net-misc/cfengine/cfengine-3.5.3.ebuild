@@ -23,7 +23,7 @@ IUSE="acl examples libvirt mysql postgres +qdbm selinux tokyocabinet vim-syntax 
 
 DEPEND="acl? ( virtual/acl )
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	selinux? ( sys-libs/libselinux )
 	tokyocabinet? ( dev-db/tokyocabinet )
 	qdbm? ( dev-db/qdbm )

@@ -30,7 +30,7 @@ DEPEND="
 	nfqueue? ( net-libs/libnfnetlink net-libs/libnetfilter_queue )
 	pam? ( sys-libs/pam )
 	pam_nuauth? ( sys-libs/pam )
-	postgres? ( dev-db/postgresql[server] )
+	postgres? ( virtual/postgresql[server] )
 	prelude? ( dev-libs/libprelude )
 "
 RDEPEND=${DEPEND}

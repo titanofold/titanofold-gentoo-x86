@@ -14,7 +14,7 @@ IUSE="static debug aruba gre mpls prelude ipv6 mysql odbc postgres"
 
 DEPEND="net-libs/libpcap
 	    mysql? ( virtual/mysql )
-		postgres? ( dev-db/postgresql[server] )
+		postgres? ( virtual/postgresql[server] )
 		prelude? ( >=dev-libs/libprelude-0.9.0 )
 		odbc? ( dev-db/unixODBC )"
 

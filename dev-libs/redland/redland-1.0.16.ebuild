@@ -23,7 +23,7 @@ RDEPEND=">=sys-devel/libtool-2.2.6b
 	!xml? ( >=dev-libs/expat-2 )
 	>=media-libs/raptor-2.0.7
 	>=dev-libs/rasqal-0.9.28
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	iodbc? ( dev-db/libiodbc )
 	odbc? ( dev-db/unixODBC )"
 DEPEND="${RDEPEND}

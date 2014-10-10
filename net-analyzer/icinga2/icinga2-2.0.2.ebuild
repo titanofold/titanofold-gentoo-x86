@@ -22,7 +22,7 @@ DEPEND="dev-util/cmake
 		sys-devel/bison
 		sys-devel/flex
 		mysql? ( virtual/mysql )
-		postgres? ( dev-db/postgresql )"
+		postgres? ( virtual/postgresql )"
 
 RDEPEND="${DEPEND}
 	plugins? ( net-analyzer/nagios-plugins )

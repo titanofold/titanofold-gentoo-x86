@@ -81,7 +81,7 @@ COMMON_DEPEND="
 	collectd_plugins_oracle?		( >=dev-db/oracle-instantclient-basic-11.2.0.1.0 )
 	collectd_plugins_perl?			( dev-lang/perl[ithreads] ( || ( sys-devel/libperl[ithreads] >=sys-devel/libperl-5.10 ) ) )
 	collectd_plugins_ping?			( net-libs/liboping )
-	collectd_plugins_postgresql?		( >=dev-db/postgresql-8.2 )
+	collectd_plugins_postgresql?		( >=virtual/postgresql-8.2 )
 	collectd_plugins_python?		( =dev-lang/python-2* )
 	collectd_plugins_routeros?		( net-libs/librouteros )
 	collectd_plugins_rrdcached?		( >=net-analyzer/rrdtool-1.4 )

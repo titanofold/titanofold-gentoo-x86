@@ -19,7 +19,7 @@ KEYWORDS="~x64-solaris"
 IUSE="bindist firebird +mysql oracle postgres sqlite sqlite3"
 
 DEPEND="mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	sqlite? ( <dev-db/sqlite-3 )
 	sqlite3? ( =dev-db/sqlite-3* )
 	oracle? ( dev-db/oracle-instantclient-basic )
