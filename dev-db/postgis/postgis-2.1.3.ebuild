@@ -21,10 +21,10 @@ IUSE="doc gtk"
 
 RDEPEND="
 		|| (
-			dev-db/postgresql:9.3[server]
-			dev-db/postgresql:9.2[server]
-			dev-db/postgresql:9.1[server]
-			dev-db/postgresql:9.0[server]
+			virtual/postgresql:9.3[server]
+			virtual/postgresql:9.2[server]
+			virtual/postgresql:9.1[server]
+			virtual/postgresql:9.0[server]
 		)
 		dev-libs/json-c
 		dev-libs/libxml2:2
@@ -52,7 +52,7 @@ PGIS="$(get_version_component_range 1-2)"
 RESTRICT="test"
 
 # These modules are built using the same *FLAGS that were used to build
-# dev-db/postgresql. The right thing to do is to ignore the current
+# virtual/postgresql. The right thing to do is to ignore the current
 # *FLAGS settings.
 QA_FLAGS_IGNORED="usr/lib(64)?/(rt)?postgis-${PGIS}\.so"
 

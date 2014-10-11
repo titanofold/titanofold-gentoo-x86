@@ -2,6 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/net-analyzer/barnyard2/barnyard2-1.8.ebuild,v 1.4 2011/04/02 12:54:23 ssuominen Exp $
 
+EAPI=2
+
 inherit eutils
 
 DESCRIPTION="Parser for Snort unified/unified2 files"
@@ -13,7 +15,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="static debug aruba gre mpls prelude ipv6 mysql odbc postgres"
 
 DEPEND="net-libs/libpcap
-	    mysql? ( virtual/mysql )
+		mysql? ( virtual/mysql )
 		postgres? ( virtual/postgresql[server] )
 		prelude? ( >=dev-libs/libprelude-0.9.0 )
 		odbc? ( dev-db/unixODBC )"
@@ -64,13 +66,13 @@ src_install () {
 	dodoc doc/INSTALL \
 		  doc/README \
 		  doc/README.aruba \
-	      doc/README.database \
+		  doc/README.database \
 		  doc/README.sguil \
 		  LICENSE \
 		  RELEASE.NOTES
 
 	dodoc schemas/create_db2 \
-	      schemas/create_mssql \
+		  schemas/create_mssql \
 		  schemas/create_mysql \
 		  schemas/create_oracle.sql \
 		  schemas/create_postgresql

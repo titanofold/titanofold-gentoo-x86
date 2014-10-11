@@ -2,6 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/app-crypt/onak/onak-0.3.3-r1.ebuild,v 1.4 2010/06/17 21:22:15 patrick Exp $
 
+EAPI=2
+
 DESCRIPTION="onak is an OpenPGP keyserver"
 HOMEPAGE="http://www.earth.li/projectpurple/progs/onak.html"
 SRC_URI="http://www.earth.li/projectpurple/files/${P}.tar.gz"

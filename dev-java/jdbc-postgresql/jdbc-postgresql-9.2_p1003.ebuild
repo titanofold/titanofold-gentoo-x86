@@ -29,7 +29,7 @@ DEPEND="
 	)
 	test? (
 		dev-java/ant-junit
-		dev-db/postgresql[server]
+		virtual/postgresql[server]
 	)"
 RDEPEND=">=virtual/jre-1.6"
 

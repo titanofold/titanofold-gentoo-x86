@@ -2,6 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/net-irc/eggdrop/eggdrop-1.6.19.ebuild,v 1.8 2014/08/10 20:53:12 slyfox Exp $
 
+EAPI=2
+
 inherit eutils
 
 MY_P="eggdrop${PV}"

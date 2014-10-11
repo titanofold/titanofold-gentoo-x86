@@ -2,6 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/net-libs/cvm/cvm-0.76.ebuild,v 1.15 2010/06/17 21:52:50 patrick Exp $
 
+EAPI=2
+
 inherit toolchain-funcs eutils
 
 DESCRIPTION="Credential Validation Modules by Bruce Guenter"

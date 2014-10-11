@@ -2,6 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/net-dialup/gnuradius/gnuradius-1.5.ebuild,v 1.6 2010/06/17 21:47:03 patrick Exp $
 
+EAPI=2
+
 inherit libtool eutils pam
 
 MY_P="${P#gnu}"

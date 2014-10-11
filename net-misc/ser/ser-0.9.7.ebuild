@@ -2,6 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/net-misc/ser/ser-0.9.7.ebuild,v 1.6 2014/01/08 06:39:49 vapier Exp $
 
+EAPI=2
+
 inherit eutils flag-o-matic toolchain-funcs multilib user
 
 IUSE="ipv6 mysql radius postgres jabber ldap ssl"

@@ -62,7 +62,7 @@ RDEPEND="dev-db/sqlite:3
 	odbc? ( dev-db/unixODBC )
 	osplookup? ( net-libs/osptoolkit )
 	portaudio? ( media-libs/portaudio )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	radius? ( net-dialup/radiusclient-ng )
 	selinux? ( sec-policy/selinux-asterisk )
 	snmp? ( net-analyzer/net-snmp )

@@ -1,6 +1,6 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/www-apps/rt/rt-4.0.8-r1.ebuild,v 1.2 2014/01/08 06:12:48 vapier Exp $
+# $Header: /var/cvsroot/gentoo-x86/www-apps/rt/rt-4.2.4.ebuild,v 1.6 2014/09/29 13:27:03 titanofold Exp $
 
 EAPI=5
 
@@ -51,7 +51,7 @@ DEPEND="
 	>=virtual/perl-File-Spec-0.8
 	>=virtual/perl-Getopt-Long-2.24
 	>=virtual/perl-Storable-2.08
-	>=virtual/perl-locale-maketext-1.06
+	>=virtual/perl-Locale-Maketext-1.06
 	dev-perl/CGI-Emulate-PSGI
 	dev-perl/CGI-PSGI
 	dev-perl/Cache-Simple-TimedExpiry
@@ -68,6 +68,7 @@ DEPEND="
 	dev-perl/Email-Address
 	dev-perl/Email-Address-List
 	dev-perl/File-ShareDir
+	dev-perl/File-Which
 	dev-perl/GD
 	dev-perl/GDGraph
 	dev-perl/GDTextUtil
@@ -91,6 +92,7 @@ DEPEND="
 	dev-perl/Plack
 	dev-perl/Regexp-Common-net-CIDR
 	dev-perl/Regexp-IPv6
+	dev-perl/String-ShellQuote
 	dev-perl/Starlet
 	dev-perl/TermReadKey
 	dev-perl/Text-Password-Pronounceable
@@ -107,7 +109,7 @@ DEPEND="
 	virtual/perl-File-Temp
 	virtual/perl-Scalar-List-Utils
 	virtual/perl-Time-HiRes
-	virtual/perl-digest-base
+	virtual/perl-Digest
 	virtual/perl-libnet
 
 	fastcgi? (

@@ -28,7 +28,7 @@ RDEPEND="
 	kerberos? ( virtual/krb5 )
 	mongodb? ( dev-libs/libmongo-client )
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql )
+	postgres? ( virtual/postgresql )
 	oracle? ( dev-db/oracle-instantclient-basic )
 	relp? ( >=dev-libs/librelp-1.0.3 )
 	snmp? ( net-analyzer/net-snmp )

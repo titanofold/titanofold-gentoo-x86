@@ -2,6 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-libs/libhome/libhome-0.10.2.ebuild,v 1.3 2011/01/10 19:50:30 flameeyes Exp $
 
+EAPI=2
+
 inherit autotools db-use eutils
 
 DESCRIPTION="libhome is a library providing a getpwnam() emulation"
