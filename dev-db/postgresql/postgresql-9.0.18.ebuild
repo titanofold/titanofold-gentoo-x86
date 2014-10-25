@@ -97,7 +97,7 @@ src_prepare() {
 
 	epatch "${WORKDIR}/pg_ctl-exit-status.patch"
 
-	use server || epatch "${WORKDIR}/base.patch"
+	use server || epatch "${FILESDIR}/${PN}-${SLOT}-no-server.patch"
 
 	if use pam ; then
 		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \
@@ -231,7 +231,7 @@ pkg_postinst() {
 }
 
 pkg_prerm() {
-	if [[ $(use server) && -z ${REPLACED_BY_VERSION} ]] ; then
+	if use server && test -z ${REPLACED_BY_VERSION} ; then
 		ewarn "Have you dumped and/or migrated the ${SLOT} database cluster?"
 		ewarn "\thttp://www.gentoo.org/doc/en/postgres-howto.xml#doc_chap5"
 
