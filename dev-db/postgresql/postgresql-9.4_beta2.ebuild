@@ -17,8 +17,7 @@ S="${WORKDIR}/postgresql-${MY_PV}"
 SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2"
 
 # Add patch and initscript source.
-SRC_URI+=" http://dev.gentoo.org/~patrick/postgresql-patches-${SLOT}-r1.tbz2
-		   http://dev.gentoo.org/~floppym/dist/postgresql-initscript-2.7.tbz2"
+SRC_URI+=" http://dev.gentoo.org/~floppym/dist/postgresql-initscript-2.7.tbz2"
 
 LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"

@@ -15,9 +15,8 @@ SLOT="$(get_version_component_range 1-2)"
 
 SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2"
 
-# Add patch and initscript source.
-SRC_URI+=" http://dev.gentoo.org/~titanofold/postgresql-patches-${SLOT}.tbz2
-		   http://dev.gentoo.org/~floppym/dist/postgresql-initscript-2.7.tbz2"
+# Add initscript source.
+SRC_URI+=" http://dev.gentoo.org/~floppym/dist/postgresql-initscript-2.7.tbz2"
 
 LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"

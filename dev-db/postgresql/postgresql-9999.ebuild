@@ -16,8 +16,8 @@ SLOT="9.5"
 
 EGIT_REPO_URI="git://git.postgresql.org/git/postgresql.git"
 
-SRC_URI="http://dev.gentoo.org/~floppym/dist/postgresql-initscript-2.7.tbz2
-	http://dev.gentoo.org/~patrick/postgresql-patches-9.5.tbz2"
+# Add initscript source
+SRC_URI="http://dev.gentoo.org/~floppym/dist/postgresql-initscript-2.7.tbz2"
 
 LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"

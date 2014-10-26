@@ -19,9 +19,8 @@ SLOT="$(get_version_component_range 1-2)"
 
 SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2"
 
-# Add patch and initscript source.
-SRC_URI+=" http://dev.gentoo.org/~titanofold/postgresql-patches-9.1-r2.tbz2
-		 http://dev.gentoo.org/~titanofold/postgresql-initscript-pre92-2.6.tbz2"
+# Add initscript source.
+SRC_URI+=" http://dev.gentoo.org/~titanofold/postgresql-initscript-pre92-2.6.tbz2"
 
 LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"
@@ -95,7 +94,7 @@ src_prepare() {
 		-i "${WORKDIR}"/postgresql{.{init,confd,service},-check-db-dir} || \
 		die "SLOT/LIBDIR sed failed"
 
-	epatch "${WORKDIR}/pg_ctl-exit-status.patch"
+	epatch "${FILESDIR}/pg_ctl-exit-status.patch"
 
 	use server || epatch "${FILESDIR}/${PN}-${SLOT}-no-server.patch"
 
