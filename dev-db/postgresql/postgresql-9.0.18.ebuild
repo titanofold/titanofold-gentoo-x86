@@ -230,7 +230,7 @@ pkg_postinst() {
 }
 
 pkg_prerm() {
-	if use server && test -z ${REPLACED_BY_VERSION} ; then
+	if use server && [[ -z ${REPLACED_BY_VERSION} ]] ; then
 		ewarn "Have you dumped and/or migrated the ${SLOT} database cluster?"
 		ewarn "\thttp://www.gentoo.org/doc/en/postgres-howto.xml#doc_chap5"
 

@@ -224,7 +224,7 @@ pkg_postinst() {
 }
 
 pkg_prerm() {
-	if use server && test -z ${REPLACED_BY_VERSION} ; then
+	if use server && [[ -z ${REPLACED_BY_VERSION} ]] ; then
 		ewarn "Have you dumped and/or migrated the ${SLOT} database cluster?"
 		ewarn "\thttp://www.gentoo.org/doc/en/postgres-howto.xml#doc_chap5"
 
@@ -388,7 +388,7 @@ pkg_config() {
 src_test() {
 	einfo ">>> Test phase [check]: ${CATEGORY}/${PF}"
 
-	if use server && test ${UID} -ne 0 ; then
+	if use server && [[ ${UID} -ne 0 ]] ; then
 		emake check
 
 		einfo "If you think other tests besides the regression tests are necessary, please"
