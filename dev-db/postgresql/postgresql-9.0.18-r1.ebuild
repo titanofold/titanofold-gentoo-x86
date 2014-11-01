@@ -211,7 +211,7 @@ pkg_postinst() {
 	if use server ; then
 		elog
 		elog "Gentoo specific documentation:"
-		elog "http://www.gentoo.org/doc/en/postgres-howto.xml"
+		elog "https://wiki.gentoo.org/wiki/PostgreSQL"
 		elog
 		elog "Official documentation:"
 		elog "http://www.postgresql.org/docs/${SLOT}/static/index.html"
@@ -232,7 +232,7 @@ pkg_postinst() {
 pkg_prerm() {
 	if use server && [[ -z ${REPLACED_BY_VERSION} ]] ; then
 		ewarn "Have you dumped and/or migrated the ${SLOT} database cluster?"
-		ewarn "\thttp://www.gentoo.org/doc/en/postgres-howto.xml#doc_chap5"
+		ewarn "\thttps://wiki.gentoo.org/wiki/PostgreSQL#doc_chap5"
 
 		ebegin "Resuming removal in 10 seconds (Control-C to cancel)"
 		sleep 10
