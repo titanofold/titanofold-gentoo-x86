@@ -1,9 +1,9 @@
 # Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-lisp/clisp/clisp-2.49-r8.ebuild,v 1.2 2014/07/11 08:48:28 patrick Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-lisp/clisp/clisp-2.49-r8.ebuild,v 1.3 2014/10/28 21:41:29 jer Exp $
 
 EAPI=5
-inherit flag-o-matic eutils toolchain-funcs multilib
+inherit eutils flag-o-matic multilib toolchain-funcs
 
 DESCRIPTION="A portable, bytecode-compiled implementation of Common Lisp"
 HOMEPAGE="http://clisp.sourceforge.net/"
@@ -24,7 +24,7 @@ RDEPEND=">=dev-lisp/asdf-2.33-r3
 		 gdbm? ( sys-libs/gdbm )
 		 gtk? ( >=x11-libs/gtk+-2.10 >=gnome-base/libglade-2.6 )
 		 pari? ( <sci-mathematics/pari-2.5.0 )
-		 postgres? ( >=virtual/postgresql-8.0 )
+		 postgres? ( >=dev-db/postgresql-base-8.0 )
 		 readline? ( >=sys-libs/readline-5.0 )
 		 pcre? ( dev-libs/libpcre )
 		 svm? ( sci-libs/libsvm )
@@ -61,6 +61,7 @@ src_prepare() {
 	fi
 	epatch "${FILESDIR}"/${P}-bits_ipctypes_to_sys_ipc.patch
 	epatch "${FILESDIR}"/${P}-get_hostname.patch
+	epatch "${FILESDIR}"/${P}-tinfo.patch
 }
 
 src_configure() {

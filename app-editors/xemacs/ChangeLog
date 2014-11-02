@@ -1,6 +1,19 @@
 # ChangeLog for app-editors/xemacs
 # Copyright 1999-2014 Gentoo Foundation; Distributed under the GPL v2
-# $Header: /var/cvsroot/gentoo-x86/app-editors/xemacs/ChangeLog,v 1.176 2014/08/01 11:25:47 armin76 Exp $
+# $Header: /var/cvsroot/gentoo-x86/app-editors/xemacs/ChangeLog,v 1.179 2014/11/01 00:16:42 jer Exp $
+
+  01 Nov 2014; Jeroen Roovers <jer@gentoo.org> xemacs-21.4.22-r4.ebuild:
+  Stable for HPPA (bug #475658).
+
+  28 Oct 2014; Mats Lidell <matsl@gentoo.org> xemacs-21.4.22-r4.ebuild,
+  xemacs-21.5.34-r2.ebuild:
+  Remove export on WANT_AUTOCONF to global scope. bug 527076
+
+*xemacs-21.4.22-r4 (20 Oct 2014)
+
+  20 Oct 2014; Mats Lidell <matsl@gentoo.org> +xemacs-21.4.22-r4.ebuild,
+  +files/xemacs-21.4.22-texinfo-5.patch:
+  Add patch for build with texinfo-5, bug 475658.
 
   01 Aug 2014; Raúl Porcel <armin76@gentoo.org> xemacs-21.4.22-r3.ebuild:
   sparc stable wrt #503112

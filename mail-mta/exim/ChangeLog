@@ -1,6 +1,29 @@
 # ChangeLog for mail-mta/exim
 # Copyright 1999-2014 Gentoo Foundation; Distributed under the GPL v2
-# $Header: /var/cvsroot/gentoo-x86/mail-mta/exim/ChangeLog,v 1.295 2014/10/05 15:06:43 ago Exp $
+# $Header: /var/cvsroot/gentoo-x86/mail-mta/exim/ChangeLog,v 1.301 2014/11/02 08:38:01 swift Exp $
+
+  02 Nov 2014; Sven Vermeulen <swift@gentoo.org> exim-4.84.ebuild:
+  Remove sec-policy/selinux-* dependency from DEPEND but keep in RDEPEND (bug
+  #527698)
+
+  18 Oct 2014; Fabian Groffen <grobian@gentoo.org> -exim-4.80.1-r2.ebuild,
+  -exim-4.80.1-r3.ebuild, -exim-4.80.1.ebuild, -exim-4.82.1.ebuild:
+  Cleanup, bug #524154, #517934
+
+  18 Oct 2014; Agostino Sarubbo <ago@gentoo.org> exim-4.84.ebuild:
+  Stable for sparc, wrt bug #524154
+
+  18 Oct 2014; Agostino Sarubbo <ago@gentoo.org> exim-4.84.ebuild:
+  Stable for ia64, wrt bug #524154
+
+  17 Oct 2014; Agostino Sarubbo <ago@gentoo.org> exim-4.84.ebuild:
+  Stable for ppc64, wrt bug #524154
+
+  09 Oct 2014; Andreas K. Huettel <dilfridge@gentoo.org> exim-4.80.1.ebuild,
+  exim-4.80.1-r2.ebuild, exim-4.80.1-r3.ebuild, exim-4.82.1.ebuild,
+  exim-4.84.ebuild:
+  The libperl ebuild is only a dummy and will be removed; libperl is provided
+  by dev-lang/perl.
 
   05 Oct 2014; Agostino Sarubbo <ago@gentoo.org> exim-4.84.ebuild:
   Stable for ppc, wrt bug #524154
