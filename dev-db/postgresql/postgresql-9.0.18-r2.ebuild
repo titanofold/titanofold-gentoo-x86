@@ -4,6 +4,10 @@
 
 EAPI="5"
 
+# Testing within Portage's environment is broken, and the patch no
+# longer applies cleanly.
+RESTRICT="test"
+
 PYTHON_COMPAT=( python{2_{6,7},3_{2,3,4}} )
 WANT_AUTOMAKE="none"
 
@@ -11,13 +15,12 @@ inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 syste
 
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~ppc-macos ~sparc-fbsd ~x86-fbsd ~x86-solaris"
 
-MY_PV=${PV/_/}
 SLOT="$(get_version_component_range 1-2)"
-S="${WORKDIR}/postgresql-${MY_PV}"
-SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2"
 
-# Add patch and initscript source.
-SRC_URI+=" http://dev.gentoo.org/~floppym/dist/postgresql-initscript-2.7.tbz2"
+SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2"
+
+# Add initscript source.
+SRC_URI+=" http://dev.gentoo.org/~titanofold/postgresql-initscript-pre92-2.6.tbz2"
 
 LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"
@@ -40,7 +43,7 @@ wanted_languages() {
 	echo -n ${enable_langs}
 }
 
-RDEPEND="
+CDEPEND="
 >=app-admin/eselect-postgresql-1.2.0
 sys-apps/less
 virtual/libintl
@@ -50,7 +53,6 @@ pam? ( virtual/pam )
 perl? ( >=dev-lang/perl-5.8 )
 python? ( ${PYTHON_DEPS} )
 readline? ( sys-libs/readline )
-selinux? ( sec-policy/selinux-postgresql )
 ssl? ( >=dev-libs/openssl-0.9.6-r1 )
 tcl? ( >=dev-lang/tcl-8 )
 uuid? ( dev-libs/ossp-uuid )
@@ -58,7 +60,7 @@ xml? ( dev-libs/libxml2 dev-libs/libxslt )
 zlib? ( sys-libs/zlib )
 "
 
-DEPEND="${RDEPEND}
+DEPEND="${CDEPEND}
 !!dev-db/postgresql-docs:${SLOT}
 !!dev-db/postgresql-base:${SLOT}
 !!dev-db/postgresql-server:${SLOT}
@@ -67,6 +69,10 @@ sys-devel/bison
 sys-devel/flex
 nls? ( sys-devel/gettext )
 xml? ( virtual/pkgconfig )
+"
+
+RDEPEND="${CDEPEND}
+selinux? ( sec-policy/selinux-postgresql )
 "
 
 pkg_setup() {
@@ -90,6 +96,8 @@ src_prepare() {
 	sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
 		-i "${WORKDIR}"/postgresql{.{init,confd,service},-check-db-dir} || \
 		die "SLOT/LIBDIR sed failed"
+
+	epatch "${FILESDIR}/pg_ctl-exit-status.patch"
 
 	use server || epatch "${FILESDIR}/${PN}-${SLOT}-no-server.patch"
 
@@ -125,6 +133,7 @@ src_configure() {
 		$(use_enable !pg_legacytimestamp integer-datetimes) \
 		$(use_enable threads thread-safety) \
 		$(use_with kerberos gssapi) \
+		$(use_with kerberos krb5) \
 		$(use_with ldap) \
 		$(use_with pam) \
 		$(use_with perl) \
@@ -382,23 +391,5 @@ pkg_config() {
 	else
 		einfo "You should use the '${EROOT%/}/etc/init.d/postgresql-${SLOT}' script to run PostgreSQL"
 		einfo "instead of 'pg_ctl'."
-	fi
-}
-
-src_test() {
-	einfo ">>> Test phase [check]: ${CATEGORY}/${PF}"
-
-	if use server && [[ ${UID} -ne 0 ]] ; then
-		emake check
-
-		einfo "If you think other tests besides the regression tests are necessary, please"
-		einfo "submit a bug including a patch for this ebuild to enable them."
-	else
-		use server || \
-			ewarn 'Tests cannot be run without the "server" use flag enabled.'
-		[[ ${UID} -eq 0 ]] || \
-			ewarn 'Tests cannot be run as root. Enable "userpriv" in FEATURES.'
-
-		ewarn 'Skipping.'
 	fi
 }
