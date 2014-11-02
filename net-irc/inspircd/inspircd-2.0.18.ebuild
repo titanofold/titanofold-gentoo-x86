@@ -22,7 +22,7 @@ RDEPEND="
 	gnutls? ( net-libs/gnutls dev-libs/libgcrypt:0 )
 	ldap? ( net-nds/openldap )
 	mysql? ( virtual/mysql )
-	postgres? ( dev-db/postgresql-server )
+	postgres? ( virtual/postgresql )
 	pcre? ( dev-libs/libpcre )
 	sqlite? ( >=dev-db/sqlite-3.0 )
 	tre? ( dev-libs/tre )"

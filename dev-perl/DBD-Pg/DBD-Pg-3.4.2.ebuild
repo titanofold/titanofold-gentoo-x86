@@ -16,7 +16,7 @@ IUSE=""
 
 RDEPEND="virtual/perl-version
 	>=dev-perl/DBI-1.614.0
-	dev-db/postgresql-base"
+	virtual/postgresql"
 DEPEND="${RDEPEND}"
 
 # testcases require a local database with an
