@@ -58,9 +58,6 @@ zlib? ( sys-libs/zlib )
 "
 
 DEPEND="${CDEPEND}
-!!dev-db/postgresql-docs:${SLOT}
-!!dev-db/postgresql-base:${SLOT}
-!!dev-db/postgresql-server:${SLOT}
 !!<sys-apps/sandbox-2.0
 >=dev-lang/perl-5.8
 app-text/docbook-dsssl-stylesheets
@@ -81,6 +78,9 @@ src_unpack() {
 }
 
 RDEPEND="${CDEPEND}
+!dev-db/postgresql-docs:${SLOT}
+!dev-db/postgresql-base:${SLOT}
+!dev-db/postgresql-server:${SLOT}
 selinux? ( sec-policy/selinux-postgresql )
 "
 
