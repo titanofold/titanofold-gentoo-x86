@@ -30,10 +30,14 @@ dev-qt/qtdbus:4
 dev-qt/qtdeclarative:4
 dev-qt/qtgui:4
 dev-qt/qtopengl:4
+dev-qt/qtphonon:4
 dev-qt/qtscript:4
 dev-qt/qtsql:4
 dev-qt/qtsvg:4
 dev-qt/qtxmlpatterns:4
+media-libs/glu
+media-libs/mesa
+sys-libs/glibc
 x11-libs/libX11
 x11-libs/libXScrnSaver
 x11-libs/libXext
