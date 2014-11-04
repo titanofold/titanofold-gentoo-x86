@@ -1,9 +1,9 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/postgis/postgis-2.1.0.ebuild,v 1.1 2013/08/18 19:18:15 titanofold Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/postgis/postgis-2.1.1.ebuild,v 1.3 2014/08/22 03:49:29 patrick Exp $
 
 EAPI="5"
-POSTGRES_COMPAT=( 9.{0,1,2,3} )
+POSTGRES_COMPAT=( 9.{0,1,2,3,4} )
 
 inherit autotools eutils versionator
 
@@ -17,16 +17,17 @@ SRC_URI="http://download.osgeo.org/postgis/source/${MY_P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86 ~amd64-linux ~x86-linux"
-IUSE="doc gtk"
+IUSE="doc gtk static-libs test"
 
 RDEPEND="
 		|| (
+			virtual/postgresql:9.4[server]
 			virtual/postgresql:9.3[server]
 			virtual/postgresql:9.2[server]
 			virtual/postgresql:9.1[server]
 			virtual/postgresql:9.0[server]
 		)
-		dev-libs/json-c
+		<dev-libs/json-c-0.11
 		dev-libs/libxml2:2
 		>=sci-libs/geos-3.3.8
 		>=sci-libs/proj-4.6.0
@@ -37,7 +38,7 @@ RDEPEND="
 DEPEND="${RDEPEND}
 		doc? (
 				app-text/docbook-xsl-stylesheets
-				app-text/docbook-xml-dtd:4.3
+				app-text/docbook-xml-dtd:4.5
 				dev-libs/libxslt
 				|| (
 					media-gfx/imagemagick[png]
@@ -45,10 +46,14 @@ DEPEND="${RDEPEND}
 				)
 		)
 		virtual/pkgconfig
+		test? ( dev-util/cunit )
 "
 
 PGIS="$(get_version_component_range 1-2)"
 
+REQUIRED_USE="test? ( doc )"
+
+# Needs a running psql instance, doesn't work out of the box
 RESTRICT="test"
 
 # These modules are built using the same *FLAGS that were used to build
@@ -93,7 +98,7 @@ pkg_setup() {
 src_prepare() {
 	epatch "${FILESDIR}/${PN}-2.1-ldflags.patch" \
 		"${FILESDIR}/${PN}-2.0-arflags.patch" \
-		"${FILESDIR}/${PN}-2.1-pkgconfig-json.patch"
+		"${FILESDIR}/${PN}-2.1.4-pkgconfig-json.patch"
 
 	local AT_M4DIR="macros"
 	eautoreconf
@@ -104,6 +109,7 @@ src_configure() {
 	use gtk && myargs+=" --with-gui"
 	econf \
 		--with-pgconfig="/usr/lib/postgresql-${PGSLOT}/bin/pg_config" \
+		$(use_enable static-libs static) \
 		${myargs}
 }
 
