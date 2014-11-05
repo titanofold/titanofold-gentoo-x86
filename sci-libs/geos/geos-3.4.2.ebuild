@@ -28,7 +28,8 @@ DEPEND="${RDEPEND}
 "
 
 src_prepare() {
-	epatch "${FILESDIR}"/3.4.2-solaris-isnan.patch
+	epatch "${FILESDIR}"/3.4.2-solaris-isnan.patch \
+		"${FILESDIR}"/3.4.2-ruby_so_name.patch
 	eautoreconf
 	echo "#!${EPREFIX}/bin/bash" > py-compile
 }
