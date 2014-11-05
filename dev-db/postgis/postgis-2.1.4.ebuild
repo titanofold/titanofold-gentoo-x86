@@ -27,9 +27,9 @@ RDEPEND="
 			virtual/postgresql:9.1[server]
 			virtual/postgresql:9.0[server]
 		)
-		<dev-libs/json-c-0.11
+		dev-libs/json-c
 		dev-libs/libxml2:2
-		>=sci-libs/geos-3.3.8
+		>=sci-libs/geos-3.4.2
 		>=sci-libs/proj-4.6.0
 		>=sci-libs/gdal-1.10.0
 		gtk? ( x11-libs/gtk+:2 )
@@ -60,10 +60,6 @@ RESTRICT="test"
 # dev-db/postgresql. The right thing to do is to ignore the current
 # *FLAGS settings.
 QA_FLAGS_IGNORED="usr/lib(64)?/(rt)?postgis-${PGIS}\.so"
-
-# Because developers have been fooled into thinking recursive make is a
-# good thing.
-MAKEOPTS="-j1"
 
 postgres_check_slot() {
 	if ! declare -p POSTGRES_COMPAT &>/dev/null; then
@@ -109,13 +105,10 @@ src_configure() {
 	use gtk && myargs+=" --with-gui"
 	econf \
 		--with-pgconfig="/usr/lib/postgresql-${PGSLOT}/bin/pg_config" \
-		$(use_enable static-libs static) \
 		${myargs}
 }
 
 src_compile() {
-	# Occasionally, builds fail because of out of order compilation.
-	# Otherwise, it'd be fine.
 	emake
 	emake -C topology
 
@@ -141,6 +134,8 @@ src_install() {
 
 	insinto /etc
 	doins "${FILESDIR}/postgis_dbs"
+
+	use static-libs || find ${ED} -name '*.a' -delete
 }
 
 pkg_postinst() {
