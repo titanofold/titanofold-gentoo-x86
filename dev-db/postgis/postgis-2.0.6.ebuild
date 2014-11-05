@@ -11,7 +11,7 @@ HOMEPAGE="http://postgis.net"
 SRC_URI="http://download.osgeo.org/postgis/source/${P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="amd64 ppc x86 ~amd64-linux ~x86-linux"
+KEYWORDS="~amd64 ~ppc ~x86 ~amd64-linux ~x86-linux"
 IUSE="doc gtk"
 
 RDEPEND="
@@ -108,7 +108,7 @@ src_install() {
 	insinto /etc
 	doins "${FILESDIR}/postgis_dbs"
 
-	use static-libs || find ${ED} -name '*.a' -delete
+	use static-libs || find "${ED}" -name '*.a' -delete
 }
 
 pkg_postinst() {

@@ -135,7 +135,7 @@ src_install() {
 	insinto /etc
 	doins "${FILESDIR}/postgis_dbs"
 
-	use static-libs || find ${ED} -name '*.a' -delete
+	use static-libs || find "${ED}" -name '*.a' -delete
 }
 
 pkg_postinst() {
