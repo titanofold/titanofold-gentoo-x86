@@ -370,7 +370,8 @@ pkg_config() {
 		"${EROOT%/}"/usr/$(get_libdir)/postgresql-${SLOT}/bin/initdb -U postgres -D "${DATA_DIR}" ${PG_INITDB_OPTS}
 	fi
 
-	mv "${DATA_DIR%/}"/*.conf "${PGDATA}"
+	mv "${DATA_DIR%/}"/{pg_{hba,ident},postgresql}.conf "${PGDATA}"
+	ln -s "${PGDATA%/}"/{pg_{hba,ident},postgresql}.conf "${DATA_DIR%/}"
 
 	einfo "The autovacuum function, which was in contrib, has been moved to the main"
 	einfo "PostgreSQL functions starting with 8.1, and starting with 8.4 is now enabled"
