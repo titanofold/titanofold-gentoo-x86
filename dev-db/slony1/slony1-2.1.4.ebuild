@@ -21,14 +21,13 @@ SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86"
 
 DEPEND="|| (
-			virtual/postgresql:9.3[server]
-			virtual/postgresql:9.2[server]
-			virtual/postgresql:9.1[server]
-			virtual/postgresql:9.0[server]
-			virtual/postgresql:8.4[server]
-			virtual/postgresql:8.3[server]
+			virtual/postgresql:9.3[server,threads]
+			virtual/postgresql:9.2[server,threads]
+			virtual/postgresql:9.1[server,threads]
+			virtual/postgresql:9.0[server,threads]
+			virtual/postgresql:8.4[server,threads]
+			virtual/postgresql:8.3[server,threads]
 		)
-		virtual/postgresql[threads]
 		perl? ( dev-perl/DBD-Pg )
 "
 
@@ -39,12 +38,6 @@ pkg_setup() {
 		eerror "Set an appropriate slot with postgresql-config."
 		die "postgresql-config not set to 8.3 or higher."
 	fi
-
-#	if [[ ${PGSLOT//.} > 90 ]] ; then
-#		ewarn "You are building ${CATEGORY}/${PN} against a version of PostgreSQL greater than 9.0."
-#		ewarn "This is neither supported here nor upstream."
-#		ewarn "Any bugs you encounter should be reported upstream."
-#	fi
 }
 
 src_prepare() {
