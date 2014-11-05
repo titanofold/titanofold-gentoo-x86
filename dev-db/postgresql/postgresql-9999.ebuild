@@ -7,7 +7,7 @@ EAPI="5"
 PYTHON_COMPAT=( python{2_{6,7},3_{2,3,4}} )
 WANT_AUTOMAKE="none"
 
-inherit autotools eutils flag-o-matic multilib pam prefix python-single-r1 systemd user versionator base git-2
+inherit autotools base eutils flag-o-matic git-2 linux-info multilib pam prefix python-single-r1 systemd user versionator
 
 KEYWORDS=""
 
@@ -85,6 +85,8 @@ selinux? ( sec-policy/selinux-postgresql )
 "
 
 pkg_setup() {
+	use server && CONFIG_CHECK="~SYSVIPC" linux-info_pkg_setup
+
 	enewgroup postgres 70
 	enewuser postgres 70 /bin/bash /var/lib/postgresql postgres
 
