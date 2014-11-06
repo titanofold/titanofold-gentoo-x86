@@ -21,6 +21,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86"
 
 DEPEND="|| (
+			virtual/postgresql:9.4[server,threads]
 			virtual/postgresql:9.3[server,threads]
 			virtual/postgresql:9.2[server,threads]
 			virtual/postgresql:9.1[server,threads]
@@ -42,6 +43,8 @@ pkg_setup() {
 
 src_configure() {
 	local myconf
+	# --with-perltools is interpreted as one of two things: Enable
+	# (yes), or an installation path; perltools=no installs the scripts in /no
 	use perl && myconf='--with-perltools'
 	econf ${myconf}
 }
