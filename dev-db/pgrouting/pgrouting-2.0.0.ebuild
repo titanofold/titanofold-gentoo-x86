@@ -9,10 +9,10 @@ inherit eutils cmake-utils
 
 DESCRIPTION="pgRouting extends PostGIS and PostgreSQL with geospatial routing functionality."
 HOMEPAGE="http://pgrouting.org/index.html"
-LICENSE="GPL-2 MIT"
+LICENSE="GPL-2 MIT Boost-1.0"
 
 SLOT="0"
-KEYWORDS=" ~amd64 ~x86"
+KEYWORDS="~amd64 ~x86"
 SRC_URI="https://github.com/pgRouting/pgrouting/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
 IUSE="+drivingdistance doc pdf html"
 
@@ -67,7 +67,6 @@ pkg_pretend() {
 
 pkg_setup() {
 	postgres_check_slot || die
-	export PGSLOT="$(postgresql-config show)"
 }
 
 src_configure() {
@@ -77,14 +76,14 @@ src_configure() {
 		$(cmake-utils_use_build doc MAN)
 		$(cmake-utils_use_build html HTML)
 		$(cmake-utils_use_build pdf LATEX)
-		)
+	)
 
-		cmake-utils_src_configure
+	cmake-utils_src_configure
 }
 
 src_compile() {
-	local make_opts=""
-	use doc && make_opts+="all doc"
+	local make_opts
+	use doc && make_opts="all doc"
 	cmake-utils_src_make ${make_opts}
 }
 
@@ -93,9 +92,7 @@ src_install() {
 	use html && dohtml -r "${BUILD_DIR}"/doc/html/*
 	use pdf && dodoc "${BUILD_DIR}"/doc/latex/en/*.pdf
 
-	local d
-	for d in README* COPYING VERSION BOOST_LICENSE_1_0.txt ; do
-		dodoc "${d}"
-	done
+	dodoc README* VERSION
+
 	cmake-utils_src_install
 }
