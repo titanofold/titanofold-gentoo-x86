@@ -15,9 +15,6 @@ SLOT="$(get_version_component_range 1-2)"
 
 SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2"
 
-# Add initscript source.
-SRC_URI+=" http://dev.gentoo.org/~floppym/dist/postgresql-initscript-2.7.tbz2"
-
 LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"
 HOMEPAGE="http://www.postgresql.org/"
@@ -90,10 +87,6 @@ src_prepare() {
 	# Set proper run directory
 	sed "s|\(PGSOCKET_DIR\s\+\)\"/tmp\"|\1\"${EPREFIX}/run/postgresql\"|" \
 		-i src/include/pg_config_manual.h || die
-
-	sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-		-i "${WORKDIR}"/postgresql{.{init,confd,service},-check-db-dir} || \
-		die "SLOT/LIBDIR sed failed"
 
 	use server || epatch "${FILESDIR}/${PN}-${SLOT}-no-server.patch"
 
@@ -187,14 +180,20 @@ src_install() {
 	fi
 
 	if use server; then
-		newconfd "${WORKDIR}/postgresql.confd" postgresql-${SLOT}
-		newinitd "${WORKDIR}/postgresql.init" postgresql-${SLOT}
+		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
+			"${FILESDIR}/${PN}.confd" | newconfd - ${PN}-${SLOT}
 
-		systemd_newunit "${WORKDIR}"/postgresql.service postgresql-${SLOT}.service
-		systemd_newtmpfilesd "${WORKDIR}"/postgresql.tmpfilesd postgresql-${SLOT}.conf
-		newbin "${WORKDIR}"/postgresql-check-db-dir postgresql-${SLOT}-check-db-dir
+		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
+			"${FILESDIR}/${PN}.init" | newinitd - ${PN}-${SLOT}
 
-		use pam && pamd_mimic system-auth postgresql-${SLOT} auth account session
+		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
+			"${FILESDIR}/${PN}.service" | systemd_newunit - ${PN}-${SLOT}.service
+
+		systemd_newtmpfilesd "${FILESDIR}"/${PN}.tmpfilesd ${PN}-${SLOT}.conf
+
+		newbin "${FILESDIR}"/${PN}-check-db-dir ${PN}-${SLOT}-check-db-dir
+
+		use pam && pamd_mimic system-auth ${PN}-${SLOT} auth account session
 
 		if use prefix ; then
 			keepdir /run/postgresql
@@ -366,8 +365,17 @@ pkg_config() {
 		"${EROOT%/}"/usr/$(get_libdir)/postgresql-${SLOT}/bin/initdb -U postgres -D "${DATA_DIR}" ${PG_INITDB_OPTS}
 	fi
 
-	mv "${DATA_DIR%/}"/{pg_{hba,ident},postgresql}.conf "${PGDATA}"
-	ln -s "${PGDATA%/}"/{pg_{hba,ident},postgresql}.conf "${DATA_DIR%/}"
+	if [[ "${DATA_DIR%/}" != "${PGDATA%/}" ]] ; then
+		mv "${DATA_DIR%/}"/{pg_{hba,ident},postgresql}.conf "${PGDATA}"
+		ln -s "${PGDATA%/}"/{pg_{hba,ident},postgresql}.conf "${DATA_DIR%/}"
+	fi
+
+	cat <<- EOF >> "${PGDATA%/}"/postgresql.conf
+		# This is here because of https://bugs.gentoo.org/show_bug.cgi?id=518522
+		# On the off-chance that you might need to work with UTF-8 encoded
+		# characters in PL/Perl
+		plperl.on_init = 'use utf8; use re; package utf8; require "utf8_heavy.pl";'
+	EOF
 
 	einfo "The autovacuum function, which was in contrib, has been moved to the main"
 	einfo "PostgreSQL functions starting with 8.1, and starting with 8.4 is now enabled"
