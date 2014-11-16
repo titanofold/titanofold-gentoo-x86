@@ -69,6 +69,10 @@ pkg_setup() {
 	postgres_check_slot || die
 }
 
+src_prepare() {
+	epatch "${FILESDIR}/no-contrib-when-use-extension.patch"
+}
+
 src_configure() {
 	local mycmakeargs=(
 		$(cmake-utils_use_with drivingdistance DD)
