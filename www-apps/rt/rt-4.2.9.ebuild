@@ -117,7 +117,10 @@ DEPEND="
 		dev-perl/FCGI
 		dev-perl/FCGI-ProcManager
 	)
-	!lighttpd? ( dev-perl/Apache-DBI )
+	!lighttpd? (
+		dev-perl/Apache-DBI
+		!fastcgi? ( >=www-apache/mod_perl-2 )
+	)
 	lighttpd? ( dev-perl/FCGI )
 	mysql? ( >=dev-perl/DBD-mysql-2.1018 )
 	postgres? ( >=dev-perl/DBD-Pg-1.43 )
