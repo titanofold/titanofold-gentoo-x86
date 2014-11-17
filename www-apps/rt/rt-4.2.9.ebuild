@@ -193,8 +193,10 @@ pkg_setup() {
 src_prepare() {
 	# add Gentoo-specific layout
 	cat "${FILESDIR}"/config.layout-gentoo >> config.layout
-	sed -e "s|PREFIX|${D}/${MY_HOSTROOTDIR}/${PF}|
-			s|HTMLDIR|${D}/${MY_HTDOCSDIR}|g" -i ./config.layout || die
+	sed -e "s|PREFIX|${D}/${MY_HOSTROOTDIR}/${PF}|g" \
+		-e "s|HTMLDIR|${D}/${MY_HTDOCSDIR}|g" \
+		-e 's|/\+|/|g' \
+		-i ./config.layout || die
 
 	# don't need to check dev dependencies
 	sed -e "s|\$args{'with-DEV'} =1;|#\$args{'with-DEV'} =1;|" -i sbin/rt-test-dependencies.in || die
