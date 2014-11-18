@@ -21,10 +21,10 @@ if [ $1 = "install" ]; then
     echo "Replacing RT_DIR with ${VHOST_ROOT}/${PF}"
 
     for file in $(find ${VHOST_ROOT}/${PF} -type f) ; do
-	sed -e "s|${ROOT#/}${MY_HOSTROOTDIR#/}/${PF}|${VHOST_ROOT}/${PF}|g" \
+        sed -e "s|${ROOT#/}${MY_HOSTROOTDIR#/}/${PF}|${VHOST_ROOT}/${PF}|g" \
             -e "s|${ROOT#/}${MY_HTDOCSDIR#/}|${MY_INSTALLDIR}|g" \
-	    -e "s|RT_DIR|${VHOST_ROOT}/${PF}|g" \
-	    -i "${file}" || die
+            -e "s|RT_DIR|${VHOST_ROOT}/${PF}|g" \
+            -i "${file}" || die
     done
 
     echo
@@ -38,10 +38,10 @@ if [ $1 = "install" ]; then
     echo "commands:"
     echo
     for step in schema acl insert ; do
-	echo "  ${VHOST_ROOT}/${PF}/sbin/rt-setup-database \\"
-	echo "    --action ${step} --dba DBSUPERUSER --prompt-for-dba-password \\"
-	echo "    --datadir ${VHOST_ROOT}/${PF}/upgrade/<version> "
-	echo
+        echo "  ${VHOST_ROOT}/${PF}/sbin/rt-setup-database \\"
+        echo "    --action ${step} --dba DBSUPERUSER --prompt-for-dba-password \\"
+        echo "    --datadir ${VHOST_ROOT}/${PF}/upgrade/<version> "
+        echo
     done
     echo "Note that some upgrade directories don't have all 3 items (schema,"
     echo "acl, insert) and you can skip them safely."
