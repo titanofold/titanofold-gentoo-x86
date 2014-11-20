@@ -259,7 +259,7 @@ src_install() {
 	webapp_src_preinst
 	emake install
 
-	dodoc -r docs
+	dodoc -r docs/*
 	# Disable compression because `perldoc` doesn't decompress transparently
 	docompress -x /usr/share/doc
 
