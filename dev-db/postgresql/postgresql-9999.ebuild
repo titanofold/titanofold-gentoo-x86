@@ -179,7 +179,7 @@ src_install() {
 	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
 		"${ED}/etc/eselect/postgresql/slots/${SLOT}/base"
 
-	use static-libs || find ${ED} -name '*.a' -delete
+	use static-libs || find "${ED}" -name '*.a' -delete
 
 	if use doc ; then
 		docinto html
