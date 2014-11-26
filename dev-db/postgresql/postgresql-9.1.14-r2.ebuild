@@ -9,11 +9,12 @@ EAPI="5"
 RESTRICT="test"
 
 PYTHON_COMPAT=( python{2_{6,7},3_{2,3,4}} )
-WANT_AUTOMAKE="none"
 
-inherit autotools eutils flag-o-matic linux-info multilib pam prefix python-single-r1 systemd user versionator
+inherit eutils flag-o-matic linux-info multilib pam prefix python-single-r1 \
+		systemd user versionator
 
-KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~ppc-macos ~sparc-fbsd ~x86-fbsd ~x86-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86
+		  ~amd64-fbsd ~ppc-macos ~sparc-fbsd ~x86-fbsd ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
 
@@ -23,8 +24,10 @@ LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"
 HOMEPAGE="http://www.postgresql.org/"
 
-LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN zh_TW"
-IUSE="doc kerberos kernel_linux ldap nls pam perl -pg_legacytimestamp python +readline selinux server ssl static-libs tcl threads uuid xml zlib"
+LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr
+		 zh_CN zh_TW"
+IUSE="doc kerberos kernel_linux ldap nls pam perl -pg_legacytimestamp python
+	  +readline selinux server ssl static-libs tcl threads uuid xml zlib"
 
 for lingua in ${LINGUAS}; do
 	IUSE+=" linguas_${lingua}"
@@ -82,9 +85,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	# Eliminate autotools version check
-	sed '/m4_PACKAGE_VERSION/,+3d' -i configure.in || die
-
 	# Work around PPC{,64} compilation bug where bool is already defined
 	sed '/#ifndef __cplusplus/a #undef bool' -i src/include/c.h || die
 
@@ -101,8 +101,6 @@ src_prepare() {
 			-i src/backend/libpq/auth.c || \
 			die 'PGSQL_PAM_SERVICE rename failed.'
 	fi
-
-	eautoconf
 }
 
 src_configure() {
@@ -193,7 +191,8 @@ src_install() {
 			"${FILESDIR}/${PN}.init-pre_9.2" | newinitd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.service" | systemd_newunit - ${PN}-${SLOT}.service
+			"${FILESDIR}/${PN}.service" | \
+			systemd_newunit - ${PN}-${SLOT}.service
 
 		systemd_newtmpfilesd "${FILESDIR}"/${PN}.tmpfilesd ${PN}-${SLOT}.conf
 
@@ -253,9 +252,11 @@ pkg_postrm() {
 pkg_config() {
 	use server || die "USE flag 'server' not enabled. Nothing to configure."
 
-	[[ -f "${EROOT%/}/etc/conf.d/postgresql-${SLOT}" ]] && source "${EROOT%/}/etc/conf.d/postgresql-${SLOT}"
+	[[ -f "${EROOT%/}/etc/conf.d/postgresql-${SLOT}" ]] \
+		&& source "${EROOT%/}/etc/conf.d/postgresql-${SLOT}"
 	[[ -z "${PGDATA}" ]] && PGDATA="${EROOT%/}/etc/postgresql-${SLOT}/"
-	[[ -z "${DATA_DIR}" ]] && DATA_DIR="${EROOT%/}/var/lib/postgresql/${SLOT}/data"
+	[[ -z "${DATA_DIR}" ]] \
+		&& DATA_DIR="${EROOT%/}/var/lib/postgresql/${SLOT}/data"
 
 	# environment.bz2 may not contain the same locale as the current system
 	# locale. Unset and source from the current system locale.
