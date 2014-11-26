@@ -38,7 +38,7 @@ FORCE_TIMEOUT=2
 #
 # The following values should not be arbitrarily changed.
 #
-# `emerge --config dev-db/postgresql-server:@SLOT@' uses these values to
+# `emerge --config dev-db/postgresql:@SLOT@' uses these values to
 # determine where to create the data directory, where to place the
 # configuration files, and any additional options to pass to initdb.
 #

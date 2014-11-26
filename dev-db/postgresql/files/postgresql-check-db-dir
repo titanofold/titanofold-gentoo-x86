@@ -18,7 +18,7 @@ if [ ! -d ${DATA_DIR} ] ; then
     eerror "Directory not found: ${DATA_DIR}"
     eerror "HINT: Ensure that DATA_DIR points to the right path."
     eerror "HINT: Or perhaps you need to create the database cluster:"
-    eerror "    emerge --config dev-db/postgresql-server:@SLOT@"
+    eerror "    emerge --config dev-db/postgresql:@SLOT@"
     exit 1
 fi
 
