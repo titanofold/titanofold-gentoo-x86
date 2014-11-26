@@ -22,6 +22,7 @@ KEYWORDS="~amd64 ~x86"
 S=${WORKDIR}
 
 RDEPEND="
+|| ( dev-qt/qtphonon:4 media-libs/phonon )
 >=dev-libs/glib-2
 app-arch/bzip2
 dev-libs/libxml2
@@ -30,7 +31,6 @@ dev-qt/qtdbus:4
 dev-qt/qtdeclarative:4
 dev-qt/qtgui:4
 dev-qt/qtopengl:4
-dev-qt/qtphonon:4
 dev-qt/qtscript:4
 dev-qt/qtsql:4
 dev-qt/qtsvg:4
