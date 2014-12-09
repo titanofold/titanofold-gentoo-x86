@@ -14,7 +14,7 @@ DESCRIPTION="A new calendar application for GNOME 3"
 HOMEPAGE="https://wiki.gnome.org/Apps/California"
 SRC_URI="mirror://gnome/sources/${PN}/${MY_PV}/${P}.tar.xz"
 
-LICENSE="GPL"
+LICENSE="GPL-3"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE="unity"
