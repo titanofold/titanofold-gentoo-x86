@@ -312,45 +312,6 @@ pkg_config() {
 		die "${DATA_DIR} is not empty."
 	fi
 
-	[ -z "${PG_MAX_CONNECTIONS}" ] && PG_MAX_CONNECTIONS="128"
-	einfo "Checking system parameters..."
-
-	if ! use kernel_linux ; then
-		einfo "Skipped."
-		einfo "  Tests not supported on this OS (yet)"
-	else
-		if [ -z ${SKIP_SYSTEM_TESTS} ] ; then
-			einfo "Checking whether your system supports at least ${PG_MAX_CONNECTIONS} connections..."
-
-			local SEMMSL=$(sysctl -n kernel.sem | cut -f1)
-			local SEMMNS=$(sysctl -n kernel.sem | cut -f2)
-			local SEMMNI=$(sysctl -n kernel.sem | cut -f4)
-			local SHMMAX=$(sysctl -n kernel.shmmax)
-
-			local SEMMSL_MIN=17
-			local SEMMNS_MIN=$(( ( ${PG_MAX_CONNECTIONS}/16 ) * 17 ))
-			local SEMMNI_MIN=$(( ( ${PG_MAX_CONNECTIONS}+15 ) / 16 ))
-			local SHMMAX_MIN=$(( 500000 + ( 30600 * ${PG_MAX_CONNECTIONS} ) ))
-
-			for p in SEMMSL SEMMNS SEMMNI SHMMAX ; do
-				if [ $(eval echo \$$p) -lt $(eval echo \$${p}_MIN) ] ; then
-					eerror "The value for ${p} $(eval echo \$$p) is below the recommended value $(eval echo \$${p}_MIN)"
-					eerror "You have now several options:"
-					eerror "    - Change the mentioned system parameter"
-					eerror "    - Lower the number of max.connections by setting PG_MAX_CONNECTIONS to a"
-					eerror "      value lower than ${PG_MAX_CONNECTIONS}"
-					eerror "    - Set SKIP_SYSTEM_TESTS in case you want to ignore this test completely"
-					eerror "More information can be found here:"
-					eerror "    http://www.postgresql.org/docs/${SLOT}/static/kernel-resources.html"
-					die "System test failed."
-				fi
-			done
-			einfo "Passed."
-		else
-			ewarn "SKIP_SYSTEM_TESTS set, so skipping."
-		fi
-	fi
-
 	einfo "Creating the data directory ..."
 	if [[ ${EUID} == 0 ]] ; then
 		mkdir -p "${DATA_DIR}"
