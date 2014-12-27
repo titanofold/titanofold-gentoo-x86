@@ -12,10 +12,9 @@ inherit eutils flag-o-matic linux-info multilib pam prefix python-single-r1 \
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86
 		  ~amd64-fbsd ~ppc-macos ~sparc-fbsd ~x86-fbsd ~x86-solaris"
 
-MY_PV=${PV/_/}
 SLOT="$(get_version_component_range 1-2)"
-S="${WORKDIR}/postgresql-${MY_PV}"
-SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2"
+
+SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2"
 
 LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"
