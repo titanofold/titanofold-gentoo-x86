@@ -32,7 +32,7 @@ RDEPEND="
 	x11-libs/qwt:5[svg]
 	x11-libs/qwtpolar
 	grass? ( >=sci-geosciences/grass-6.4.0_rc6[python?] )
-	postgres? ( >=virtual/postgresql-8.4 )
+	postgres? ( >=dev-db/postgresql-8.4 )
 	python? ( dev-python/PyQt4[X,sql,svg] )
 	spatialite? (
 		dev-db/sqlite:3

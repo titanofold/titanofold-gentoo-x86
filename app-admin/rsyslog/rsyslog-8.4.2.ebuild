@@ -37,7 +37,7 @@ RDEPEND="
 	)
 	omudpspoof? ( >=net-libs/libnet-1.1.6 )
 	oracle? ( >=dev-db/oracle-instantclient-basic-10.2 )
-	postgres? ( >=virtual/postgresql-8.4.20 )
+	postgres? ( >=dev-db/postgresql-8.4.20 )
 	rabbitmq? ( >=net-libs/rabbitmq-c-0.3.0 )
 	redis? ( >=dev-libs/hiredis-0.11.0 )
 	relp? ( >=dev-libs/librelp-1.2.5 )

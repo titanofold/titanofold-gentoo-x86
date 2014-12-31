@@ -26,7 +26,7 @@ DEPEND="dev-scheme/guile
 	odbc? ( dev-db/unixODBC )
 	gdbm? ( sys-libs/gdbm )
 	mysql? ( virtual/mysql )
-	postgres? ( virtual/postgresql[server] )
+	postgres? ( dev-db/postgresql[server] )
 	ldap? ( net-nds/openldap )"
 RDEPEND="${DEPEND}"
 

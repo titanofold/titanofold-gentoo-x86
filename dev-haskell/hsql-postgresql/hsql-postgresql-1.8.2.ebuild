@@ -21,6 +21,6 @@ IUSE=""
 RDEPEND=">=dev-haskell/hsql-1.8.2[profile?]
 		<dev-haskell/hsql-1.9[profile?]
 		>=dev-lang/ghc-6.10.1
-		>=virtual/postgresql-7"
+		>=dev-db/postgresql-7"
 DEPEND="${RDEPEND}
 		dev-haskell/cabal"

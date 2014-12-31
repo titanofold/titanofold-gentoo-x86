@@ -30,7 +30,7 @@ DEPEND="
 	dev-qt/qtsql:4[mysql?,postgres?]
 	dev-qt/qtxmlpatterns:4
 	oci8-instant-client? ( dev-db/oracle-instantclient-basic )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 "
 RDEPEND="${DEPEND}"
 

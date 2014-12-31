@@ -14,7 +14,7 @@ KEYWORDS="~alpha ~amd64 ~hppa ~mips ~ppc ~sparc ~x86"
 IUSE="mysql postgres"
 
 DEPEND="mysql? ( virtual/mysql )
-	postgres? ( virtual/postgresql )"
+	postgres? ( dev-db/postgresql )"
 RDEPEND="${DEPEND}
 	virtual/qmail"
 

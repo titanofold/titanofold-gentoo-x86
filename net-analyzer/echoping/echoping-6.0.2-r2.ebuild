@@ -17,7 +17,7 @@ IUSE="gnutls http icp idn priority smtp ssl tos postgres ldap"
 RESTRICT="test"
 
 RDEPEND="idn? ( net-dns/libidn )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	ldap? ( net-nds/openldap )
 	ssl? (
 		gnutls? ( >=net-libs/gnutls-1.0.17 )

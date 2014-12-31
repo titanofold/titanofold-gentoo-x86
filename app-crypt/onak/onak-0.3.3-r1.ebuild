@@ -12,7 +12,7 @@ SLOT="0"
 KEYWORDS="~x86"
 IUSE="berkdb postgres"
 RDEPEND="berkdb? ( =sys-libs/db-4* )
-	postgres? ( virtual/postgresql[server] )"
+	postgres? ( dev-db/postgresql[server] )"
 DEPEND="${RDEPEND}"
 
 src_compile() {

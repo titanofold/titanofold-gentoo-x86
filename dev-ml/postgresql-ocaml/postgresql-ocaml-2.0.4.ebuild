@@ -13,7 +13,7 @@ SRC_URI="http://bitbucket.org/mmottl/postgresql-ocaml/downloads/${P}.tar.gz"
 HOMEPAGE="http://bitbucket.org/mmottl/postgresql-ocaml"
 IUSE="examples"
 
-DEPEND="virtual/postgresql[server]"
+DEPEND="dev-db/postgresql[server]"
 RDEPEND="${DEPEND}"
 
 SLOT="0/${PV}"

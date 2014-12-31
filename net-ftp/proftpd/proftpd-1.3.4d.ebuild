@@ -50,7 +50,7 @@ CDEPEND="acl? ( virtual/acl )
 	openssl? ( dev-libs/openssl )
 	pam? ( virtual/pam )
 	pcre? ( dev-libs/libpcre )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	sqlite? ( dev-db/sqlite:3 )
 	xinetd? ( virtual/inetd )"
 DEPEND="${CDEPEND}

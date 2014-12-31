@@ -21,11 +21,11 @@ KEYWORDS="alpha amd64 hppa ia64 ppc sparc x86"
 IUSE="doc"
 
 DEPEND="|| (
-	virtual/postgresql:8.3
-	virtual/postgresql:8.4
-	virtual/postgresql:9.0
-	virtual/postgresql:9.1
-	virtual/postgresql:9.2
+	dev-db/postgresql:8.3
+	dev-db/postgresql:8.4
+	dev-db/postgresql:9.0
+	dev-db/postgresql:9.1
+	dev-db/postgresql:9.2
 )"
 
 RDEPEND="${DEPEND}"

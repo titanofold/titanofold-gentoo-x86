@@ -24,14 +24,14 @@ RESTRICT="test" # requires configured postgresql
 
 hdbc_PV=$(get_version_component_range 1-2)
 
-RDEPEND=">virtual/postgresql-8
+RDEPEND=">dev-db/postgresql-8
 		dev-haskell/convertible[profile?]
 		=dev-haskell/hdbc-${hdbc_PV}*[profile?]
 		dev-haskell/mtl[profile?]
 		dev-haskell/parsec[profile?]
 		dev-haskell/utf8-string[profile?]
 		>=dev-lang/ghc-6.8.2
-		>=virtual/postgresql-8"
+		>=dev-db/postgresql-8"
 DEPEND="${RDEPEND}
 		>=dev-haskell/cabal-1.8
 		test? ( dev-haskell/convertible

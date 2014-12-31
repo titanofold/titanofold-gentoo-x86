@@ -21,5 +21,5 @@ RDEPEND="dev-python/argh[${PYTHON_USEDEP}]
 	>=dev-python/psycopg-2[${PYTHON_USEDEP}]
 	dev-python/python-dateutil[${PYTHON_USEDEP}]
 	net-misc/rsync
-	virtual/postgresql[server]"
+	dev-db/postgresql[server]"
 DEPEND=""

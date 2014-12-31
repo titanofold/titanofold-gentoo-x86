@@ -15,7 +15,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="debug doc postgres radius shaper snmp valgrind"
 
-RDEPEND="postgres? ( virtual/postgresql )
+RDEPEND="postgres? ( dev-db/postgresql )
 	snmp? ( net-analyzer/net-snmp )
 	dev-libs/libpcre
 	dev-libs/openssl:0"

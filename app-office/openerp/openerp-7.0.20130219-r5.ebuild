@@ -20,7 +20,7 @@ KEYWORDS="~x86 ~amd64"
 IUSE="+postgres ldap ssl"
 
 CDEPEND="!app-office/openerp-web
-	postgres? ( virtual/postgresql[server] )
+	postgres? ( dev-db/postgresql[server] )
 	dev-python/psutil
 	dev-python/docutils
 	dev-python/lxml

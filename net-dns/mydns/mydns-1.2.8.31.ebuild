@@ -17,7 +17,7 @@ IUSE="alias debug nls mysql postgres ssl static status"
 
 RDEPEND="mysql? ( virtual/mysql )
 	nls? ( virtual/libintl )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	ssl? ( dev-libs/openssl )
 	virtual/libiconv"
 DEPEND="${RDEPEND}

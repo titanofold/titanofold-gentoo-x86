@@ -19,7 +19,7 @@ KEYWORDS="alpha ~amd64 ~arm ia64 ppc ppc64 sparc x86"
 IUSE=""
 
 DEPEND=">=dev-python/egenix-mx-base-2.0.3
-	virtual/postgresql"
+	dev-db/postgresql"
 RDEPEND="${DEPEND}"
 
 src_prepare() {

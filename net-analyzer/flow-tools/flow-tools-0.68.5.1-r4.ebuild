@@ -17,7 +17,7 @@ IUSE="debug mysql postgres ssl static-libs"
 RDEPEND="sys-apps/tcp-wrappers
 	sys-libs/zlib
 	mysql? ( virtual/mysql )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	ssl? ( dev-libs/openssl )"
 
 DEPEND="${RDEPEND}

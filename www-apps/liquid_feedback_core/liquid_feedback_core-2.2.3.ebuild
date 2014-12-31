@@ -17,7 +17,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
-RDEPEND="virtual/postgresql"
+RDEPEND="dev-db/postgresql"
 DEPEND="${RDEPEND}"
 
 S=${WORKDIR}/${MY_P}

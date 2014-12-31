@@ -25,7 +25,7 @@ vim-syntax xml"
 DEPEND=">=sys-libs/db-4
 	acl? ( virtual/acl )
 	mysql? ( virtual/mysql )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	selinux? ( sys-libs/libselinux )
 	tokyocabinet? ( dev-db/tokyocabinet )
 	qdbm? ( dev-db/qdbm )

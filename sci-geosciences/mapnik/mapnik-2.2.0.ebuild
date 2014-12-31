@@ -37,7 +37,7 @@ RDEPEND="
 		dev-cpp/cairomm
 		python? ( dev-python/pycairo[${PYTHON_USEDEP}] )
 	)
-	postgres? ( >=virtual/postgresql-8.3 )
+	postgres? ( >=dev-db/postgresql-8.3 )
 	gdal? ( sci-libs/gdal )
 	sqlite? ( dev-db/sqlite:3 )
 	python_single_target_python3_2? ( >=dev-libs/boost-1.53[${PYTHON_USEDEP}] )

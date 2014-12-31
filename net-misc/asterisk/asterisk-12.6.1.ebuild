@@ -61,7 +61,7 @@ CDEPEND="dev-db/sqlite:3
 	odbc? ( dev-db/unixODBC )
 	osplookup? ( net-libs/osptoolkit )
 	portaudio? ( media-libs/portaudio )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	radius? ( net-dialup/radiusclient-ng )
 	snmp? ( net-analyzer/net-snmp )
 	span? ( media-libs/spandsp )

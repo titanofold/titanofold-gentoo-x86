@@ -23,7 +23,7 @@ RDEPEND="fcgi? ( dev-libs/fcgi )
 	)
 	mprpc? ( dev-libs/msgpack )
 	mysql? ( virtual/mysql )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	"
 DEPEND="${RDEPEND}
 	test? ( dev-cpp/gtest )"

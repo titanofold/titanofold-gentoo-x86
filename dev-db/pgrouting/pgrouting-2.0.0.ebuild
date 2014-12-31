@@ -20,11 +20,11 @@ REQUIRED_USE="html? ( doc ) pdf? ( doc )"
 
 RDEPEND="
 	|| (
-		virtual/postgresql:9.4[server]
-		virtual/postgresql:9.3[server]
-		virtual/postgresql:9.2[server]
-		virtual/postgresql:9.1[server]
-		virtual/postgresql:9.0[server]
+		dev-db/postgresql:9.4[server]
+		dev-db/postgresql:9.3[server]
+		dev-db/postgresql:9.2[server]
+		dev-db/postgresql:9.1[server]
+		dev-db/postgresql:9.0[server]
 	)
 	>=dev-db/postgis-2.0
 	dev-libs/boost

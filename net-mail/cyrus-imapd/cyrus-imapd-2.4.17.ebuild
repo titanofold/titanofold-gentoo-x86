@@ -28,7 +28,7 @@ RDEPEND="sys-libs/zlib
 			virtual/pam
 			>=net-mail/mailbase-1
 		)
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	snmp? ( >=net-analyzer/net-snmp-5.2.2-r1 )
 	sqlite? ( dev-db/sqlite )
 	ssl? ( >=dev-libs/openssl-0.9.6 )

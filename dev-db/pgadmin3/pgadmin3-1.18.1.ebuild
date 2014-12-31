@@ -18,7 +18,7 @@ SLOT="0"
 IUSE="debug +databasedesigner"
 
 DEPEND="x11-libs/wxGTK:2.8[X,debug=]
-	>=virtual/postgresql-8.4.0
+	>=dev-db/postgresql-8.4.0
 	>=dev-libs/libxml2-2.6.18
 	>=dev-libs/libxslt-1.1"
 RDEPEND="${DEPEND}"

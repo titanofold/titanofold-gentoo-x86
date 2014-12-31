@@ -20,7 +20,7 @@ RDEPEND="
 	>=dev-libs/boost-1.36
 	graphicsmagick? ( media-gfx/graphicsmagick )
 	pdf? ( media-libs/libharu )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	sqlite? ( dev-db/sqlite:3 )
 	fcgi? (
 		dev-libs/fcgi

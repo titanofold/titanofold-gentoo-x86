@@ -16,7 +16,7 @@ KEYWORDS="amd64 x86"
 IUSE="bindist firebird +mysql oracle postgres sqlite sqlite3"
 
 DEPEND="mysql? ( virtual/mysql )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	sqlite? ( <dev-db/sqlite-3 )
 	sqlite3? ( =dev-db/sqlite-3* )
 	oracle? ( dev-db/oracle-instantclient-basic )

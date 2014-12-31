@@ -18,7 +18,7 @@ IUSE="mysql postgres"
 
 DEPEND="
 	mysql? ( virtual/mysql )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 "
 RDEPEND="${DEPEND}
 	virtual/qmail"

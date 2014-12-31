@@ -23,7 +23,7 @@ RDEPEND="
 		media-libs/libharu
 		x11-libs/pango
 	)
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	mysql? ( virtual/mysql )
 	sqlite? ( dev-db/sqlite:3 )
 	fcgi? (

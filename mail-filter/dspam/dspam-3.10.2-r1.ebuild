@@ -20,7 +20,7 @@ DEPEND="
 	net-mail/mailbase
 	ldap? ( net-nds/openldap )
 	mysql? ( >=virtual/mysql-5.0 )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	sqlite? ( dev-db/sqlite:3 )
 "
 

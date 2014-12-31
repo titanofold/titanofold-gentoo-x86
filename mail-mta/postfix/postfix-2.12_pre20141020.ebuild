@@ -32,7 +32,7 @@ DEPEND=">=dev-libs/libpcre-3.4
 	lmdb? ( >=dev-db/lmdb-0.9.11 )
 	mysql? ( virtual/mysql )
 	pam? ( virtual/pam )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	sasl? (  >=dev-libs/cyrus-sasl-2 )
 	sqlite? ( dev-db/sqlite:3 )
 	ssl? ( >=dev-libs/openssl-0.9.6g )"

@@ -17,7 +17,7 @@ KEYWORDS="~amd64 ~ppc x86"
 IUSE="mysql postgres"
 
 DEPEND="mysql? ( virtual/mysql )
-	postgres? ( virtual/postgresql[server] )"
+	postgres? ( dev-db/postgresql[server] )"
 
 PATCHES=( "${FILESDIR}/${P}-fhs.patch" )
 

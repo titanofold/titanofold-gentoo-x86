@@ -12,7 +12,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 
-DEPEND="virtual/postgresql
+DEPEND="dev-db/postgresql
 	dev-libs/cyrus-sasl
 	>=dev-libs/libmemcached-1.0.18[sasl]"
 RDEPEND="${DEPEND}"

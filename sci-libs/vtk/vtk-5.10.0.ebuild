@@ -47,7 +47,7 @@ RDEPEND="
 	mpi? ( virtual/mpi[cxx,romio] )
 	mysql? ( virtual/mysql )
 	odbc? ( dev-db/unixODBC )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	python? ( dev-python/sip )
 	qt4? (
 		dev-qt/qtcore:4

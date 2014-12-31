@@ -23,7 +23,7 @@ KEYWORDS="~alpha amd64 ~arm ~hppa ~ia64 ~ppc ~ppc64 ~s390 ~sparc x86 ~amd64-linu
 IUSE="debug id64 mysql odbc postgres stemmer test"
 
 RDEPEND="mysql? ( virtual/mysql )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	odbc? ( dev-db/unixODBC )
 	virtual/libiconv"
 DEPEND="${RDEPEND}

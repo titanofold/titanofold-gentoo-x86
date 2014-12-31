@@ -24,7 +24,7 @@ KEYWORDS="amd64 x86"
 IUSE="debug id64 mysql postgres stemmer test"
 
 RDEPEND="mysql? ( virtual/mysql )
-	postgres? ( virtual/postgresql )"
+	postgres? ( dev-db/postgresql )"
 DEPEND="${RDEPEND}
 	test? ( dev-lang/php )"
 

@@ -18,7 +18,7 @@ REQUIRED_USE="|| ( mysql postgres sqlite )"
 
 RDEPEND=">=dev-lang/lua-5.1
 		mysql? ( virtual/mysql )
-		postgres? ( virtual/postgresql )
+		postgres? ( dev-db/postgresql )
 		sqlite? ( >=dev-db/sqlite-3 )"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"

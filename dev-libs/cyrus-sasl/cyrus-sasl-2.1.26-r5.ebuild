@@ -26,7 +26,7 @@ DEPEND="net-mail/mailbase
 	openldap? ( net-nds/openldap )
 	mysql? ( virtual/mysql )
 	pam? ( virtual/pam )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	sqlite? ( dev-db/sqlite:3 )
 	ssl? ( dev-libs/openssl )
 	java? ( >=virtual/jdk-1.4 )"

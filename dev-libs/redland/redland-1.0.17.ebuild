@@ -21,7 +21,7 @@ RDEPEND=">=sys-devel/libtool-2.2.6b
 	berkdb? ( sys-libs/db )
 	>=media-libs/raptor-2.0.14
 	>=dev-libs/rasqal-0.9.32
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	iodbc? ( dev-db/libiodbc )
 	odbc? ( dev-db/unixODBC )"
 DEPEND="${RDEPEND}

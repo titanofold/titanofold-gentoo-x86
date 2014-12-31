@@ -40,7 +40,7 @@ DEPEND="
 	munge? ( sys-auth/munge )
 	ypbind? ( net-nds/ypbind )
 	pam? ( virtual/pam )
-	postgres? ( virtual/postgresql )
+	postgres? ( dev-db/postgresql )
 	ssl? ( dev-libs/openssl )
 	lua? ( dev-lang/lua )
 	!lua? ( !dev-lang/lua )

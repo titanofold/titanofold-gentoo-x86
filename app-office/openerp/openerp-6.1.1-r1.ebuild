@@ -17,7 +17,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="postgres ldap ssl"
 
-CDEPEND="postgres? ( virtual/postgresql[server] )
+CDEPEND="postgres? ( dev-db/postgresql[server] )
 	dev-python/lxml
 	dev-python/psycopg:2
 	dev-python/pychart

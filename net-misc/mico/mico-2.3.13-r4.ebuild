@@ -26,7 +26,7 @@ RESTRICT="test" #298101
 
 RDEPEND="
 	gtk?       ( x11-libs/gtk+:2 )
-	postgres?  ( virtual/postgresql )
+	postgres?  ( dev-db/postgresql )
 	qt4?       ( dev-qt/qtgui:4[qt3support] )
 	ssl?       ( dev-libs/openssl )
 	tcl?       ( dev-lang/tcl )
