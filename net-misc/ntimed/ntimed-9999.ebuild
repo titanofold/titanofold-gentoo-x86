@@ -18,7 +18,7 @@ DEPEND=""
 RDEPEND="${DEPEND}"
 
 src_configure() {
-	bash configure
+	bash configure || die 'Configure failed.'
 }
 
 src_install() {
