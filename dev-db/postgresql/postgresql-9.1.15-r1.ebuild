@@ -1,15 +1,19 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql/postgresql-9.2.10.ebuild,v 1.12 2015/03/31 19:06:54 ulm Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql/postgresql-9.1.15.ebuild,v 1.12 2015/03/31 19:06:54 ulm Exp $
 
 EAPI="5"
+
+# Testing within Portage's environment is broken, and the patch no
+# longer applies cleanly.
+RESTRICT="test"
 
 PYTHON_COMPAT=( python{2_{6,7},3_{2,3,4}} )
 
 inherit eutils flag-o-matic linux-info multilib pam prefix python-single-r1 \
 		systemd user versionator
 
-KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 ~s390 ~sh sparc x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
 
@@ -87,11 +91,13 @@ src_prepare() {
 	sed "s|\(PGSOCKET_DIR\s\+\)\"/tmp\"|\1\"${EPREFIX}/run/postgresql\"|" \
 		-i src/include/pg_config_manual.h || die
 
+	epatch "${FILESDIR}/pg_ctl-exit-status.patch"
+
 	use server || epatch "${FILESDIR}/${PN}-${SLOT}-no-server.patch"
 
 	# Fix bug 486556 where the server would crash at start up because of
 	# an infinite loop caused by a self-referencing symlink.
-	epatch "${FILESDIR}/postgresql-9.2-9.4-tz-dir-overflow.patch"
+	epatch "${FILESDIR}/postgresql-9.1-tz-dir-overflow.patch"
 
 	if use pam ; then
 		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \
@@ -187,7 +193,7 @@ src_install() {
 			"${FILESDIR}/${PN}.confd" | newconfd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.init" | newinitd - ${PN}-${SLOT}
+			"${FILESDIR}/${PN}.init-pre_9.2" | newinitd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
 			"${FILESDIR}/${PN}.service" | \
@@ -365,23 +371,5 @@ pkg_config() {
 	else
 		einfo "You should use the '${EROOT%/}/etc/init.d/postgresql-${SLOT}' script to run PostgreSQL"
 		einfo "instead of 'pg_ctl'."
-	fi
-}
-
-src_test() {
-	einfo ">>> Test phase [check]: ${CATEGORY}/${PF}"
-
-	if use server && [[ ${UID} -ne 0 ]] ; then
-		emake check
-
-		einfo "If you think other tests besides the regression tests are necessary, please"
-		einfo "submit a bug including a patch for this ebuild to enable them."
-	else
-		use server || \
-			ewarn 'Tests cannot be run without the "server" use flag enabled.'
-		[[ ${UID} -eq 0 ]] || \
-			ewarn 'Tests cannot be run as root. Enable "userpriv" in FEATURES.'
-
-		ewarn 'Skipping.'
 	fi
 }
