@@ -245,7 +245,7 @@ pkg_postinst() {
 pkg_prerm() {
 	if use server && [[ -z ${REPLACED_BY_VERSION} ]] ; then
 		ewarn "Have you dumped and/or migrated the ${SLOT} database cluster?"
-		ewarn "\thttps://wiki.gentoo.org/wiki/PostgreSQL#doc_chap5"
+		ewarn "\thttps://wiki.gentoo.org/wiki/PostgreSQL/QuickStart#Migrating_PostgreSQL"
 
 		ebegin "Resuming removal in 10 seconds (Control-C to cancel)"
 		sleep 10
