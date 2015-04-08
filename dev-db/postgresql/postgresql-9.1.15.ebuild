@@ -95,6 +95,10 @@ src_prepare() {
 
 	use server || epatch "${FILESDIR}/${PN}-${SLOT}-no-server.patch"
 
+	# Fix bug 486556 where the server would crash at start up because of
+	# an infinite loop caused by a self-referencing symlink.
+	epatch "${FILESDIR}/postgresql-9.1-tz-dir-overflow.patch"
+
 	if use pam ; then
 		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \
 			-i src/backend/libpq/auth.c || \
