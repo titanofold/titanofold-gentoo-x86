@@ -1,20 +1,15 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql/postgresql-9.4.1.ebuild,v 1.12 2015/03/31 19:06:54 ulm Exp $
 
 EAPI="5"
-
-# Testing within Portage's environment is broken, and the patch no
-# longer applies cleanly.
-RESTRICT="test"
 
 PYTHON_COMPAT=( python{2_{6,7},3_{2,3,4}} )
 
 inherit eutils flag-o-matic linux-info multilib pam prefix python-single-r1 \
 		systemd user versionator
 
-KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86
-		  ~amd64-fbsd ~ppc-macos ~sparc-fbsd ~x86-fbsd ~x86-solaris"
+KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 ~s390 ~sh sparc x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
 
@@ -44,7 +39,7 @@ wanted_languages() {
 }
 
 CDEPEND="
->=app-admin/eselect-postgresql-1.2.0
+>=app-eselect/eselect-postgresql-1.2.0
 sys-apps/less
 virtual/libintl
 kerberos? ( virtual/krb5 )
@@ -52,9 +47,9 @@ ldap? ( net-nds/openldap )
 pam? ( virtual/pam )
 perl? ( >=dev-lang/perl-5.8 )
 python? ( ${PYTHON_DEPS} )
-readline? ( sys-libs/readline )
-ssl? ( >=dev-libs/openssl-0.9.6-r1 )
-tcl? ( >=dev-lang/tcl-8 )
+readline? ( sys-libs/readline:0= )
+ssl? ( >=dev-libs/openssl-0.9.6-r1:0= )
+tcl? ( >=dev-lang/tcl-8:0= )
 uuid? ( dev-libs/ossp-uuid )
 xml? ( dev-libs/libxml2 dev-libs/libxslt )
 zlib? ( sys-libs/zlib )
@@ -92,8 +87,6 @@ src_prepare() {
 	sed "s|\(PGSOCKET_DIR\s\+\)\"/tmp\"|\1\"${EPREFIX}/run/postgresql\"|" \
 		-i src/include/pg_config_manual.h || die
 
-	epatch "${FILESDIR}/pg_ctl-exit-status.patch"
-
 	use server || epatch "${FILESDIR}/${PN}-${SLOT}-no-server.patch"
 
 	if use pam ; then
@@ -126,7 +119,6 @@ src_configure() {
 		$(use_enable !pg_legacytimestamp integer-datetimes) \
 		$(use_enable threads thread-safety) \
 		$(use_with kerberos gssapi) \
-		$(use_with kerberos krb5) \
 		$(use_with ldap) \
 		$(use_with pam) \
 		$(use_with perl) \
@@ -188,7 +180,7 @@ src_install() {
 			"${FILESDIR}/${PN}.confd" | newconfd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.init-pre_9.2" | newinitd - ${PN}-${SLOT}
+			"${FILESDIR}/${PN}.init" | newinitd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
 			"${FILESDIR}/${PN}.service" | \
@@ -366,5 +358,23 @@ pkg_config() {
 	else
 		einfo "You should use the '${EROOT%/}/etc/init.d/postgresql-${SLOT}' script to run PostgreSQL"
 		einfo "instead of 'pg_ctl'."
+	fi
+}
+
+src_test() {
+	einfo ">>> Test phase [check]: ${CATEGORY}/${PF}"
+
+	if use server && [[ ${UID} -ne 0 ]] ; then
+		emake check
+
+		einfo "If you think other tests besides the regression tests are necessary, please"
+		einfo "submit a bug including a patch for this ebuild to enable them."
+	else
+		use server || \
+			ewarn 'Tests cannot be run without the "server" use flag enabled.'
+		[[ ${UID} -eq 0 ]] || \
+			ewarn 'Tests cannot be run as root. Enable "userpriv" in FEATURES.'
+
+		ewarn 'Skipping.'
 	fi
 }

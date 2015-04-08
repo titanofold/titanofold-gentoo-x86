@@ -1,6 +1,6 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql/postgresql-9.3.6.ebuild,v 1.12 2015/03/31 19:06:54 ulm Exp $
 
 EAPI="5"
 
@@ -9,8 +9,7 @@ PYTHON_COMPAT=( python{2_{6,7},3_{2,3,4}} )
 inherit eutils flag-o-matic linux-info multilib pam prefix python-single-r1 \
 		systemd user versionator
 
-KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86
-		  ~amd64-fbsd ~ppc-macos ~sparc-fbsd ~x86-fbsd ~x86-solaris"
+KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 ~s390 ~sh sparc x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
 
@@ -40,7 +39,7 @@ wanted_languages() {
 }
 
 CDEPEND="
->=app-admin/eselect-postgresql-1.2.0
+>=app-eselect/eselect-postgresql-1.2.0
 sys-apps/less
 virtual/libintl
 kerberos? ( virtual/krb5 )
@@ -48,9 +47,9 @@ ldap? ( net-nds/openldap )
 pam? ( virtual/pam )
 perl? ( >=dev-lang/perl-5.8 )
 python? ( ${PYTHON_DEPS} )
-readline? ( sys-libs/readline )
-ssl? ( >=dev-libs/openssl-0.9.6-r1 )
-tcl? ( >=dev-lang/tcl-8 )
+readline? ( sys-libs/readline:0= )
+ssl? ( >=dev-libs/openssl-0.9.6-r1:0= )
+tcl? ( >=dev-lang/tcl-8:0= )
 uuid? ( dev-libs/ossp-uuid )
 xml? ( dev-libs/libxml2 dev-libs/libxslt )
 zlib? ( sys-libs/zlib )
@@ -120,6 +119,7 @@ src_configure() {
 		$(use_enable !pg_legacytimestamp integer-datetimes) \
 		$(use_enable threads thread-safety) \
 		$(use_with kerberos gssapi) \
+		$(use_with kerberos krb5) \
 		$(use_with ldap) \
 		$(use_with pam) \
 		$(use_with perl) \
