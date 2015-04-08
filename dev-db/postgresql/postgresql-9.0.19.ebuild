@@ -100,6 +100,8 @@ src_prepare() {
 			-i src/backend/libpq/auth.c || \
 			die 'PGSQL_PAM_SERVICE rename failed.'
 	fi
+
+	epatch_user
 }
 
 src_configure() {
