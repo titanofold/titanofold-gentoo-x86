@@ -10,8 +10,8 @@ guides:
   * http://www.gentoo.org/doc/en/mysql-howto.xml
   * https://wiki.gentoo.org/wiki/PostgreSQL
 
-Once the database and user have been allocated, you will need to provide the details of this database and
-the associated user within the configuration file:
+Once the database and user have been allocated, you will need to provide the
+details of this database and the associated user within the configuration file:
 
   ${MY_INSTALLDIR}/config.inc.php
 
