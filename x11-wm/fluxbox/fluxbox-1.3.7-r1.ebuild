@@ -45,8 +45,6 @@ src_prepare() {
 	# files in menu [include] items. This patch will allow us to do clever
 	# things with style ebuilds.
 	epatch "${FILESDIR}"/gentoo_style_location-1.1.x.patch
-	# Fix the semantic issue of icon paths, bug #536370
-	epatch "${FILESDIR}"/1.3.5-generate_menu-printf-fix.patch
 
 	eprefixify util/fluxbox-generate_menu.in
 
