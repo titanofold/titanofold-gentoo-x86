@@ -23,16 +23,17 @@ DEPEND="
 	>=dev-perl/Apache-Session-1.53
 	>=dev-perl/CSS-Squish-0.06
 	>=dev-perl/Class-Accessor-0.34
+	>=dev-perl/Class-ReturnValue-0.550.0-r1
 	>=dev-perl/DBI-1.37
 	>=dev-perl/Date-Extract-0.02
 	>=dev-perl/DateTime-Format-Natural-0.67
-	>=dev-perl/dbix-searchbuilder-1.660.0
 	>=dev-perl/Devel-StackTrace-1.19
 	>=dev-perl/HTML-FormatText-WithLinks-0.14
 	>=dev-perl/HTML-Mason-1.43
 	>=dev-perl/HTML-Scrubber-0.08
 	>=dev-perl/HTTP-Server-Simple-0.34
 	>=dev-perl/HTTP-Server-Simple-Mason-0.14
+	>=dev-perl/Log-Dispatch-2.410.0
 	>=dev-perl/MIME-tools-5.425
 	>=dev-perl/MailTools-1.60
 	>=dev-perl/Module-Versions-Report-1.05
@@ -42,16 +43,16 @@ DEPEND="
 	>=dev-perl/Text-WikiFormat-0.76
 	>=dev-perl/Tree-Simple-1.04
 	>=dev-perl/XML-RSS-1.05
-	>=dev-perl/Class-ReturnValue-0.550.0-r1
 	>=dev-perl/dbix-searchbuilder-1.59
+	>=dev-perl/dbix-searchbuilder-1.660.0
 	>=dev-perl/locale-maketext-lexicon-0.32
-	>=dev-perl/Log-Dispatch-2.410.0
 	>=virtual/perl-CGI-4
 	>=virtual/perl-Digest-MD5-2.27
+	>=virtual/perl-Encode-2.730.0
 	>=virtual/perl-File-Spec-0.8
 	>=virtual/perl-Getopt-Long-2.24
-	>=virtual/perl-Storable-2.08
 	>=virtual/perl-Locale-Maketext-1.06
+	>=virtual/perl-Storable-2.08
 	dev-perl/CGI-Emulate-PSGI
 	dev-perl/CGI-PSGI
 	dev-perl/Cache-Simple-TimedExpiry
@@ -92,8 +93,8 @@ DEPEND="
 	dev-perl/Plack
 	dev-perl/Regexp-Common-net-CIDR
 	dev-perl/Regexp-IPv6
-	dev-perl/String-ShellQuote
 	dev-perl/Starlet
+	dev-perl/String-ShellQuote
 	dev-perl/TermReadKey
 	dev-perl/Text-Password-Pronounceable
 	dev-perl/Time-modules
@@ -106,10 +107,10 @@ DEPEND="
 	dev-perl/text-autoformat
 	dev-perl/text-template
 	dev-perl/text-wrapper
+	virtual/perl-Digest
 	virtual/perl-File-Temp
 	virtual/perl-Scalar-List-Utils
 	virtual/perl-Time-HiRes
-	virtual/perl-Digest
 	virtual/perl-libnet
 
 	fastcgi? (
