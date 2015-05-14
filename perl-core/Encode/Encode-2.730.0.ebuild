@@ -5,7 +5,7 @@
 EAPI=5
 
 MODULE_AUTHOR=DANKOGAI
-MODULE_VERSION=2.55
+MODULE_VERSION=2.73
 inherit perl-module
 
 DESCRIPTION="character encodings"
