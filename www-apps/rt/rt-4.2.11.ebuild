@@ -200,6 +200,8 @@ src_prepare() {
 
 	# don't need to check dev dependencies
 	sed -e "s|\$args{'with-DEV'} =1;|#\$args{'with-DEV'} =1;|" -i sbin/rt-test-dependencies.in || die
+
+	epatch "${FILESDIR}/rt-makefile-serialize-install-prereqs.patch"
 }
 
 src_configure() {
