@@ -43,7 +43,6 @@ DEPEND="
 	>=dev-perl/Text-WikiFormat-0.76
 	>=dev-perl/Tree-Simple-1.04
 	>=dev-perl/XML-RSS-1.05
-	>=dev-perl/dbix-searchbuilder-1.59
 	>=dev-perl/dbix-searchbuilder-1.660.0
 	>=dev-perl/locale-maketext-lexicon-0.32
 	>=virtual/perl-CGI-4
