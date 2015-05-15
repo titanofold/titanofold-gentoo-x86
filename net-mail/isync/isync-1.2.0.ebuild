@@ -11,14 +11,18 @@ SRC_URI="mirror://sourceforge/isync/${P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86"
-IUSE="ssl"
+IUSE="compat sasl ssl zlib"
 
 DEPEND=">=sys-libs/db-4.2
-	ssl? ( >=dev-libs/openssl-0.9.6 )"
+	sasl? ( dev-libs/cyrus-sasl )
+	ssl? ( >=dev-libs/openssl-0.9.6 )
+	zlib? ( sys-libs/zlib )"
 RDEPEND="${DEPEND}"
 
 src_configure() {
 	econf \
 		--docdir="/usr/share/doc/${PF}" \
+		$(use_enable compat) \
+		$(use_with sasl) \
 		$(use_with ssl)
 }
