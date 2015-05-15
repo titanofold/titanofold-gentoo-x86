@@ -83,8 +83,17 @@ RDEPEND="${CDEPEND}
 selinux? ( sec-policy/selinux-postgresql )
 "
 
+pkg_pretend() {
+	if ! use server ; then
+		eerror "Because this is a live ebuild and the GNU Makefiles may be altered"
+		eerror "by upstream without notice, the ebuild maintainers will not support building a"
+		eerror "client-only version. Please enable the server use flag."
+		die "The 'server' use flag must be enabled."
+	fi
+}
+
 pkg_setup() {
-	use server && CONFIG_CHECK="~SYSVIPC" linux-info_pkg_setup
+	CONFIG_CHECK="~SYSVIPC" linux-info_pkg_setup
 
 	enewgroup postgres 70
 	enewuser postgres 70 /bin/bash /var/lib/postgresql postgres
@@ -99,8 +108,6 @@ src_prepare() {
 	# Set proper run directory
 	sed "s|\(PGSOCKET_DIR\s\+\)\"/tmp\"|\1\"${EPREFIX}/run/postgresql\"|" \
 		-i src/include/pg_config_manual.h || die
-
-	use server || epatch "${FILESDIR}/${PN}-${SLOT}-no-server.patch"
 
 	if use pam ; then
 		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \
@@ -149,30 +156,13 @@ src_configure() {
 }
 
 src_compile() {
-	emake
-	emake -C contrib
-
-	# If use doc, generate all documentation, otherwise just the
-	# man pages
-	#use doc && emake -C doc || emake -C doc man
+	emake world
 }
 
 src_install() {
-	emake DESTDIR="${D}" install
-	emake DESTDIR="${D}" install -C contrib
+	emake DESTDIR="${D}" install-world
 
 	dodoc README HISTORY doc/{TODO,bug.template}
-
-	# We use ${SLOT} instead of doman for postgresql.eselect
-	#insinto /usr/share/postgresql-${SLOT}/man/
-	#doins -r doc/src/sgml/man{1,3,7}
-	#if ! use server; then
-	#	# Remove man pages for non-existent binaries
-	#	for m in {initdb,pg_{controldata,ctl,resetxlog},post{gres,master}}; do
-	#		rm "${ED}/usr/share/postgresql-${SLOT}/man/man1/${m}.1"
-	#	done
-	#fi
-	#docompress /usr/share/postgresql-${SLOT}/man/man{1,3,7}
 
 	insinto /etc/postgresql-${SLOT}
 	newins src/bin/psql/psqlrc.sample psqlrc
@@ -183,35 +173,25 @@ src_install() {
 
 	use static-libs || find "${ED}" -name '*.a' -delete
 
-	#if use doc ; then
-	#	docinto html
-	#	dodoc doc/src/sgml/html/*
+	sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
+		"${FILESDIR}/${PN}.confd" | newconfd - ${PN}-${SLOT}
 
-	#	docinto sgml
-	#	dodoc doc/src/sgml/*.{sgml,dsl}
-	#fi
+	sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
+		"${FILESDIR}/${PN}.init" | newinitd - ${PN}-${SLOT}
 
-	if use server; then
-		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.confd" | newconfd - ${PN}-${SLOT}
+	sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
+		"${FILESDIR}/${PN}.service" | \
+		systemd_newunit - ${PN}-${SLOT}.service
 
-		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.init" | newinitd - ${PN}-${SLOT}
+	systemd_newtmpfilesd "${FILESDIR}"/${PN}.tmpfilesd ${PN}-${SLOT}.conf
 
-		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.service" | \
-			systemd_newunit - ${PN}-${SLOT}.service
+	newbin "${FILESDIR}"/${PN}-check-db-dir ${PN}-${SLOT}-check-db-dir
 
-		systemd_newtmpfilesd "${FILESDIR}"/${PN}.tmpfilesd ${PN}-${SLOT}.conf
+	use pam && pamd_mimic system-auth ${PN}-${SLOT} auth account session
 
-		newbin "${FILESDIR}"/${PN}-check-db-dir ${PN}-${SLOT}-check-db-dir
-
-		use pam && pamd_mimic system-auth ${PN}-${SLOT} auth account session
-
-		if use prefix ; then
-			keepdir /run/postgresql
-			fperms 0775 /run/postgresql
-		fi
+	if use prefix ; then
+		keepdir /run/postgresql
+		fperms 0775 /run/postgresql
 	fi
 }
 
@@ -221,29 +201,27 @@ pkg_postinst() {
 	elog "If you need a global psqlrc-file, you can place it in:"
 	elog "    ${EROOT%/}/etc/postgresql-${SLOT}/"
 
-	if use server ; then
-		elog
-		elog "Gentoo specific documentation:"
-		elog "https://wiki.gentoo.org/wiki/PostgreSQL"
-		elog
-		elog "Official documentation:"
-		elog "http://www.postgresql.org/docs/${SLOT}/static/index.html"
-		elog
-		elog "The default location of the Unix-domain socket is:"
-		elog "    ${EROOT%/}/run/postgresql/"
-		elog
-		elog "Before initializing the database, you may want to edit PG_INITDB_OPTS"
-		elog "so that it contains your preferred locale in:"
-		elog "    ${EROOT%/}/etc/conf.d/postgresql-${SLOT}"
-		elog
-		elog "Then, execute the following command to setup the initial database"
-		elog "environment:"
-		elog "    emerge --config =${CATEGORY}/${PF}"
-	fi
+	elog
+	elog "Gentoo specific documentation:"
+	elog "https://wiki.gentoo.org/wiki/PostgreSQL"
+	elog
+	elog "Official documentation:"
+	elog "http://www.postgresql.org/docs/${SLOT}/static/index.html"
+	elog
+	elog "The default location of the Unix-domain socket is:"
+	elog "    ${EROOT%/}/run/postgresql/"
+	elog
+	elog "Before initializing the database, you may want to edit PG_INITDB_OPTS"
+	elog "so that it contains your preferred locale in:"
+	elog "    ${EROOT%/}/etc/conf.d/postgresql-${SLOT}"
+	elog
+	elog "Then, execute the following command to setup the initial database"
+	elog "environment:"
+	elog "    emerge --config =${CATEGORY}/${PF}"
 }
 
 pkg_prerm() {
-	if use server && [[ -z ${REPLACED_BY_VERSION} ]] ; then
+	if [[ -z ${REPLACED_BY_VERSION} ]] ; then
 		ewarn "Have you dumped and/or migrated the ${SLOT} database cluster?"
 		ewarn "\thttps://wiki.gentoo.org/wiki/PostgreSQL/QuickStart#Migrating_PostgreSQL"
 
@@ -258,8 +236,6 @@ pkg_postrm() {
 }
 
 pkg_config() {
-	use server || die "USE flag 'server' not enabled. Nothing to configure."
-
 	[[ -f "${EROOT%/}/etc/conf.d/postgresql-${SLOT}" ]] \
 		&& source "${EROOT%/}/etc/conf.d/postgresql-${SLOT}"
 	[[ -z "${PGDATA}" ]] && PGDATA="${EROOT%/}/etc/postgresql-${SLOT}/"
@@ -380,17 +356,15 @@ pkg_config() {
 src_test() {
 	einfo ">>> Test phase [check]: ${CATEGORY}/${PF}"
 
-	if use server && [[ ${UID} -ne 0 ]] ; then
+	if [[ ${UID} -ne 0 ]] ; then
 		emake check
 
 		einfo "If you think other tests besides the regression tests are necessary, please"
 		einfo "submit a bug including a patch for this ebuild to enable them."
 	else
-		use server || \
-			ewarn 'Tests cannot be run without the "server" use flag enabled.'
 		[[ ${UID} -eq 0 ]] || \
-			ewarn 'Tests cannot be run as root. Enable "userpriv" in FEATURES.'
+			ewarn "Tests cannot be run as root. Enable 'userpriv' in FEATURES."
 
-		ewarn 'Skipping.'
+		ewarn "Skipping."
 	fi
 }
