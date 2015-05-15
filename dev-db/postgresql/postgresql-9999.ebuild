@@ -206,13 +206,13 @@ pkg_postinst() {
 	elog "https://wiki.gentoo.org/wiki/PostgreSQL"
 	elog
 	elog "Official documentation:"
-	elog "http://www.postgresql.org/docs/${SLOT}/static/index.html"
+	elog "${EROOT%/}/usr/share/doc/${PF}/html"
 	elog
 	elog "The default location of the Unix-domain socket is:"
 	elog "    ${EROOT%/}/run/postgresql/"
 	elog
 	elog "Before initializing the database, you may want to edit PG_INITDB_OPTS"
-	elog "so that it contains your preferred locale in:"
+	elog "so that it contains your preferred locale, and other options, in:"
 	elog "    ${EROOT%/}/etc/conf.d/postgresql-${SLOT}"
 	elog
 	elog "Then, execute the following command to setup the initial database"
