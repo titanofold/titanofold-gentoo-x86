@@ -195,10 +195,11 @@ src_prepare() {
 	sed -e "s|PREFIX|${ED}/${MY_HOSTROOTDIR}/${PF}|g" \
 		-e "s|HTMLDIR|${ED}/${MY_HTDOCSDIR}|g" \
 		-e 's|/\+|/|g' \
-		-i ./config.layout || die
+		-i ./config.layout || die 'config sed failed'
 
 	# don't need to check dev dependencies
-	sed -e "s|\$args{'with-DEV'} =1;|#\$args{'with-DEV'} =1;|" -i sbin/rt-test-dependencies.in || die
+	sed -e "s|\$args{'with-DEV'} =1;|#\$args{'with-DEV'} =1;|" \
+		-i sbin/rt-test-dependencies.in || die 'dev sed failed'
 
 	epatch "${FILESDIR}/rt-makefile-serialize-install-prereqs.patch"
 }
@@ -278,8 +279,6 @@ src_install() {
 		newinitd "${FILESDIR}"/${PN}.init.d.2 ${PN}
 		newconfd "${FILESDIR}"/${PN}.conf.d.2 ${PN}
 		sed -i -e "s/@@PF@@/${PF}/g" "${ED}"/etc/conf.d/${PN} || die
-	else
-		doins "${FILESDIR}"/rt_apache2{,_fcgi}.conf
 	fi
 
 	# require the web server's permissions
