@@ -15,8 +15,8 @@ KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
 SLOT="0"
 IUSE="debug +databasedesigner"
 
-DEPEND="x11-libs/wxGTK[X,debug=]
-	>=dev-db/postgresql-8.4.0
+DEPEND="x11-libs/wxGTK:=[X,debug=]
+	>=dev-db/postgresql-8.4.0:=
 	>=dev-libs/libxml2-2.6.18
 	>=dev-libs/libxslt-1.1"
 RDEPEND="${DEPEND}"
@@ -37,7 +37,7 @@ src_prepare() {
 
 src_configure() {
 	WX_GTK_PV=$(best_version x11-libs/wxGTK[X,debug=])
-	WX_GTK_VER=$(get_version_component_range 1-2 ${WX_GTK_PV/'x11-libs/wxGTK-'})
+	WX_GTK_VER=$(get_version_component_range 1-2 ${WX_GTK_PV#x11-libs/wxGTK-})
 
 	need-wxwidgets unicode
 
