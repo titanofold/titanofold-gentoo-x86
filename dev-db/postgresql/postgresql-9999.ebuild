@@ -84,12 +84,12 @@ selinux? ( sec-policy/selinux-postgresql )
 "
 
 pkg_pretend() {
-	if ! use server ; then
-		eerror "Because this is a live ebuild and the GNU Makefiles may be altered"
-		eerror "by upstream without notice, the ebuild maintainers will not support building a"
-		eerror "client-only version. Please enable the server use flag."
-		die "The 'server' use flag must be enabled."
-	fi
+	ewarn "You are using a live ebuild that uses the current source code as it is"
+	ewarn "available from PostgreSQL's Git repository at emerge time. Given such,"
+	ewarn "the GNU Makefiles may be altered by upstream without notice and the"
+	ewarn "documentation for this live version is not readily available"
+	ewarn "online. Ergo, the ebuild maintainers will not support building a"
+	ewarn "client-only and/or document-free version."
 }
 
 pkg_setup() {
