@@ -50,7 +50,7 @@ python? ( ${PYTHON_DEPS} )
 readline? ( sys-libs/readline:0= )
 ssl? ( >=dev-libs/openssl-0.9.6-r1:0= )
 tcl? ( >=dev-lang/tcl-8:0= )
-uuid? ( dev-libs/ossp-uuid )
+uuid? ( sys-apps/util-linux )
 xml? ( dev-libs/libxml2 dev-libs/libxslt )
 zlib? ( sys-libs/zlib )
 "
@@ -109,12 +109,25 @@ src_configure() {
 			;;
 	esac
 
+	local uuid_lib
+	case ${CHOST} in
+		*bsd*)
+			uuid_lib='bsd'
+			;;
+		*)
+			uuid_lib='e2fs'
+			;;
+	esac
+
+	local myconf
+	use uuid && myconf="--with-uuid=$uuid_lib"
+
 	export LDFLAGS_SL="${LDFLAGS}"
 	export LDFLAGS_EX="${LDFLAGS}"
 
 	local PO="${EPREFIX%/}"
 
-	econf \
+	econf $myconf \
 		--prefix="${PO}/usr/$(get_libdir)/postgresql-${SLOT}" \
 		--datadir="${PO}/usr/share/postgresql-${SLOT}" \
 		--docdir="${PO}/usr/share/doc/${PF}" \
@@ -132,7 +145,6 @@ src_configure() {
 		$(use_with readline) \
 		$(use_with ssl openssl) \
 		$(use_with tcl) \
-		$(use_with uuid ossp-uuid) \
 		$(use_with xml libxml) \
 		$(use_with xml libxslt) \
 		$(use_with zlib) \
