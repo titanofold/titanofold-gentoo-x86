@@ -50,10 +50,32 @@ python? ( ${PYTHON_DEPS} )
 readline? ( sys-libs/readline:0= )
 ssl? ( >=dev-libs/openssl-0.9.6-r1:0= )
 tcl? ( >=dev-lang/tcl-8:0= )
-uuid? ( sys-apps/util-linux )
 xml? ( dev-libs/libxml2 dev-libs/libxslt )
 zlib? ( sys-libs/zlib )
 "
+
+# uuid flags -- depend on sys-apps/util-linux for Linux libcs, or if no
+# supported libc in use depend on dev-libs/ossp-uuid. For BSD systems,
+# the libc includes UUID functions.
+UTIL_LINUX_LIBC=( elibc_{glibc,uclibc,musl} )
+BSD_LIBC=( elibc_{Free,Net,Open}BSD )
+
+nest_usedep() {
+	local front back
+	while [[ ${#} -gt 1 ]]; do
+		front+="${1}? ( "
+		back+=" )"
+		shift
+	done
+	echo "${front}${1}${back}"
+}
+
+IUSE+=" ${UTIL_LINUX_LIBC[@]} ${BSD_LIBC[@]}"
+CDEPEND+="
+uuid? (
+	${UTIL_LINUX_LIBC[@]/%/? ( sys-apps/util-linux )}
+	$(nest_usedep ${UTIL_LINUX_LIBC[@]/#/!} ${BSD_LIBC[@]/#/!} dev-libs/ossp-uuid)
+)"
 
 DEPEND="${CDEPEND}
 !!<sys-apps/sandbox-2.0
@@ -109,25 +131,23 @@ src_configure() {
 			;;
 	esac
 
-	local uuid_lib
-	case ${CHOST} in
-		*bsd*)
-			uuid_lib='bsd'
-			;;
-		*)
-			uuid_lib='e2fs'
-			;;
-	esac
-
-	local myconf
-	use uuid && myconf="--with-uuid=$uuid_lib"
-
 	export LDFLAGS_SL="${LDFLAGS}"
 	export LDFLAGS_EX="${LDFLAGS}"
 
 	local PO="${EPREFIX%/}"
 
-	econf $myconf \
+	local i uuid_config=""
+	if use uuid; then
+		for i in ${UTIL_LINUX_LIBC[@]}; do
+			use ${i} && uuid_config="--with-uuid=e2fs"
+		done
+		for i in ${BSD_LIBC[@]}; do
+			use ${i} && uuid_config="--with-uuid=bsd"
+		done
+		[[ -z $uuid_config ]] && uuid_config="--with-uuid=ossp"
+	fi
+
+	econf \
 		--prefix="${PO}/usr/$(get_libdir)/postgresql-${SLOT}" \
 		--datadir="${PO}/usr/share/postgresql-${SLOT}" \
 		--docdir="${PO}/usr/share/doc/${PF}" \
@@ -145,6 +165,7 @@ src_configure() {
 		$(use_with readline) \
 		$(use_with ssl openssl) \
 		$(use_with tcl) \
+		${uuid_config} \
 		$(use_with xml libxml) \
 		$(use_with xml libxslt) \
 		$(use_with zlib) \
@@ -198,7 +219,7 @@ src_install() {
 			"${FILESDIR}/${PN}.confd" | newconfd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.init" | newinitd - ${PN}-${SLOT}
+			"${FILESDIR}/${PN}.init-9.3" | newinitd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
 			"${FILESDIR}/${PN}.service" | \
