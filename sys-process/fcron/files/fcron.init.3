@@ -20,7 +20,7 @@ getconfig() {
 	return 0
     fi
 
-    sed -n -e 's:^$1[ \t]*=[ \t]*::p' $(configfile)
+	sed -n -e "s:^$1[ \t]*=[ \t]*::p" $(configfile)
 }
 
 depend() {
