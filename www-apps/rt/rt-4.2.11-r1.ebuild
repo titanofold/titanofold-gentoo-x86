@@ -69,7 +69,7 @@ DEPEND="
 	dev-perl/Email-Address-List
 	dev-perl/File-ShareDir
 	dev-perl/File-Which
-	dev-perl/GD
+	dev-perl/GD[png,gif]
 	dev-perl/GDGraph
 	dev-perl/GDTextUtil
 	dev-perl/GnuPG-Interface
