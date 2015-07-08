@@ -21,6 +21,7 @@ DEPEND="
 	>=dev-lang/perl-5.10.1
 
 	>=dev-perl/Apache-Session-1.53
+	>=dev-perl/CGI-4
 	>=dev-perl/CSS-Squish-0.06
 	>=dev-perl/Class-Accessor-0.34
 	>=dev-perl/Class-ReturnValue-0.550.0-r1
@@ -45,7 +46,6 @@ DEPEND="
 	>=dev-perl/XML-RSS-1.05
 	>=dev-perl/dbix-searchbuilder-1.660.0
 	>=dev-perl/locale-maketext-lexicon-0.32
-	>=virtual/perl-CGI-4
 	>=virtual/perl-Digest-MD5-2.27
 	>=virtual/perl-Encode-2.730.0
 	>=virtual/perl-File-Spec-0.8
