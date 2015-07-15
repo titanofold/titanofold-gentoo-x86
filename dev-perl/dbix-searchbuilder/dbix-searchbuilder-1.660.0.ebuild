@@ -18,7 +18,7 @@ IUSE="test"
 RDEPEND="
 	>=dev-perl/Cache-Simple-TimedExpiry-0.210.0
 	>=dev-perl/capitalization-0.30.0
-	>=dev-perl/class-returnvalue-0.400.0
+	>=dev-perl/Class-ReturnValue-0.400.0
 	dev-perl/Class-Accessor
 	dev-perl/Clone
 	dev-perl/DBI
