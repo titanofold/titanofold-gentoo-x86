@@ -4,7 +4,7 @@
 
 EAPI="5"
 
-inherit multilib versionator wxwidgets
+inherit eutils multilib versionator wxwidgets
 
 DESCRIPTION="wxWidgets GUI for PostgreSQL"
 HOMEPAGE="http://www.pgadmin.org/"
@@ -32,7 +32,10 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/pgadmin3-desktop.patch"
+	epatch "${FILESDIR}/pgadmin3-desktop.patch" \
+		   "${FILESDIR}/pgadmin3-menu-assert.patch"
+
+	epatch_user
 }
 
 src_configure() {
