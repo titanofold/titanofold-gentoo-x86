@@ -16,7 +16,8 @@ inherit user
 # and generating dependencies.
 
 if declare -p POSTGRES_COMPAT &> /dev/null ; then
-	# We prefer newer over older we have a choice.
+	# Reverse sort the given POSTGRES_COMPAT so that the most recent
+	# slot is preferred over an older slot.
 	POSTGRES_COMPAT=(`for i in ${POSTGRES_COMPAT[@]}; do echo $i; done | sort -nr`)
 
 	POSTGRES_DEP="|| ("
@@ -67,7 +68,7 @@ postgres_new_user() {
 
 	if [[ $# -gt 0 ]] ; then
 		if [[ "$1" = "postgres" ]] ; then
-			ewarn "Invalid username 'postgres', skipping"
+			ewarn "Username 'postgres' implied, skipping"
 		else
 			local groups=$5
 			[[ -n "${groups}" ]] && groups+=",postgres" || groups="postgres"
