@@ -9,17 +9,11 @@ PYTHON_COMPAT=( python{2_7,3_4} )
 inherit eutils flag-o-matic linux-info multilib pam prefix python-single-r1 \
 		systemd user versionator
 
-# This is a prerelease version, so no keywords please
-KEYWORDS=""
-#KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
 
-MY_PV=${PV/_/}
-
-S=${WORKDIR}/${PN}-${MY_PV}
-
-SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2"
+SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2"
 
 LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"
@@ -117,6 +111,11 @@ src_prepare() {
 	# Set proper run directory
 	sed "s|\(PGSOCKET_DIR\s\+\)\"/tmp\"|\1\"${EPREFIX}/run/postgresql\"|" \
 		-i src/include/pg_config_manual.h || die
+
+	# Rely on $PATH being in the proper order so that the correct
+	# install program is used for modules utilizing PGXS in both
+	# hardened and non-hardened environments. (Bug #528786)
+	sed 's/@install_bin@/install -c/' -i src/Makefile.global.in || die
 
 	use server || epatch "${FILESDIR}/${PN}-${SLOT}-no-server.patch"
 
@@ -250,6 +249,14 @@ pkg_postinst() {
 
 	elog "If you need a global psqlrc-file, you can place it in:"
 	elog "    ${EROOT%/}/etc/postgresql-${SLOT}/"
+
+	if [[ -z ${REPLACING_VERSIONS} ]] ; then
+		elog
+		elog "It looks like this is your first time installing PostgreSQL. Run the"
+		elog "following command in all active shells to pick up changes to the default"
+		elog "environemnt:"
+		elog "    source /etc/profile"
+	fi
 
 	if use server ; then
 		elog
