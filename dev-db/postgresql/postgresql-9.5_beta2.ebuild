@@ -1,19 +1,25 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/postgresql/postgresql-9.4.1.ebuild,v 1.12 2015/03/31 19:06:54 ulm Exp $
+# $Id$
 
 EAPI="5"
 
-PYTHON_COMPAT=( python{2_{6,7},3_{2,3,4}} )
+PYTHON_COMPAT=( python{2_7,3_4} )
 
 inherit eutils flag-o-matic linux-info multilib pam prefix python-single-r1 \
 		systemd user versionator
 
-KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
+# This is a prerelease version, so no keywords please
+KEYWORDS=""
+#KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
 
-SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2"
+MY_PV=${PV/_/}
+
+S=${WORKDIR}/${PN}-${MY_PV}
+
+SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2"
 
 LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"
@@ -21,7 +27,7 @@ HOMEPAGE="http://www.postgresql.org/"
 
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr
 		 zh_CN zh_TW"
-IUSE="doc kerberos kernel_linux ldap nls pam perl -pg_legacytimestamp python
+IUSE="doc kerberos kernel_linux ldap libressl nls pam perl -pg_legacytimestamp python
 	  +readline selinux +server ssl static-libs tcl threads uuid xml zlib"
 
 for lingua in ${LINGUAS}; do
@@ -48,7 +54,10 @@ pam? ( virtual/pam )
 perl? ( >=dev-lang/perl-5.8 )
 python? ( ${PYTHON_DEPS} )
 readline? ( sys-libs/readline:0= )
-ssl? ( >=dev-libs/openssl-0.9.6-r1:0= )
+ssl? (
+	!libressl? ( >=dev-libs/openssl-0.9.6-r1:0= )
+	libressl? ( dev-libs/libressl:= )
+)
 tcl? ( >=dev-lang/tcl-8:0= )
 xml? ( dev-libs/libxml2 dev-libs/libxslt )
 zlib? ( sys-libs/zlib )
@@ -96,7 +105,7 @@ pkg_setup() {
 	use server && CONFIG_CHECK="~SYSVIPC" linux-info_pkg_setup
 
 	enewgroup postgres 70
-	enewuser postgres 70 /bin/bash /var/lib/postgresql postgres
+	enewuser postgres 70 /bin/sh /var/lib/postgresql postgres
 
 	use python && python-single-r1_pkg_setup
 }
@@ -224,8 +233,6 @@ src_install() {
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
 			"${FILESDIR}/${PN}.service" | \
 			systemd_newunit - ${PN}-${SLOT}.service
-
-		systemd_newtmpfilesd "${FILESDIR}"/${PN}.tmpfilesd ${PN}-${SLOT}.conf
 
 		newbin "${FILESDIR}"/${PN}-check-db-dir ${PN}-${SLOT}-check-db-dir
 
