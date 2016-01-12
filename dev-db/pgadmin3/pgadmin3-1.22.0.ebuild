@@ -32,8 +32,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/pgadmin3-desktop.patch" \
-		   "${FILESDIR}/pgadmin3-menu-assert.patch"
+	epatch "${FILESDIR}/pgadmin3-desktop.patch"
 
 	epatch_user
 }
