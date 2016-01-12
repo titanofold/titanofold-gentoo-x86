@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<herd>web-apps</herd>
+	<upstream>
+		<remote-id type="sourceforge">roundcubemail</remote-id>
+	</upstream>
+	<use>
+		<flag name="enigma">
+			Add dependencies to support server-side GnuPG signing
+			and/or encryption through the enigma plugin
+		</flag>
+		<flag name="managesieve">
+			Add dependencies to support the sieverules plugin
+		</flag>
+		<flag name="ldap">
+			Add dependencies to support connecting to an LDAP address
+			book server
+		</flag>
+	</use>
+</pkgmetadata>

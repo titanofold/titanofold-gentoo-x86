@@ -18,7 +18,9 @@ IUSE="+lua +pbf"
 DEPEND="
 	app-arch/bzip2
 	dev-db/postgresql
+	dev-libs/boost
 	dev-libs/libxml2:2
+	dev-libs/protobuf
 	sci-libs/geos
 	sci-libs/proj
 	sys-libs/zlib

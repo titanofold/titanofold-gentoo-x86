@@ -1,10 +1,10 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/pgadmin3/pgadmin3-1.18.1.ebuild,v 1.7 2014/12/28 15:08:20 titanofold Exp $
+# $Header: /var/cvsroot/gentoo-x86/dev-db/pgadmin3/pgadmin3-1.20.0-r1.ebuild,v 1.1 2015/05/20 19:48:25 titanofold Exp $
 
 EAPI="5"
 
-inherit multilib versionator wxwidgets
+inherit eutils multilib versionator wxwidgets
 
 DESCRIPTION="wxWidgets GUI for PostgreSQL"
 HOMEPAGE="http://www.pgadmin.org/"
@@ -33,6 +33,8 @@ pkg_setup() {
 
 src_prepare() {
 	epatch "${FILESDIR}/pgadmin3-desktop.patch"
+
+	epatch_user
 }
 
 src_configure() {
