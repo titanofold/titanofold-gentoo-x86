@@ -5,5 +5,10 @@
   <herd>sci-geosciences</herd>
   <use>
 	<flag name="gtk">Build shp2pgsql-gui a graphical interface to shp2pgsql</flag>
+	<flag name="postgres_9_5"></flag>
+	<flag name="postgres_9_4"></flag>
+	<flag name="postgres_9_3"></flag>
+	<flag name="postgres_9_2"></flag>
+	<flag name="postgres_9_1"></flag>
   </use>
 </pkgmetadata>

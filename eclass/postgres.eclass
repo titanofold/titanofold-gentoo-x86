@@ -27,15 +27,19 @@ esac
 # A Bash array containing a list of compatible PostgreSQL slots as
 # defined by the developer.
 
+# @ECLASS-VARIABLE: POSTGRES_USEDEP
+# @DESCRIPTION:
+# Add the, without brackets, 2-Style and/or 4-Style use dependencies to
+# be used for POSTGRES_DEP.
+
 # @ECLASS-VARIABLE: POSTGRES_DEP
 # @DESCRIPTION:
 # An automatically generated dependency string suitable for use in
 # DEPEND and RDEPEND declarations.
 
-# @ECLASS-VARIABLE: POSTGRES_USEDEP
+# @ECLASS-VARIABLE: POSTGRES_REQ_USE
 # @DESCRIPTION:
-# Add the given, without brackets, 2-Style and/or 4-Style use
-# dependencies to POSTGRES_DEP
+# An automatically generated REQUIRED_USE-compatible string.
 
 if declare -p POSTGRES_COMPAT &> /dev/null ; then
 	# Reverse sort the given POSTGRES_COMPAT so that the most recent
