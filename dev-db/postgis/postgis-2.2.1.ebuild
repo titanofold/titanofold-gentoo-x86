@@ -47,7 +47,7 @@ DEPEND="${RDEPEND}
 
 PGIS="$(get_version_component_range 1-2)"
 
-REQUIRED_USE="test? ( doc )"
+REQUIRED_USE="test? ( doc ) ${POSTGRES_REQ_USE}"
 
 # Needs a running psql instance, doesn't work out of the box
 RESTRICT="test"

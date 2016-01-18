@@ -94,6 +94,10 @@ postgres-multi_pkg_setup() {
 			_POSTGRES_UNION_SLOTS+=( "${user_slot}" )
 	done
 
+	if [[ "${#_POSTGRES_UNION_SLOTS[@]}" -eq "0" ]]; then
+		die "One of the postgres_SL_OT use flags must be enabled"
+	fi
+
 	elog "Multibuild variants: ${_POSTGRES_UNION_SLOTS[@]}"
 }
 
