@@ -40,17 +40,22 @@ esac
 if declare -p POSTGRES_COMPAT &> /dev/null ; then
 	# Reverse sort the given POSTGRES_COMPAT so that the most recent
 	# slot is preferred over an older slot.
+	# -- do we care if dependencies are deterministic by USE flags?
 	readarray -t POSTGRES_COMPAT < <(printf '%s\n' "${POSTGRES_COMPAT[@]}" | sort -nr)
 
-	POSTGRES_DEP="|| ("
+	POSTGRES_DEP=""
+	POSTGRES_REQ_USE=" || ("
 	for slot in "${POSTGRES_COMPAT[@]}" ; do
-		POSTGRES_DEP+=" dev-db/postgresql:${slot}="
+		POSTGRES_DEP+=" postgres_${slot/\./_}? ( dev-db/postgresql:${slot}="
 		declare -p POSTGRES_USEDEP &>/dev/null && \
 			POSTGRES_DEP+="[${POSTGRES_USEDEP}]"
+		POSTGRES_DEP+=" )"
+		IUSE+=" postgres_${slot/\./_}"
+		POSTGRES_REQ_USE+=" postgres_${slot/\./_}"
 	done
-	POSTGRES_DEP+=" )"
+	POSTGRES_REQ_USE+=" )"
 else
-	POSTGRES_DEP="dev-db/postgresql"
+	POSTGRES_DEP="dev-db/postgresql:="
 	declare -p POSTGRES_USEDEP &>/dev/null && \
 		POSTGRES_DEP+="[${POSTGRES_USEDEP}]"
 fi

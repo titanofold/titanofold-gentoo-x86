@@ -87,11 +87,10 @@ postgres-multi_forbest() {
 # @DESCRIPTION:
 # Initialize internal environment variable(s).
 postgres-multi_pkg_setup() {
-	local all_slots=$(eselect --brief postgresql list)
 	local user_slot
 
 	for user_slot in "${POSTGRES_COMPAT[@]}"; do
-		has "${user_slot}" ${all_slots} && \
+		use "postgres_${user_slot/\./_}" && \
 			_POSTGRES_UNION_SLOTS+=( "${user_slot}" )
 	done
 
