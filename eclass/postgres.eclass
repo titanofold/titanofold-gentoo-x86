@@ -25,12 +25,14 @@ esac
 # @ECLASS-VARIABLE: POSTGRES_COMPAT
 # @DESCRIPTION:
 # A Bash array containing a list of compatible PostgreSQL slots as
-# defined by the developer.
+# defined by the developer. If declared, must be declared before
+# inheriting this eclass.
 
 # @ECLASS-VARIABLE: POSTGRES_USEDEP
 # @DESCRIPTION:
 # Add the, without brackets, 2-Style and/or 4-Style use dependencies to
-# be used for POSTGRES_DEP.
+# be used for POSTGRES_DEP. If declared, must be declared before
+# inheriting this eclass.
 
 # @ECLASS-VARIABLE: POSTGRES_DEP
 # @DESCRIPTION:
@@ -39,7 +41,10 @@ esac
 
 # @ECLASS-VARIABLE: POSTGRES_REQ_USE
 # @DESCRIPTION:
-# An automatically generated REQUIRED_USE-compatible string.
+# An automatically generated REQUIRED_USE-compatible string built upon
+# POSTGRES_COMPAT. REQUIRED_USE="... ${POSTGRES_REQ_USE}" is only
+# required if the package must build against one of the PostgreSQL slots
+# declared in POSTGRES_COMPAT.
 
 if declare -p POSTGRES_COMPAT &> /dev/null ; then
 	# Reverse sort the given POSTGRES_COMPAT so that the most recent
@@ -54,6 +59,7 @@ if declare -p POSTGRES_COMPAT &> /dev/null ; then
 		declare -p POSTGRES_USEDEP &>/dev/null && \
 			POSTGRES_DEP+="[${POSTGRES_USEDEP}]"
 		POSTGRES_DEP+=" )"
+
 		IUSE+=" postgres_${slot/\./_}"
 		POSTGRES_REQ_USE+=" postgres_${slot/\./_}"
 	done
