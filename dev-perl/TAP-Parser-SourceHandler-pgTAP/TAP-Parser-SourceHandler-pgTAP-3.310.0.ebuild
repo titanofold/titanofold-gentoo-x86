@@ -1,11 +1,11 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
+# $Id$
 
-EAPI=5
+EAPI=6
 
-MODULE_AUTHOR=DWHEELER
-MODULE_VERSION="${PV}"
+DIST_AUTHOR=DWHEELER
+DIST_VERSION="3.31"
 inherit perl-module
 
 DESCRIPTION="Stream TAP from pgTAP test scripts"
@@ -17,7 +17,7 @@ RDEPEND="virtual/perl-Test-Harness"
 DEPEND="${RDEPEND}
 		dev-perl/Test-Pod
 		dev-perl/Test-Pod-Coverage
-		virtual/perl-Module-Build
+		dev-perl/Module-Build
 "
 
-SRC_TEST="do"
+DIST_TEST="do"
