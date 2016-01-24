@@ -96,12 +96,12 @@ postgres-multi_pkg_setup() {
 	local user_slot
 
 	for user_slot in "${POSTGRES_COMPAT[@]}"; do
-		use "postgres_${user_slot/\./_}" && \
+		use "postgres_targets_postgres${user_slot/\./_}" && \
 			_POSTGRES_UNION_SLOTS+=( "${user_slot}" )
 	done
 
 	if [[ "${#_POSTGRES_UNION_SLOTS[@]}" -eq "0" ]]; then
-		die "One of the postgres_SL_OT use flags must be enabled"
+		die "One of the postgres_targets_postgresSL_OT use flags must be enabled"
 	fi
 
 	elog "Multibuild variants: ${_POSTGRES_UNION_SLOTS[@]}"
