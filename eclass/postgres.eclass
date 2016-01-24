@@ -61,7 +61,7 @@ if declare -p POSTGRES_COMPAT &> /dev/null ; then
 		POSTGRES_DEP+=" )"
 
 		IUSE+=" postgres_targets_postgres${slot/\./_}"
-		POSTGRES_REQ_USE+=" postgres_targets_${slot/\./_}"
+		POSTGRES_REQ_USE+=" postgres_targets_postgres${slot/\./_}"
 	done
 	POSTGRES_REQ_USE+=" )"
 else
