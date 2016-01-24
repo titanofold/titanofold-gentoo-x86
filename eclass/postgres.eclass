@@ -26,7 +26,7 @@ esac
 # @DESCRIPTION:
 # A Bash array containing a list of compatible PostgreSQL slots as
 # defined by the developer. If declared, must be declared before
-# inheriting this eclass.
+# inheriting this eclass. Example: POSTGRES_COMPAT=( 9.4 9.{5,6} )
 
 # @ECLASS-VARIABLE: POSTGRES_USEDEP
 # @DESCRIPTION:
