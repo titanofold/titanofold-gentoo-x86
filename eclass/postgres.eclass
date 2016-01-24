@@ -55,7 +55,7 @@ if declare -p POSTGRES_COMPAT &> /dev/null ; then
 	POSTGRES_DEP=""
 	POSTGRES_REQ_USE=" || ("
 	for slot in "${POSTGRES_COMPAT[@]}" ; do
-		POSTGRES_DEP+=" postgres_targets_${slot/\./_}? ( dev-db/postgresql:${slot}="
+		POSTGRES_DEP+=" postgres_targets_postgres${slot/\./_}? ( dev-db/postgresql:${slot}="
 		declare -p POSTGRES_USEDEP &>/dev/null && \
 			POSTGRES_DEP+="[${POSTGRES_USEDEP}]"
 		POSTGRES_DEP+=" )"
