@@ -10,12 +10,4 @@
         pgTAP is a suite of database functions that make it easy to write
         TAP-emitting unit tests in psql scripts or xUnit-style test functions.
     </longdescription>
-  <use>
-	<flag name="postgres_9_5"></flag>
-	<flag name="postgres_9_4"></flag>
-	<flag name="postgres_9_3"></flag>
-	<flag name="postgres_9_2"></flag>
-	<flag name="postgres_9_1"></flag>
-	<flag name="postgres_9_0"></flag>
-  </use>
 </pkgmetadata>
