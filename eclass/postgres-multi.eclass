@@ -113,6 +113,8 @@ postgres-multi_src_prepare() {
 		die "Did you forget to call postgres-multi_pkg_setup?"
 	fi
 
+	eapply_user
+
 	local MULTIBUILD_VARIANT
 	local MULTIBUILD_VARIANTS=("${_POSTGRES_UNION_SLOTS[@]}")
 	multibuild_copy_sources
