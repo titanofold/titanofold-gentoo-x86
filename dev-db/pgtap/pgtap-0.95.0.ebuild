@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
 POSTGRES_COMPAT=( 9.{0,1,2,3,4,5} )
 
