@@ -17,8 +17,8 @@ inherit user
 
 
 case ${EAPI:-0} in
-  0|1|2|3|4) die "postgres.eclass requires EAPI 5 or higher" ;;
-  *) ;;
+	5|6) ;;
+	*) die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}" ;;
 esac
 
 
