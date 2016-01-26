@@ -13,9 +13,8 @@ EXPORT_FUNCTIONS pkg_setup src_prepare src_compile src_install src_test
 # @BLURB: An eclass to build PostgreSQL-related packages against multiple slots
 # @DESCRIPTION:
 # postgres-multi enables ebuilds, particularly PostgreSQL extensions, to
-# build against any and all compatible PostgreSQL slots that are also
-# enabled by the user. Additionally makes a developer's life easier with
-# exported default functions to do the right thing.
+# build and install for one or more PostgreSQL slots as specified by
+# POSTGRES_TARGETS use flags.
 
 
 case ${EAPI:-0} in
@@ -28,17 +27,18 @@ esac
 # @REQUIRED
 # @DESCRIPTION:
 # A Bash array containing a list of compatible PostgreSQL slots as
-# defined by the developer. Must be declared before inheriting this eclass.
+# defined by the developer. Must be declared before inheriting this
+# eclass. Example: POSTGRES_COMPAT=( 9.4 9.{5,6} )
 if ! declare -p POSTGRES_COMPAT &>/dev/null; then
 	die 'Required variable POSTGRES_COMPAT not declared.'
 fi
 
-# @ECLASS-VARIABLE: _POSTGRES_UNION_SLOTS
+# @ECLASS-VARIABLE: _POSTGRES_INTERSECT_SLOTS
 # @INTERNAL
 # @DESCRIPTION:
-# A Bash array containing the union set of user-enabled slots that are
-# also in POSTGRES_COMPAT.
-export _POSTGRES_UNION_SLOTS=( )
+# A Bash array containing the intersect of POSTGRES_TARGETS and
+# POSTGRES_COMPAT.
+export _POSTGRES_INTERSECT_SLOTS=( )
 
 # @FUNCTION _postgres-multi_multibuild_wrapper
 # @INTERNAL
@@ -57,15 +57,15 @@ _postgres-multi_multibuild_wrapper() {
 # @FUNCTION: postgres-multi_foreach
 # @USAGE: postgres-multi_foreach <command> <arg> [<arg> ...]
 # @DESCRIPTION:
-# Run the given command in the package's source directory for each
-# PostgreSQL slot in the union set of the developer defined
+# Run the given command in the package's build directory for each
+# PostgreSQL slot in the intersect of POSTGRES_TARGETS and
 # POSTGRES_COMPAT and user-enabled slots. The PG_CONFIG environment
 # variable is updated on each iteration to point to the matching
 # pg_config command for the current slot. Any appearance of @PG_SLOT@ in
 # the command or arguments will be substituted with the slot (e.g., 9.5)
 # of the current iteration.
 postgres-multi_foreach() {
-	local MULTIBUILD_VARIANTS=("${_POSTGRES_UNION_SLOTS[@]}")
+	local MULTIBUILD_VARIANTS=("${_POSTGRES_INTERSECT_SLOTS[@]}")
 
 	multibuild_foreach_variant \
 		_postgres-multi_multibuild_wrapper run_in_build_dir ${@}
@@ -74,20 +74,22 @@ postgres-multi_foreach() {
 # @FUNCTION: postgres-multi_forbest
 # @USAGE: postgres-multi_forbest <command> <arg> [<arg> ...]
 # @DESCRIPTION:
-# Run the given command in the package's source directory for the best,
-# compatible PostgreSQL slot. The PG_CONFIG environment variable is set
-# to the matching pg_config command. Any appearance of @PG_SLOT@ in the
-# command or arguments will be substituted with the matching slot (e.g., 9.5).
+# Run the given command in the package's build directory for the highest
+# slot in the intersect of POSTGRES_COMPAT and POSTGRES_TARGETS. The
+# PG_CONFIG environment variable is set to the matching pg_config
+# command. Any appearance of @PG_SLOT@ in the command or arguments will
+# be substituted with the matching slot (e.g., 9.5).
 postgres-multi_forbest() {
 	# POSTGRES_COMPAT is reverse sorted once in postgres.eclass so
 	# element 0 has the highest slot version.
-	local MULTIBUILD_VARIANTS=("${_POSTGRES_UNION_SLOTS[0]}")
+	local MULTIBUILD_VARIANTS=("${_POSTGRES_INTERSECT_SLOTS[0]}")
 
 	multibuild_foreach_variant \
 		_postgres-multi_multibuild_wrapper run_in_build_dir ${@}
 }
 
 # @FUNCTION: postgres-multi_pkg_setup
+# @REQUIRED
 # @USAGE: postgres-multi_pkg_setup
 # @DESCRIPTION:
 # Initialize internal environment variable(s). This is required if
@@ -97,37 +99,55 @@ postgres-multi_pkg_setup() {
 
 	for user_slot in "${POSTGRES_COMPAT[@]}"; do
 		use "postgres_targets_postgres${user_slot/\./_}" && \
-			_POSTGRES_UNION_SLOTS+=( "${user_slot}" )
+			_POSTGRES_INTERSECT_SLOTS+=( "${user_slot}" )
 	done
 
-	if [[ "${#_POSTGRES_UNION_SLOTS[@]}" -eq "0" ]]; then
+	if [[ "${#_POSTGRES_INTERSECT_SLOTS[@]}" -eq "0" ]]; then
 		die "One of the postgres_targets_postgresSL_OT use flags must be enabled"
 	fi
 
-	elog "Multibuild variants: ${_POSTGRES_UNION_SLOTS[@]}"
+	elog "Multibuild variants: ${_POSTGRES_INTERSECT_SLOTS[@]}"
 }
 
+# @FUNCTION: postgres-multi_src_prepare
+# @REQUIRED
+# @USAGE: postgres-multi_src_prepare
+# @DESCRIPTION:
+# Calls eapply_user then copies ${S} into a build directory for each
+# intersect of POSTGRES_TARGETS and POSTGRES_COMPAT.
 postgres-multi_src_prepare() {
-	if [[ "${#_POSTGRES_UNION_SLOTS[@]}" -eq "0" ]]; then
-		eerror "Internal array _POSTGRES_UNION_SLOTS is empty."
+	if [[ "${#_POSTGRES_INTERSECT_SLOTS[@]}" -eq "0" ]]; then
+		eerror "Internal array _POSTGRES_INTERSECT_SLOTS is empty."
 		die "Did you forget to call postgres-multi_pkg_setup?"
 	fi
 
 	eapply_user
 
 	local MULTIBUILD_VARIANT
-	local MULTIBUILD_VARIANTS=("${_POSTGRES_UNION_SLOTS[@]}")
+	local MULTIBUILD_VARIANTS=("${_POSTGRES_INTERSECT_SLOTS[@]}")
 	multibuild_copy_sources
 }
 
+# @FUNCTION: postgres-multi_src_compile
+# @USAGE: postgres-multi_src_compile
+# @DESCRIPTION:
+# Runs `emake' in each build directory
 postgres-multi_src_compile() {
 	postgres-multi_foreach emake
 }
 
+# @FUNCTION: postgres-multi_src_install
+# @USAGE: postgres-multi_src_install
+# @DESCRIPTION:
+# Runs `emake install DESTDIR="${D}"' in each build directory.
 postgres-multi_src_install() {
 	postgres-multi_foreach emake install DESTDIR="${D}"
 }
 
+# @FUNCTION: postgres-multi_src_test
+# @USAGE: postgres-multi_src_test
+# @DESCRIPTION:
+# Runs `emake installcheck' in each build directory.
 postgres-multi_src_test() {
 	postgres-multi_foreach emake installcheck
 }
