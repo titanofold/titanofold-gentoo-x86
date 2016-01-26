@@ -18,8 +18,8 @@ EXPORT_FUNCTIONS pkg_setup src_prepare src_compile src_install src_test
 
 
 case ${EAPI:-0} in
-  0|1|2|3|4) die "postgres-multi.eclass requires EAPI 5 or higher" ;;
-  *) ;;
+	5|6) ;;
+	*) die "Unsupported EAPI=${EAPI} (unknown) for ${ECLASS}" ;;
 esac
 
 
