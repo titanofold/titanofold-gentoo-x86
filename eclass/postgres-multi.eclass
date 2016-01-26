@@ -135,7 +135,6 @@ postgres-multi_src_prepare() {
 # @USAGE: postgres-multi_src_compile
 # @DESCRIPTION:
 # Runs `emake' in each build directory
-
 postgres-multi_src_compile() {
 	postgres-multi_foreach emake
 }
