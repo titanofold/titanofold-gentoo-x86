@@ -3,6 +3,7 @@
 # $Id$
 
 inherit user
+EXPORT_FUNCTIONS pkg_setup
 
 # @ECLASS: postgres
 # @MAINTAINER:
@@ -112,4 +113,48 @@ postgres_new_user() {
 			enewuser "$1" "$2" "$3" "$4" "${groups}"
 		fi
 	fi
+}
+
+# @FUNCTION: postgres_pkg_setup
+# @REQUIRED
+# @USAGE: postgres_pkg_setup
+# @DESCRIPTION:
+# Initialize environment variable(s) according to the best
+# installed version of PostgreSQL that is also in POSTGRES_COMPAT. This
+# is required if pkg_setup() is declared in the ebuild.
+# Exports PG_SLOT, PG_CONFIG, and PKG_CONFIG_PATH.
+postgres_pkg_setup() {
+	debug-print-function ${FUNCNAME} "${@}"
+
+	local compat_slot
+	local best_slot
+	for compat_slot in "${POSTGRES_COMPAT[@]}"; do
+		if use "postgres_targets_postgres${compat_slot/\./_}"; then
+			best_slot="${compat_slot}"
+			break
+		fi
+	done
+
+	if [[ -z "${best_slot}" ]]; then
+		local flags f
+		for f in "${POSTGRES_COMPAT[@]}"; do
+			flags+=" postgres${f/./_}"
+		done
+
+		eerror "POSTGRES_TARGETS must contain at least one of:"
+		eerror "    ${flags}"
+		die "No suitable POSTGRES_TARGETS enabled."
+	fi
+
+	export PG_SLOT=${best_slot}
+	export PG_CONFIG=$(which pg_config${best_slot//./})
+
+	local pg_pkg_config_path="$(${PG_CONFIG} --libdir)/pkgconfig"
+	if [[ -n "${PKG_CONFIG_PATH}" ]]; then
+		export PKG_CONFIG_PATH="${pg_pkg_config_path}:${PKG_CONFIG_PATH}"
+	else
+		export PKG_CONFIG_PATH="${pg_pkg_config_path}"
+	fi
+
+	elog "PostgreSQL Target: ${best_slot}"
 }
