@@ -1,10 +1,14 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/pgadmin3/pgadmin3-1.20.0-r1.ebuild,v 1.1 2015/05/20 19:48:25 titanofold Exp $
+# $Id$
 
 EAPI="5"
 
-inherit eutils multilib versionator wxwidgets
+POSTGRES_COMPAT=( 9.{1,2,3,4,5,6} )
+
+WX_GTK_VER="3.0"
+
+inherit eutils multilib postgres versionator wxwidgets
 
 DESCRIPTION="wxWidgets GUI for PostgreSQL"
 HOMEPAGE="http://www.pgadmin.org/"
@@ -15,21 +19,12 @@ KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
 SLOT="0"
 IUSE="debug +databasedesigner"
 
-DEPEND="x11-libs/wxGTK:=[X,debug=]
-	>=dev-db/postgresql-8.4.0:=
+DEPEND="${POSTGRES_DEPEND}
+	x11-libs/wxGTK:${WX_GTK_VER}=[X]
 	>=dev-libs/libxml2-2.6.18
 	>=dev-libs/libxslt-1.1"
 RDEPEND="${DEPEND}"
 
-pkg_setup() {
-	local pgslot=$(postgresql-config show)
-
-	if [[ ${pgslot//.} < 84 ]] ; then
-		eerror "PostgreSQL slot must be set to 8.4 or higher."
-		eerror "    postgresql-config set 8.4"
-		die "PostgreSQL slot is not set to 8.4 or higher."
-	fi
-}
 
 src_prepare() {
 	epatch "${FILESDIR}/pgadmin3-desktop.patch"
@@ -38,12 +33,10 @@ src_prepare() {
 }
 
 src_configure() {
-	WX_GTK_PV=$(best_version x11-libs/wxGTK[X,debug=])
-	WX_GTK_VER=$(get_version_component_range 1-2 ${WX_GTK_PV#x11-libs/wxGTK-})
-
 	need-wxwidgets unicode
 
-	econf --with-wx-version=${WX_GTK_VER} \
+	econf --with-pgsql="$(${PG_CONFIG} --bindir|sed 's|/bin||')" \
+		  --with-wx-version=${WX_GTK_VER} \
 		$(use_enable debug) \
 		$(use_enable databasedesigner)
 }
