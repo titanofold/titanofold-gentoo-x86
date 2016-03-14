@@ -22,7 +22,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE="memcached pam ssl static-libs"
 
 RDEPEND="
-	${POSTGRES_DEPEND}
+	${POSTGRES_DEP}
 	memcached? ( dev-libs/libmemcached )
 	pam? ( sys-auth/pambase )
 	ssl? ( dev-libs/openssl )
