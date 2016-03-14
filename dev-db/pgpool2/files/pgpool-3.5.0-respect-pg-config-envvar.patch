@@ -1,0 +1,60 @@
+diff -aruw pgpool-II-3.5.0.orig/src/sql/Makefile pgpool-II-3.5.0/src/sql/Makefile
+--- pgpool-II-3.5.0.orig/src/sql/Makefile	2016-02-10 03:53:31.000000000 -0500
++++ pgpool-II-3.5.0/src/sql/Makefile	2016-03-12 12:44:33.085835110 -0500
+@@ -29,7 +29,7 @@
+ top_builddir = ..
+ 
+ ifdef USE_PGXS
+-PG_CONFIG = pg_config
++PG_CONFIG ?= pg_config
+ PGXS = $(shell $(PG_CONFIG) --pgxs)
+ include $(PGXS)
+ else
+diff -aruw pgpool-II-3.5.0.orig/src/sql/pgpool_adm/Makefile pgpool-II-3.5.0/src/sql/pgpool_adm/Makefile
+--- pgpool-II-3.5.0.orig/src/sql/pgpool_adm/Makefile	2016-02-10 03:54:49.000000000 -0500
++++ pgpool-II-3.5.0/src/sql/pgpool_adm/Makefile	2016-03-12 12:44:33.085835110 -0500
+@@ -16,7 +16,7 @@
+ top_builddir = ../..
+ 
+ ifdef USE_PGXS
+-PG_CONFIG = pg_config
++PG_CONFIG ?= pg_config
+ PGXS := $(shell $(PG_CONFIG) --pgxs)
+ include $(PGXS)
+ else
+diff -aruw pgpool-II-3.5.0.orig/src/sql/pgpool_adm/Makefile.in pgpool-II-3.5.0/src/sql/pgpool_adm/Makefile.in
+--- pgpool-II-3.5.0.orig/src/sql/pgpool_adm/Makefile.in	2016-02-10 03:53:31.000000000 -0500
++++ pgpool-II-3.5.0/src/sql/pgpool_adm/Makefile.in	2016-03-12 12:44:33.085835110 -0500
+@@ -16,7 +16,7 @@
+ top_builddir = ../..
+ 
+ ifdef USE_PGXS
+-PG_CONFIG = pg_config
++PG_CONFIG ?= pg_config
+ PGXS := $(shell $(PG_CONFIG) --pgxs)
+ include $(PGXS)
+ else
+diff -aruw pgpool-II-3.5.0.orig/src/sql/pgpool-recovery/Makefile pgpool-II-3.5.0/src/sql/pgpool-recovery/Makefile
+--- pgpool-II-3.5.0.orig/src/sql/pgpool-recovery/Makefile	2016-02-10 03:53:31.000000000 -0500
++++ pgpool-II-3.5.0/src/sql/pgpool-recovery/Makefile	2016-03-12 12:44:33.085835110 -0500
+@@ -14,7 +14,7 @@
+ top_builddir = ../..
+ 
+ ifdef USE_PGXS
+-PG_CONFIG = pg_config
++PG_CONFIG ?= pg_config
+ PGXS = $(shell $(PG_CONFIG) --pgxs)
+ include $(PGXS)
+ else
+diff -aruw pgpool-II-3.5.0.orig/src/sql/pgpool-regclass/Makefile pgpool-II-3.5.0/src/sql/pgpool-regclass/Makefile
+--- pgpool-II-3.5.0.orig/src/sql/pgpool-regclass/Makefile	2016-02-10 03:53:31.000000000 -0500
++++ pgpool-II-3.5.0/src/sql/pgpool-regclass/Makefile	2016-03-12 12:44:33.085835110 -0500
+@@ -14,7 +14,7 @@
+ top_builddir = ../..
+ 
+ ifdef USE_PGXS
+-PG_CONFIG = pg_config
++PG_CONFIG ?= pg_config
+ PGXS = $(shell $(PG_CONFIG) --pgxs)
+ include $(PGXS)
+ else
