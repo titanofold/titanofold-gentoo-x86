@@ -19,7 +19,7 @@ SLOT="0"
 
 KEYWORDS="~amd64 ~x86"
 
-IUSE="memcached pam ssl static-libs"
+IUSE="doc memcached pam ssl static-libs"
 
 RDEPEND="
 	${POSTGRES_DEP}
@@ -77,13 +77,13 @@ src_configure() {
 }
 
 src_compile() {
-	#postgres-multi_forbest emake
+	postgres-multi_foreach emake
 	postgres-multi_foreach emake -C src/sql
 }
 
 src_install() {
 	# We only need the best stuff installed
-	#postgres-multi_forbest emake DESTDIR="${D}" install
+	postgres-multi_forbest emake DESTDIR="${D}" install
 
 	# Except for the extension and .so files that PostgreSQL slot needs
 	postgres-multi_foreach emake DESTDIR="${D}" -C src/sql install
@@ -92,8 +92,8 @@ src_install() {
 	newconfd "${FILESDIR}/${PN}.confd" ${PN}
 
 	# Documentation!
-	dodoc NEWS TODO doc/where_to_send_queries.{pdf,odg}
-	dohtml -r doc/*
+	dodoc NEWS TODO
+	use doc && dohtml -r doc/*
 
 	# Examples and extras
 	# mv some files that get installed to /usr/share/pgpool-II so that
