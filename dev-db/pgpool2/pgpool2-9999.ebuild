@@ -1,6 +1,6 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/pgpool2/pgpool2-9999.ebuild,v 1.7 2013/05/10 08:21:43 patrick Exp $
+# $Id$
 
 EAPI=4
 
