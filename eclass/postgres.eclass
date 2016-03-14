@@ -110,7 +110,7 @@ postgres_new_user() {
 		else
 			local groups=$5
 			[[ -n "${groups}" ]] && groups+=",postgres" || groups="postgres"
-			enewuser "$1" "$2" "$3" "$4" "${groups}"
+			enewuser "$1" "${2:--1}" "${3:--1}" "${4:--1}" "${groups}"
 		fi
 	fi
 }
