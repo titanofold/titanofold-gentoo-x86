@@ -1,18 +1,18 @@
 # Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
+# $Id$
 
 EAPI=5
 
-inherit rpm eutils
+inherit rpm eutils pax-utils
 
 # Binary only distribution
 QA_PREBUILT="*"
 
 DESCRIPTION="Project collaboration and tracking software for upwork.com"
 HOMEPAGE="https://www.upwork.com/"
-SRC_URI="amd64? ( http://updates.team.odesk.com/binaries/v4_0_70_0_bccbf5c8e0866/${PN}_x86_64.rpm -> ${P}_x86_64.rpm )
-		 x86? ( http://updates.team.odesk.com/binaries/v4_0_70_0_bccbf5c8e0866/${PN}_i386.rpm -> ${P}_i386.rpm )
+SRC_URI="amd64? ( http://updates.team.odesk.com/binaries/v4_0_144_0_mj9j7zmoj9asg5f0/upwork_x86_64.rpm -> ${P}_x86_64.rpm )
+		 x86? ( http://updates.team.odesk.com/binaries/v4_0_144_0_mj9j7zmoj9asg5f0/upwork_i386.rpm -> ${P}_i386.rpm )
 "
 LICENSE="ODESK"
 SLOT="0"
@@ -38,6 +38,7 @@ src_install() {
 	dobin usr/bin/upwork
 
 	insinto /usr/share
+	pax-mark m usr/share/upwork/upwork
 	doins -r usr/share/upwork
 	dosym /usr/lib/libudev.so /usr/share/upwork/libudev.so.0
 
