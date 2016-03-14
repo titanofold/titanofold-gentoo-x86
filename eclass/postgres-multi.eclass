@@ -106,7 +106,7 @@ postgres-multi_pkg_setup() {
 		die "One of the postgres_targets_postgresSL_OT use flags must be enabled"
 	fi
 
-	elog "Multibuild variants: ${_POSTGRES_INTERSECT_SLOTS[@]}"
+	einfo "Multibuild variants: ${_POSTGRES_INTERSECT_SLOTS[@]}"
 }
 
 # @FUNCTION: postgres-multi_src_prepare
@@ -121,7 +121,10 @@ postgres-multi_src_prepare() {
 		die "Did you forget to call postgres-multi_pkg_setup?"
 	fi
 
-	eapply_user
+	case ${EAPI:-0} in
+		0|1|2|3|4|5) epatch_user ;;
+		6) eapply_user ;;
+	esac
 
 	local MULTIBUILD_VARIANT
 	local MULTIBUILD_VARIANTS=("${_POSTGRES_INTERSECT_SLOTS[@]}")
