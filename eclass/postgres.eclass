@@ -31,15 +31,8 @@ esac
 
 # @ECLASS-VARIABLE: POSTGRES_USEDEP
 # @DESCRIPTION:
-# Add the, without brackets, 2-Style and/or 4-Style use dependencies to
-# be used for POSTGRES_DEP. If declared, must be declared before
-# inheriting this eclass.
-
-# @ECLASS-VARIABLE: POSTGRES_USEDEP
-# @DESCRIPTION:
-# Add the, without brackets, 2-Style and/or 4-Style use dependencies to
-# be used for POSTGRES_DEP. If declared, must be declared before
-# inheriting this eclass.
+# Add the 2-Style and/or 4-Style use dependencies without brackets to be used
+# for POSTGRES_DEP. If declared, must be done before inheriting this eclass.
 
 # @ECLASS-VARIABLE: POSTGRES_DEP
 # @DESCRIPTION:
