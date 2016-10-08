@@ -1,4 +1,4 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -9,7 +9,7 @@ PYTHON_COMPAT=( python{2_7,3_4} )
 inherit eutils flag-o-matic linux-info multilib pam prefix python-single-r1 \
 		systemd user versionator
 
-KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
+KEYWORDS="alpha amd64 arm hppa ~ia64 ~mips ~ppc ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
 
@@ -45,7 +45,7 @@ virtual/libintl
 kerberos? ( virtual/krb5 )
 ldap? ( net-nds/openldap )
 pam? ( virtual/pam )
-perl? ( >=dev-lang/perl-5.8 )
+perl? ( >=dev-lang/perl-5.8:= )
 python? ( ${PYTHON_DEPS} )
 readline? ( sys-libs/readline:0= )
 ssl? (
@@ -222,7 +222,7 @@ pkg_postinst() {
 		elog
 		elog "It looks like this is your first time installing PostgreSQL. Run the"
 		elog "following command in all active shells to pick up changes to the default"
-		elog "environemnt:"
+		elog "environment:"
 		elog "    source /etc/profile"
 	fi
 
@@ -383,8 +383,6 @@ pkg_config() {
 }
 
 src_test() {
-	einfo ">>> Test phase [check]: ${CATEGORY}/${PF}"
-
 	if use server && [[ ${UID} -ne 0 ]] ; then
 		emake check
 

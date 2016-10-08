@@ -1,18 +1,18 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
 EAPI="5"
 
-PYTHON_COMPAT=( python{2_7,3_4} )
+PYTHON_COMPAT=( python{2_7,3_4,3_5} )
 
-inherit base eutils flag-o-matic git-2 linux-info multilib pam prefix \
+inherit eutils flag-o-matic git-2 linux-info multilib pam prefix \
 		python-single-r1 systemd user versionator
 
 KEYWORDS=""
 
 # Fix if needed
-SLOT="9.6"
+SLOT="9.7"
 
 EGIT_REPO_URI="git://git.postgresql.org/git/postgresql.git"
 
@@ -46,7 +46,7 @@ virtual/libintl
 kerberos? ( virtual/krb5 )
 ldap? ( net-nds/openldap )
 pam? ( virtual/pam )
-perl? ( >=dev-lang/perl-5.8 )
+perl? ( >=dev-lang/perl-5.8:= )
 python? ( ${PYTHON_DEPS} )
 readline? ( sys-libs/readline:0= )
 ssl? (
@@ -211,7 +211,7 @@ pkg_postinst() {
 		elog
 		elog "It looks like this is your first time installing PostgreSQL. Run the"
 		elog "following command in all active shells to pick up changes to the default"
-		elog "environemnt:"
+		elog "environment:"
 		elog "    source /etc/profile"
 	fi
 
