@@ -13,7 +13,7 @@ LICENSE="GPL-2 MIT Boost-1.0"
 
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-SRC_URI="https://github.com/pgRouting/pgrouting/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
+SRC_URI="https://github.com/pgRouting/${PN}/archive/${P}.tar.gz"
 IUSE="+drivingdistance doc pdf html"
 
 REQUIRED_USE="html? ( doc ) pdf? ( doc )"

@@ -41,8 +41,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/pgpool2-3.5.0-path-fix.patch" \
-		   "${FILESDIR}/pgpool-3.5.0-respect-pg-config-envvar.patch"
+	epatch "${FILESDIR}/pgpool2-3.5.0-path-fix.patch"
 
 	local pg_config_manual="$(pg_config --includedir)/pg_config_manual.h"
 	local pgsql_socket_dir=$(grep DEFAULT_PGSOCKET_DIR "${pg_config_manual}" | \

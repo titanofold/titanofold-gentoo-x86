@@ -1,11 +1,11 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2015 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/pygresql/pygresql-4.1.1.ebuild,v 1.9 2014/08/10 20:02:22 slyfox Exp $
+# $Id$
 
 EAPI=5
 
-POSTGRES_COMPAT=( 8.{3,4} 9.{0,1,2} )
-PYTHON_COMPAT=( python{2_6,2_7} )
+POSTGRES_COMPAT=( 9.{0,1,2,3,4,5} )
+PYTHON_COMPAT=( python2_7 )
 
 inherit distutils-r1
 
@@ -13,19 +13,20 @@ MY_P="PyGreSQL-${PV}"
 
 DESCRIPTION="A Python interface for the PostgreSQL database"
 HOMEPAGE="http://www.pygresql.org/"
-SRC_URI="mirror://pypi/P/PyGreSQL/${MY_P}.tgz"
+SRC_URI="mirror://pypi/P/PyGreSQL/${MY_P}.zip"
 
 LICENSE="POSTGRESQL"
 SLOT="0"
-KEYWORDS="alpha amd64 hppa ia64 ppc sparc x86"
+KEYWORDS="~alpha ~amd64 ~hppa ~ia64 ~ppc ~sparc ~x86"
 IUSE="doc"
 
 DEPEND="|| (
-	dev-db/postgresql:8.3
-	dev-db/postgresql:8.4
-	dev-db/postgresql:9.0
-	dev-db/postgresql:9.1
+	dev-db/postgresql:9.5
+	dev-db/postgresql:9.4
+	dev-db/postgresql:9.3
 	dev-db/postgresql:9.2
+	dev-db/postgresql:9.1
+	dev-db/postgresql:9.0
 )"
 
 RDEPEND="${DEPEND}"
@@ -64,7 +65,7 @@ pkg_setup() {
 }
 
 python_install_all() {
-	local DOCS=( docs/*.txt )
+	local DOCS=( docs/*.rst )
 	distutils-r1_python_install_all
 
 	if use doc; then
