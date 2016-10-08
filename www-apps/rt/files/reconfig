@@ -29,22 +29,15 @@ if [ $1 = "install" ]; then
 
     echo
     echo "If you're upgrading RT, you may need to update your database."
-    echo "Take a look in:"
+    echo "For more information, read:"
     echo
-    echo "  ${VHOST_ROOT}/${PF}/upgrade"
+    echo "  ${VHOST_ROOT}/${PF}/share/doc/UPGRADING-${PV%.*}"
     echo
-    echo "Iterate through each sub-directory, in order, whose name is greater"
-    echo "than your previously installed RT version, and run the following"
-    echo "commands:"
+    echo "To upgrade your database:"
     echo
-    for step in schema acl insert ; do
-        echo "  ${VHOST_ROOT}/${PF}/sbin/rt-setup-database \\"
-        echo "    --action ${step} --dba DBSUPERUSER --prompt-for-dba-password \\"
-        echo "    --datadir ${VHOST_ROOT}/${PF}/upgrade/<version> "
-        echo
-    done
-    echo "Note that some upgrade directories don't have all 3 items (schema,"
-    echo "acl, insert) and you can skip them safely."
+    echo "  ${VHOST_ROOT}/${PF}/sbin/rt-setup-database \\"
+    echo "    --action upgrade --dba DBSUPERUSER --prompt-for-dba-password \\"
+    echo "    --upgrade-from <previous.version> --upgrade-to ${PV}"
     echo
     echo "Don't forget to read the online installation guide for more details"
 elif [ $1 = "clean" ]; then
