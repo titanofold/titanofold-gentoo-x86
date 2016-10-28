@@ -2,12 +2,11 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
-
+EAPI=6
 
 POSTGRES_COMPAT=( 9.{1..6} )
 
-inherit base multilib postgres-multi user
+inherit postgres-multi
 
 MY_P="${PN/2/-II}-${PV}"
 
@@ -71,11 +70,12 @@ src_configure() {
 		$(use_with ssl openssl) \
 		$(use_enable static-libs static) \
 		${myconf}
-
-
 }
 
 src_compile() {
+	# Even though we're only going to do an install for the best slot
+	# available, the extension bits in src/sql need some things outside
+	# of that directory built, too.
 	postgres-multi_foreach emake
 	postgres-multi_foreach emake -C src/sql
 }
@@ -84,7 +84,7 @@ src_install() {
 	# We only need the best stuff installed
 	postgres-multi_forbest emake DESTDIR="${D}" install
 
-	# Except for the extension and .so files that PostgreSQL slot needs
+	# Except for the extension and .so files that each PostgreSQL slot needs
 	postgres-multi_foreach emake DESTDIR="${D}" -C src/sql install
 
 	newinitd "${FILESDIR}/${PN}.initd" ${PN}

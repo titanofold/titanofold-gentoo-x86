@@ -4,7 +4,10 @@
 
 EAPI="6"
 
-inherit eutils versionator
+POSTGRES_COMPAT=( 9.{1..6} )
+POSTGRES_USEDEP="server,threads"
+
+inherit eutils postgres-multi versionator
 
 IUSE="doc perl"
 
@@ -20,35 +23,24 @@ LICENSE="BSD GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~ppc ~x86"
 
-DEPEND="|| (
-			dev-db/postgresql:9.6
-			dev-db/postgresql:9.5
-			dev-db/postgresql:9.4
-			dev-db/postgresql:9.3
-			dev-db/postgresql:9.2
-			dev-db/postgresql:9.1
-		)
-		dev-db/postgresql[server,threads]
+DEPEND="${POSTGRES_DEP}
 		perl? ( dev-perl/DBD-Pg )
 "
 
-pkg_setup() {
-	local PGSLOT="$(postgresql-config show)"
-	if [[ ${PGSLOT//.} < 91 ]] ; then
-		eerror "You must build ${CATEGORY}/${PN} against PostgreSQL 9.1 or higher."
-		eerror "Set an appropriate slot with postgresql-config."
-		die "postgresql-config not set to 9.1 or higher."
-	fi
-}
+RDEPEND=${DEPEND}
+
+REQUIRE_USE="${POSTGRES_REQ_USE}"
 
 src_configure() {
-	local myconf
-	use perl && myconf='--with-perltools'
-	econf ${myconf}
+	local slot_bin_dir="/usr/$(get_libdir)/postgresql-@PG_SLOT@/bin"
+	use perl && myconf=" --with-perltools=\"${slot_bin_dir}\""
+	postgres-multi_foreach econf ${myconf} \
+						   --with-pgconfigdir="${slot_bin_dir}" \
+						   --with-slonybindir="${slot_bin_dir}"
 }
 
 src_install() {
-	emake DESTDIR="${D}" install
+	postgres-multi_foreach emake DESTDIR="${D}" install
 
 	dodoc INSTALL README SAMPLE TODO UPGRADING share/slon.conf-sample
 

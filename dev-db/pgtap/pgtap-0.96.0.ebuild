@@ -4,7 +4,7 @@
 
 EAPI=6
 
-POSTGRES_COMPAT=( 9.{0,1,2,3,4,5} )
+POSTGRES_COMPAT=( 9.{1..6} )
 
 inherit postgres-multi
 
@@ -17,7 +17,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
-DEPEND="${POSTGRES_DEPEND}
+DEPEND="${POSTGRES_DEP}
 		dev-perl/TAP-Parser-SourceHandler-pgTAP
 "
 RDEPEND="${DEPEND}"
