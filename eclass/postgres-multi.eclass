@@ -44,13 +44,21 @@ export _POSTGRES_INTERSECT_SLOTS=( )
 # @INTERNAL
 # @USAGE: _postgres-multi_multibuild_wrapper <command> [<arg> ...]
 # @DESCRIPTION:
-# For the given variant, set the values of the PG_SLOT and PG_CONFIG
-# environment variables accordingly and replace any appearance of
-# @PG_SLOT@ in the command and arguments with value of ${PG_SLOT}.
+# For the given variant, set the values of the PG_SLOT, PG_CONFIG, and
+# PKG_CONFIG_PATH environment variables accordingly and replace any
+# appearance of @PG_SLOT@ in the command and arguments with value of
+# ${PG_SLOT}.
 _postgres-multi_multibuild_wrapper() {
 	debug-print-function ${FUNCNAME} "${@}"
 	export PG_SLOT=${MULTIBUILD_VARIANT}
 	export PG_CONFIG=$(which pg_config${MULTIBUILD_VARIANT//./})
+	if [[ -n ${PKG_CONFIG_PATH} ]] ; then
+		PKG_CONFIG_PATH="$(${PG_CONFIG} --libdir)/pkgconfig:${PKG_CONFIG_PATH}"
+	else
+		PKG_CONFIG_PATH="$(${PG_CONFIG} --libdir)/pkgconfig"
+	fi
+	export PKG_CONFIG_PATH
+
 	$(echo "${@}" | sed "s/@PG_SLOT@/${PG_SLOT}/g")
 }
 
@@ -59,11 +67,12 @@ _postgres-multi_multibuild_wrapper() {
 # @DESCRIPTION:
 # Run the given command in the package's build directory for each
 # PostgreSQL slot in the intersect of POSTGRES_TARGETS and
-# POSTGRES_COMPAT and user-enabled slots. The PG_CONFIG environment
-# variable is updated on each iteration to point to the matching
-# pg_config command for the current slot. Any appearance of @PG_SLOT@ in
-# the command or arguments will be substituted with the slot (e.g., 9.5)
-# of the current iteration.
+# POSTGRES_COMPAT and user-enabled slots. The PG_CONFIG and
+# PKG_CONFIG_PATH environment variables are updated on each iteration to
+# point to the matching pg_config command and pkg-config metadata files,
+# respectively, for the current slot. Any appearance of @PG_SLOT@ in the
+# command or arguments will be substituted with the slot (e.g., 9.5) of
+# the current iteration.
 postgres-multi_foreach() {
 	local MULTIBUILD_VARIANTS=("${_POSTGRES_INTERSECT_SLOTS[@]}")
 
@@ -76,9 +85,10 @@ postgres-multi_foreach() {
 # @DESCRIPTION:
 # Run the given command in the package's build directory for the highest
 # slot in the intersect of POSTGRES_COMPAT and POSTGRES_TARGETS. The
-# PG_CONFIG environment variable is set to the matching pg_config
-# command. Any appearance of @PG_SLOT@ in the command or arguments will
-# be substituted with the matching slot (e.g., 9.5).
+# PG_CONFIG and PKG_CONFIG_PATH environment variables are set to the
+# matching pg_config command and pkg-config metadata files,
+# respectively. Any appearance of @PG_SLOT@ in the command or arguments
+# will be substituted with the matching slot (e.g., 9.5).
 postgres-multi_forbest() {
 	# POSTGRES_COMPAT is reverse sorted once in postgres.eclass so
 	# element 0 has the highest slot version.
