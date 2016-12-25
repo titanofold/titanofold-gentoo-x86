@@ -2,18 +2,17 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=5
+EAPI=6
 
-MODULE_AUTHOR="CHUNZI"
-MODULE_VERSION="1.02"
+DIST_AUTHOR="CHUNZI"
+DIST_VERSION="1.02"
 
 inherit perl-module
 
 DESCRIPTION="change long page list to be shorter and well navigate"
 
-LICENSE="Artistic GPL-1"
 SLOT="0"
-KEYWORDS="~amd64"
+KEYWORDS="~amd64 ~x86"
 IUSE="test"
 
 RDEPEND="
@@ -25,6 +24,7 @@ DEPEND="${RDEPEND}
 	test? ( dev-perl/Test-Exception )
 "
 
-if use test ; then
-	SRC_TEST="do"
-fi
+src_test() {
+	perl_rm_files t/pod-coverage.t t/pod.t
+	perl-module_src_test
+}
