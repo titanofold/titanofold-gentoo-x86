@@ -1,4 +1,4 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -9,15 +9,11 @@ PYTHON_COMPAT=( python{2_7,3_4} )
 inherit eutils flag-o-matic linux-info multilib pam prefix python-single-r1 \
 		systemd user versionator
 
-KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
+KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 ~s390 ~sh sparc x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
 
-MY_PV=${PV/_/}
-
-S=${WORKDIR}/${PN}-${MY_PV}
-
-SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2"
+SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2"
 
 LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"
@@ -43,13 +39,13 @@ wanted_languages() {
 }
 
 CDEPEND="
->=app-eselect/eselect-postgresql-1.2.0
+>=app-eselect/eselect-postgresql-2.0
 sys-apps/less
 virtual/libintl
 kerberos? ( virtual/krb5 )
 ldap? ( net-nds/openldap )
 pam? ( virtual/pam )
-perl? ( >=dev-lang/perl-5.8 )
+perl? ( >=dev-lang/perl-5.8:= )
 python? ( ${PYTHON_DEPS} )
 readline? ( sys-libs/readline:0= )
 ssl? (
@@ -121,7 +117,7 @@ src_prepare() {
 	# hardened and non-hardened environments. (Bug #528786)
 	sed 's/@install_bin@/install -c/' -i src/Makefile.global.in || die
 
-	use server || epatch "${FILESDIR}/${PN}-${SLOT}-no-server.patch"
+	use server || epatch "${FILESDIR}/${PN}-9.4.10-no-server.patch"
 
 	# Fix bug 486556 where the server would crash at start up because of
 	# an infinite loop caused by a self-referencing symlink.
@@ -212,11 +208,26 @@ src_install() {
 	insinto /etc/postgresql-${SLOT}
 	newins src/bin/psql/psqlrc.sample psqlrc
 
-	dodir /etc/eselect/postgresql/slots/${SLOT}
-	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
-		"${ED}/etc/eselect/postgresql/slots/${SLOT}/base"
-
 	use static-libs || find "${ED}" -name '*.a' -delete
+
+	local f bn
+	for f in $(find "${ED}/usr/$(get_libdir)/postgresql-${SLOT}/bin" \
+					-mindepth 1 -maxdepth 1)
+	do
+		bn=$(basename "${f}")
+		dosym "../$(get_libdir)/postgresql-${SLOT}/bin/${bn}" \
+			  "/usr/bin/${bn}${SLOT/.}"
+	done
+
+	local linkname mansec
+	for mansec in {1,3,7} ; do
+		for f in "${ED}"/usr/share/postgresql-${SLOT}/man/man${mansec}/* ; do
+			bn=$(basename "${f}")
+			linkname=${bn/%.${mansec}/${SLOT/.}.${mansec}}
+			dosym ../../postgresql-${SLOT}/man/man${mansec}/$bn \
+				  /usr/share/man/man${mansec}/${linkname}
+		done
+	done
 
 	if use doc ; then
 		docinto html
@@ -248,11 +259,43 @@ src_install() {
 	fi
 }
 
+pkg_preinst() {
+	# Find all of the slot-specific symlinks, if any, in /usr/bin (e.g.,
+	# /usr/bin/psql96). They may have been created by the
+	# postgresql.eselect module, but they're handled within this ebuild
+	# now. It's alright if we momentarily delete /usr/bin/psql as it
+	# will be recreated by the eselect module in pkg_ppostinst(). This
+	# is only necessary for 9.7 and earlier. 10 and later were never
+	# handled in this manner.
+	local canonicalise
+	if type -p realpath > /dev/null; then
+		canonicalise=realpath
+	elif type -p readlink > /dev/null; then
+		canonicalise='readlink -f'
+	else
+		# can't die, subshell
+		die "No readlink nor realpath found, cannot canonicalise"
+	fi
+
+	local l
+	for l in $(find "${ROOT%/}/usr/bin" -mindepth 1 -maxdepth 1 -type l) ; do
+		[[ $(${canonicalise} "${l}") == *postgresql-${SLOT}* ]] && rm "${l}"
+	done
+}
+
 pkg_postinst() {
 	postgresql-config update
 
 	elog "If you need a global psqlrc-file, you can place it in:"
 	elog "    ${EROOT%/}/etc/postgresql-${SLOT}/"
+
+	if [[ -z ${REPLACING_VERSIONS} ]] ; then
+		elog
+		elog "It looks like this is your first time installing PostgreSQL. Run the"
+		elog "following command in all active shells to pick up changes to the default"
+		elog "environment:"
+		elog "    source /etc/profile"
+	fi
 
 	if use server ; then
 		elog
@@ -411,8 +454,6 @@ pkg_config() {
 }
 
 src_test() {
-	einfo ">>> Test phase [check]: ${CATEGORY}/${PF}"
-
 	if use server && [[ ${UID} -ne 0 ]] ; then
 		emake check
 

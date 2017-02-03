@@ -1,15 +1,15 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
 EAPI="5"
 
-PYTHON_COMPAT=( python{2_7,3_4} )
+PYTHON_COMPAT=( python{2_7,3_4,3_5} )
 
 inherit eutils flag-o-matic linux-info multilib pam prefix python-single-r1 \
 		systemd user versionator
 
-KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 ~s390 ~sh sparc x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
+KEYWORDS="~alpha amd64 arm ~arm64 hppa ia64 ~mips ppc ppc64 ~s390 ~sh sparc x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
 
@@ -39,13 +39,13 @@ wanted_languages() {
 }
 
 CDEPEND="
->=app-eselect/eselect-postgresql-1.2.0
+>=app-eselect/eselect-postgresql-2.0
 sys-apps/less
 virtual/libintl
 kerberos? ( virtual/krb5 )
 ldap? ( net-nds/openldap )
 pam? ( virtual/pam )
-perl? ( >=dev-lang/perl-5.8 )
+perl? ( >=dev-lang/perl-5.8:= )
 python? ( ${PYTHON_DEPS} )
 readline? ( sys-libs/readline:0= )
 ssl? (
@@ -53,10 +53,32 @@ ssl? (
 	libressl? ( dev-libs/libressl:= )
 )
 tcl? ( >=dev-lang/tcl-8:0= )
-uuid? ( dev-libs/ossp-uuid )
 xml? ( dev-libs/libxml2 dev-libs/libxslt )
 zlib? ( sys-libs/zlib )
 "
+
+# uuid flags -- depend on sys-apps/util-linux for Linux libcs, or if no
+# supported libc in use depend on dev-libs/ossp-uuid. For BSD systems,
+# the libc includes UUID functions.
+UTIL_LINUX_LIBC=( elibc_{glibc,uclibc,musl} )
+BSD_LIBC=( elibc_{Free,Net,Open}BSD )
+
+nest_usedep() {
+	local front back
+	while [[ ${#} -gt 1 ]]; do
+		front+="${1}? ( "
+		back+=" )"
+		shift
+	done
+	echo "${front}${1}${back}"
+}
+
+IUSE+=" ${UTIL_LINUX_LIBC[@]} ${BSD_LIBC[@]}"
+CDEPEND+="
+uuid? (
+	${UTIL_LINUX_LIBC[@]/%/? ( sys-apps/util-linux )}
+	$(nest_usedep ${UTIL_LINUX_LIBC[@]/#/!} ${BSD_LIBC[@]/#/!} dev-libs/ossp-uuid)
+)"
 
 DEPEND="${CDEPEND}
 !!<sys-apps/sandbox-2.0
@@ -90,7 +112,12 @@ src_prepare() {
 	sed "s|\(PGSOCKET_DIR\s\+\)\"/tmp\"|\1\"${EPREFIX}/run/postgresql\"|" \
 		-i src/include/pg_config_manual.h || die
 
-	use server || epatch "${FILESDIR}/${PN}-${SLOT}-no-server.patch"
+	# Rely on $PATH being in the proper order so that the correct
+	# install program is used for modules utilizing PGXS in both
+	# hardened and non-hardened environments. (Bug #528786)
+	sed 's/@install_bin@/install -c/' -i src/Makefile.global.in || die
+
+	use server || epatch "${FILESDIR}/${PN}-9.5.5-no-server.patch"
 
 	# Fix bug 486556 where the server would crash at start up because of
 	# an infinite loop caused by a self-referencing symlink.
@@ -117,6 +144,17 @@ src_configure() {
 
 	local PO="${EPREFIX%/}"
 
+	local i uuid_config=""
+	if use uuid; then
+		for i in ${UTIL_LINUX_LIBC[@]}; do
+			use ${i} && uuid_config="--with-uuid=e2fs"
+		done
+		for i in ${BSD_LIBC[@]}; do
+			use ${i} && uuid_config="--with-uuid=bsd"
+		done
+		[[ -z $uuid_config ]] && uuid_config="--with-uuid=ossp"
+	fi
+
 	econf \
 		--prefix="${PO}/usr/$(get_libdir)/postgresql-${SLOT}" \
 		--datadir="${PO}/usr/share/postgresql-${SLOT}" \
@@ -125,10 +163,10 @@ src_configure() {
 		--mandir="${PO}/usr/share/postgresql-${SLOT}/man" \
 		--sysconfdir="${PO}/etc/postgresql-${SLOT}" \
 		--with-system-tzdata="${PO}/usr/share/zoneinfo" \
+		$(use_enable !alpha spinlocks) \
 		$(use_enable !pg_legacytimestamp integer-datetimes) \
 		$(use_enable threads thread-safety) \
 		$(use_with kerberos gssapi) \
-		$(use_with kerberos krb5) \
 		$(use_with ldap) \
 		$(use_with pam) \
 		$(use_with perl) \
@@ -136,7 +174,7 @@ src_configure() {
 		$(use_with readline) \
 		$(use_with ssl openssl) \
 		$(use_with tcl) \
-		$(use_with uuid ossp-uuid) \
+		${uuid_config} \
 		$(use_with xml libxml) \
 		$(use_with xml libxslt) \
 		$(use_with zlib) \
@@ -171,11 +209,26 @@ src_install() {
 	insinto /etc/postgresql-${SLOT}
 	newins src/bin/psql/psqlrc.sample psqlrc
 
-	dodir /etc/eselect/postgresql/slots/${SLOT}
-	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
-		"${ED}/etc/eselect/postgresql/slots/${SLOT}/base"
-
 	use static-libs || find "${ED}" -name '*.a' -delete
+
+	local f bn
+	for f in $(find "${ED}/usr/$(get_libdir)/postgresql-${SLOT}/bin" \
+					-mindepth 1 -maxdepth 1)
+	do
+		bn=$(basename "${f}")
+		dosym "../$(get_libdir)/postgresql-${SLOT}/bin/${bn}" \
+			  "/usr/bin/${bn}${SLOT/.}"
+	done
+
+	local linkname mansec
+	for mansec in {1,3,7} ; do
+		for f in "${ED}"/usr/share/postgresql-${SLOT}/man/man${mansec}/* ; do
+			bn=$(basename "${f}")
+			linkname=${bn/%.${mansec}/${SLOT/.}.${mansec}}
+			dosym ../../postgresql-${SLOT}/man/man${mansec}/$bn \
+				  /usr/share/man/man${mansec}/${linkname}
+		done
+	done
 
 	if use doc ; then
 		docinto html
@@ -190,7 +243,7 @@ src_install() {
 			"${FILESDIR}/${PN}.confd" | newconfd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.init" | newinitd - ${PN}-${SLOT}
+			"${FILESDIR}/${PN}.init-9.3" | newinitd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
 			"${FILESDIR}/${PN}.service" | \
@@ -207,8 +260,37 @@ src_install() {
 	fi
 }
 
+pkg_preinst() {
+	# Find all of the slot-specific symlinks, if any, in /usr/bin (e.g.,
+	# /usr/bin/psql96). They may have been created by the
+	# postgresql.eselect module, but they're handled within this ebuild
+	# now. It's alright if we momentarily delete /usr/bin/psql as it
+	# will be recreated by the eselect module in pkg_ppostinst(). This
+	# is only necessary for 9.7 and earlier. 10 and later were never
+	# handled in this manner.
+	local canonicalise
+	if type -p realpath > /dev/null; then
+		canonicalise=realpath
+	elif type -p readlink > /dev/null; then
+		canonicalise='readlink -f'
+	else
+		# can't die, subshell
+		die "No readlink nor realpath found, cannot canonicalise"
+	fi
+
+	local l
+	for l in $(find "${ROOT%/}/usr/bin" -mindepth 1 -maxdepth 1 -type l) ; do
+		[[ $(${canonicalise} "${l}") == *postgresql-${SLOT}* ]] && rm "${l}"
+	done
+}
+
 pkg_postinst() {
 	postgresql-config update
+
+	if use alpha && use server ; then
+		ewarn "PostgreSQL 9.5+ no longer has native spinlock support on Alpha platforms."
+		ewarn "As a result, performance will be extremely degraded."
+	fi
 
 	elog "If you need a global psqlrc-file, you can place it in:"
 	elog "    ${EROOT%/}/etc/postgresql-${SLOT}/"
@@ -217,7 +299,7 @@ pkg_postinst() {
 		elog
 		elog "It looks like this is your first time installing PostgreSQL. Run the"
 		elog "following command in all active shells to pick up changes to the default"
-		elog "environemnt:"
+		elog "environment:"
 		elog "    source /etc/profile"
 	fi
 
@@ -378,8 +460,6 @@ pkg_config() {
 }
 
 src_test() {
-	einfo ">>> Test phase [check]: ${CATEGORY}/${PF}"
-
 	if use server && [[ ${UID} -ne 0 ]] ; then
 		emake check
 

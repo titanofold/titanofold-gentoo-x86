@@ -1,0 +1,21 @@
+diff -Naruw a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2016-12-21 04:12:44.000000000 -0500
++++ b/CMakeLists.txt	2017-01-18 20:12:11.402602292 -0500
+@@ -147,7 +147,7 @@
+     target_link_libraries(utoxNATIVE icon v4lconvert X11 Xext Xrender fontconfig freetype resolv dl )
+ 
+ 	install(FILES
+-	  utox
++	  ${CMAKE_CURRENT_BINARY_DIR}/utox
+ 	  DESTINATION "bin"
+       )
+ 	install(FILES
+@@ -156,7 +156,7 @@
+       )
+ 	install(FILES
+ 	  src/utox.1
+-	  DESTINATION "man/man1"
++	  DESTINATION "share/man/man1"
+       )
+ 
+ endif()

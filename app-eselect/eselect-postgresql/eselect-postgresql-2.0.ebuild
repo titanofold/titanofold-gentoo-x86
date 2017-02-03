@@ -1,8 +1,7 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/app-admin/eselect-postgresql/eselect-postgresql-1.0.10.ebuild,v 1.9 2012/09/17 19:19:07 grobian Exp $
 
-EAPI="5"
+EAPI="6"
 
 DESCRIPTION="Utility to select the default PostgreSQL slot"
 HOMEPAGE="http://www.gentoo.org/"
@@ -15,8 +14,6 @@ IUSE=""
 RDEPEND="app-admin/eselect"
 
 src_install() {
-	keepdir /etc/eselect/postgresql
-
 	insinto /usr/share/eselect/modules
 	doins postgresql.eselect
 

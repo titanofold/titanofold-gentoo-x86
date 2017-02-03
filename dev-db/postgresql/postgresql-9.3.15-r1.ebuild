@@ -1,12 +1,8 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
 EAPI="5"
-
-# Testing within Portage's environment is broken, and the patch no
-# longer applies cleanly.
-RESTRICT="test"
 
 PYTHON_COMPAT=( python{2_7,3_4} )
 
@@ -43,13 +39,13 @@ wanted_languages() {
 }
 
 CDEPEND="
->=app-eselect/eselect-postgresql-1.2.0
+>=app-eselect/eselect-postgresql-2.0
 sys-apps/less
 virtual/libintl
 kerberos? ( virtual/krb5 )
 ldap? ( net-nds/openldap )
 pam? ( virtual/pam )
-perl? ( >=dev-lang/perl-5.8 )
+perl? ( >=dev-lang/perl-5.8:= )
 python? ( ${PYTHON_DEPS} )
 readline? ( sys-libs/readline:0= )
 ssl? (
@@ -94,13 +90,16 @@ src_prepare() {
 	sed "s|\(PGSOCKET_DIR\s\+\)\"/tmp\"|\1\"${EPREFIX}/run/postgresql\"|" \
 		-i src/include/pg_config_manual.h || die
 
-	epatch "${FILESDIR}/pg_ctl-exit-status.patch"
+	# Rely on $PATH being in the proper order so that the correct
+	# install program is used for modules utilizing PGXS in both
+	# hardened and non-hardened environments. (Bug #528786)
+	sed 's/@install_bin@/install -c/' -i src/Makefile.global.in || die
 
 	use server || epatch "${FILESDIR}/${PN}-${SLOT}-no-server.patch"
 
 	# Fix bug 486556 where the server would crash at start up because of
 	# an infinite loop caused by a self-referencing symlink.
-	epatch "${FILESDIR}/postgresql-9.1-tz-dir-overflow.patch"
+	epatch "${FILESDIR}/postgresql-9.2-9.4-tz-dir-overflow.patch"
 
 	if use pam ; then
 		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \
@@ -177,11 +176,26 @@ src_install() {
 	insinto /etc/postgresql-${SLOT}
 	newins src/bin/psql/psqlrc.sample psqlrc
 
-	dodir /etc/eselect/postgresql/slots/${SLOT}
-	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
-		"${ED}/etc/eselect/postgresql/slots/${SLOT}/base"
-
 	use static-libs || find "${ED}" -name '*.a' -delete
+
+	local f bn
+	for f in $(find "${ED}/usr/$(get_libdir)/postgresql-${SLOT}/bin" \
+					-mindepth 1 -maxdepth 1)
+	do
+		bn=$(basename "${f}")
+		dosym "../$(get_libdir)/postgresql-${SLOT}/bin/${bn}" \
+			  "/usr/bin/${bn}${SLOT/.}"
+	done
+
+	local linkname mansec
+	for mansec in {1,3,7} ; do
+		for f in "${ED}"/usr/share/postgresql-${SLOT}/man/man${mansec}/* ; do
+			bn=$(basename "${f}")
+			linkname=${bn/%.${mansec}/${SLOT/.}.${mansec}}
+			dosym ../../postgresql-${SLOT}/man/man${mansec}/$bn \
+				  /usr/share/man/man${mansec}/${linkname}
+		done
+	done
 
 	if use doc ; then
 		docinto html
@@ -196,7 +210,7 @@ src_install() {
 			"${FILESDIR}/${PN}.confd" | newconfd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.init-pre_9.2" | newinitd - ${PN}-${SLOT}
+			"${FILESDIR}/${PN}.init-9.3" | newinitd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
 			"${FILESDIR}/${PN}.service" | \
@@ -213,6 +227,30 @@ src_install() {
 	fi
 }
 
+pkg_preinst() {
+	# Find all of the slot-specific symlinks, if any, in /usr/bin (e.g.,
+	# /usr/bin/psql96). They may have been created by the
+	# postgresql.eselect module, but they're handled within this ebuild
+	# now. It's alright if we momentarily delete /usr/bin/psql as it
+	# will be recreated by the eselect module in pkg_ppostinst(). This
+	# is only necessary for 9.7 and earlier. 10 and later were never
+	# handled in this manner.
+	local canonicalise
+	if type -p realpath > /dev/null; then
+		canonicalise=realpath
+	elif type -p readlink > /dev/null; then
+		canonicalise='readlink -f'
+	else
+		# can't die, subshell
+		die "No readlink nor realpath found, cannot canonicalise"
+	fi
+
+	local l
+	for l in $(find "${ROOT%/}/usr/bin" -mindepth 1 -maxdepth 1 -type l) ; do
+		[[ $(${canonicalise} "${l}") == *postgresql-${SLOT}* ]] && rm "${l}"
+	done
+}
+
 pkg_postinst() {
 	postgresql-config update
 
@@ -223,7 +261,7 @@ pkg_postinst() {
 		elog
 		elog "It looks like this is your first time installing PostgreSQL. Run the"
 		elog "following command in all active shells to pick up changes to the default"
-		elog "environemnt:"
+		elog "environment:"
 		elog "    source /etc/profile"
 	fi
 
@@ -380,5 +418,21 @@ pkg_config() {
 	else
 		einfo "You should use the '${EROOT%/}/etc/init.d/postgresql-${SLOT}' script to run PostgreSQL"
 		einfo "instead of 'pg_ctl'."
+	fi
+}
+
+src_test() {
+	if use server && [[ ${UID} -ne 0 ]] ; then
+		emake check
+
+		einfo "If you think other tests besides the regression tests are necessary, please"
+		einfo "submit a bug including a patch for this ebuild to enable them."
+	else
+		use server || \
+			ewarn 'Tests cannot be run without the "server" use flag enabled.'
+		[[ ${UID} -eq 0 ]] || \
+			ewarn 'Tests cannot be run as root. Enable "userpriv" in FEATURES.'
+
+		ewarn 'Skipping.'
 	fi
 }
