@@ -39,7 +39,7 @@ wanted_languages() {
 }
 
 CDEPEND="
->=app-eselect/eselect-postgresql-1.2.0
+>=app-eselect/eselect-postgresql-2.0
 sys-apps/less
 virtual/libintl
 kerberos? ( virtual/krb5 )
@@ -89,11 +89,6 @@ src_prepare() {
 	# Set proper run directory
 	sed "s|\(PGSOCKET_DIR\s\+\)\"/tmp\"|\1\"${EPREFIX}/run/postgresql\"|" \
 		-i src/include/pg_config_manual.h || die
-
-	# Rely on $PATH being in the proper order so that the correct
-	# install program is used for modules utilizing PGXS in both
-	# hardened and non-hardened environments. (Bug #528786)
-	sed 's/@install_bin@/install -c/' -i src/Makefile.global.in || die
 
 	use server || epatch "${FILESDIR}/${PN}-${SLOT}-no-server.patch"
 
@@ -176,11 +171,26 @@ src_install() {
 	insinto /etc/postgresql-${SLOT}
 	newins src/bin/psql/psqlrc.sample psqlrc
 
-	dodir /etc/eselect/postgresql/slots/${SLOT}
-	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
-		"${ED}/etc/eselect/postgresql/slots/${SLOT}/base"
-
 	use static-libs || find "${ED}" -name '*.a' -delete
+
+	local f bn
+	for f in $(find "${ED}/usr/$(get_libdir)/postgresql-${SLOT}/bin" \
+					-mindepth 1 -maxdepth 1)
+	do
+		bn=$(basename "${f}")
+		dosym "../$(get_libdir)/postgresql-${SLOT}/bin/${bn}" \
+			  "/usr/bin/${bn}${SLOT/.}"
+	done
+
+	local linkname mansec
+	for mansec in {1,3,7} ; do
+		for f in "${ED}"/usr/share/postgresql-${SLOT}/man/man${mansec}/* ; do
+			bn=$(basename "${f}")
+			linkname=${bn/%.${mansec}/${SLOT/.}.${mansec}}
+			dosym ../../postgresql-${SLOT}/man/man${mansec}/$bn \
+				  /usr/share/man/man${mansec}/${linkname}
+		done
+	done
 
 	if use doc ; then
 		docinto html
@@ -195,7 +205,7 @@ src_install() {
 			"${FILESDIR}/${PN}.confd" | newconfd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.init-9.3" | newinitd - ${PN}-${SLOT}
+			"${FILESDIR}/${PN}.init" | newinitd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
 			"${FILESDIR}/${PN}.service" | \
@@ -210,6 +220,30 @@ src_install() {
 			fperms 0775 /run/postgresql
 		fi
 	fi
+}
+
+pkg_preinst() {
+	# Find all of the slot-specific symlinks, if any, in /usr/bin (e.g.,
+	# /usr/bin/psql96). They may have been created by the
+	# postgresql.eselect module, but they're handled within this ebuild
+	# now. It's alright if we momentarily delete /usr/bin/psql as it
+	# will be recreated by the eselect module in pkg_ppostinst(). This
+	# is only necessary for 9.7 and earlier. 10 and later were never
+	# handled in this manner.
+	local canonicalise
+	if type -p realpath > /dev/null; then
+		canonicalise=realpath
+	elif type -p readlink > /dev/null; then
+		canonicalise='readlink -f'
+	else
+		# can't die, subshell
+		die "No readlink nor realpath found, cannot canonicalise"
+	fi
+
+	local l
+	for l in $(find "${ROOT%/}/usr/bin" -mindepth 1 -maxdepth 1 -type l) ; do
+		[[ $(${canonicalise} "${l}") == *postgresql-${SLOT}* ]] && rm "${l}"
+	done
 }
 
 pkg_postinst() {

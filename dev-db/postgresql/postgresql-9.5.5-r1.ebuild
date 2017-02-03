@@ -4,12 +4,12 @@
 
 EAPI="5"
 
-PYTHON_COMPAT=( python{2_7,3_4} )
+PYTHON_COMPAT=( python{2_7,3_4,3_5} )
 
 inherit eutils flag-o-matic linux-info multilib pam prefix python-single-r1 \
 		systemd user versionator
 
-KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 ~s390 ~sh sparc x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
+KEYWORDS="~alpha amd64 arm ~arm64 hppa ia64 ~mips ppc ppc64 ~s390 ~sh sparc x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
 
@@ -39,7 +39,7 @@ wanted_languages() {
 }
 
 CDEPEND="
->=app-eselect/eselect-postgresql-1.2.0
+>=app-eselect/eselect-postgresql-2.0
 sys-apps/less
 virtual/libintl
 kerberos? ( virtual/krb5 )
@@ -117,7 +117,7 @@ src_prepare() {
 	# hardened and non-hardened environments. (Bug #528786)
 	sed 's/@install_bin@/install -c/' -i src/Makefile.global.in || die
 
-	use server || epatch "${FILESDIR}/${PN}-9.4.10-no-server.patch"
+	use server || epatch "${FILESDIR}/${PN}-9.5.5-no-server.patch"
 
 	# Fix bug 486556 where the server would crash at start up because of
 	# an infinite loop caused by a self-referencing symlink.
@@ -163,6 +163,7 @@ src_configure() {
 		--mandir="${PO}/usr/share/postgresql-${SLOT}/man" \
 		--sysconfdir="${PO}/etc/postgresql-${SLOT}" \
 		--with-system-tzdata="${PO}/usr/share/zoneinfo" \
+		$(use_enable !alpha spinlocks) \
 		$(use_enable !pg_legacytimestamp integer-datetimes) \
 		$(use_enable threads thread-safety) \
 		$(use_with kerberos gssapi) \
@@ -208,11 +209,26 @@ src_install() {
 	insinto /etc/postgresql-${SLOT}
 	newins src/bin/psql/psqlrc.sample psqlrc
 
-	dodir /etc/eselect/postgresql/slots/${SLOT}
-	echo "postgres_ebuilds=\"\${postgres_ebuilds} ${PF}\"" > \
-		"${ED}/etc/eselect/postgresql/slots/${SLOT}/base"
-
 	use static-libs || find "${ED}" -name '*.a' -delete
+
+	local f bn
+	for f in $(find "${ED}/usr/$(get_libdir)/postgresql-${SLOT}/bin" \
+					-mindepth 1 -maxdepth 1)
+	do
+		bn=$(basename "${f}")
+		dosym "../$(get_libdir)/postgresql-${SLOT}/bin/${bn}" \
+			  "/usr/bin/${bn}${SLOT/.}"
+	done
+
+	local linkname mansec
+	for mansec in {1,3,7} ; do
+		for f in "${ED}"/usr/share/postgresql-${SLOT}/man/man${mansec}/* ; do
+			bn=$(basename "${f}")
+			linkname=${bn/%.${mansec}/${SLOT/.}.${mansec}}
+			dosym ../../postgresql-${SLOT}/man/man${mansec}/$bn \
+				  /usr/share/man/man${mansec}/${linkname}
+		done
+	done
 
 	if use doc ; then
 		docinto html
@@ -244,8 +260,37 @@ src_install() {
 	fi
 }
 
+pkg_preinst() {
+	# Find all of the slot-specific symlinks, if any, in /usr/bin (e.g.,
+	# /usr/bin/psql96). They may have been created by the
+	# postgresql.eselect module, but they're handled within this ebuild
+	# now. It's alright if we momentarily delete /usr/bin/psql as it
+	# will be recreated by the eselect module in pkg_ppostinst(). This
+	# is only necessary for 9.7 and earlier. 10 and later were never
+	# handled in this manner.
+	local canonicalise
+	if type -p realpath > /dev/null; then
+		canonicalise=realpath
+	elif type -p readlink > /dev/null; then
+		canonicalise='readlink -f'
+	else
+		# can't die, subshell
+		die "No readlink nor realpath found, cannot canonicalise"
+	fi
+
+	local l
+	for l in $(find "${ROOT%/}/usr/bin" -mindepth 1 -maxdepth 1 -type l) ; do
+		[[ $(${canonicalise} "${l}") == *postgresql-${SLOT}* ]] && rm "${l}"
+	done
+}
+
 pkg_postinst() {
 	postgresql-config update
+
+	if use alpha && use server ; then
+		ewarn "PostgreSQL 9.5+ no longer has native spinlock support on Alpha platforms."
+		ewarn "As a result, performance will be extremely degraded."
+	fi
 
 	elog "If you need a global psqlrc-file, you can place it in:"
 	elog "    ${EROOT%/}/etc/postgresql-${SLOT}/"
