@@ -210,7 +210,7 @@ src_install() {
 
 	if use server; then
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.confd" | newconfd - ${PN}-${SLOT}
+			"${FILESDIR}/${PN}.confd-9.3" | newconfd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
 			"${FILESDIR}/${PN}.init-9.3" | newinitd - ${PN}-${SLOT}
@@ -394,6 +394,10 @@ pkg_config() {
 		mv "${DATA_DIR%/}"/{pg_{hba,ident},postgresql}.conf "${PGDATA}"
 		ln -s "${PGDATA%/}"/{pg_{hba,ident},postgresql}.conf "${DATA_DIR%/}"
 	fi
+
+	# unix_socket_directory has no effect in postgresql.conf as it's
+	# overridden in the initscript
+	sed '/^#unix_socket_directories/,+1d' -i "${PGDATA%/}"/postgresql.conf
 
 	cat <<- EOF >> "${PGDATA%/}"/postgresql.conf
 		# This is here because of https://bugs.gentoo.org/show_bug.cgi?id=518522

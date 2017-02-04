@@ -390,6 +390,10 @@ pkg_config() {
 		ln -s "${PGDATA%/}"/{pg_{hba,ident},postgresql}.conf "${DATA_DIR%/}"
 	fi
 
+	# unix_socket_directory has no effect in postgresql.conf as it's
+	# overridden in the initscript
+	sed '/^#unix_socket_directory/d' -i "${PGDATA%/}"/postgresql.conf
+
 	cat <<- EOF >> "${PGDATA%/}"/postgresql.conf
 		# This is here because of https://bugs.gentoo.org/show_bug.cgi?id=518522
 		# On the off-chance that you might need to work with UTF-8 encoded
