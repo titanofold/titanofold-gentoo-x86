@@ -265,14 +265,6 @@ pkg_postinst() {
 	elog "If you need a global psqlrc-file, you can place it in:"
 	elog "    ${EROOT%/}/etc/postgresql-${SLOT}/"
 
-	if [[ -z ${REPLACING_VERSIONS} ]] ; then
-		elog
-		elog "It looks like this is your first time installing PostgreSQL. Run the"
-		elog "following command in all active shells to pick up changes to the default"
-		elog "environment:"
-		elog "    source /etc/profile"
-	fi
-
 	if use server ; then
 		elog
 		elog "Gentoo specific documentation:"
