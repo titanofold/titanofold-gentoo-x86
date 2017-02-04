@@ -218,8 +218,11 @@ src_install() {
 					-mindepth 1 -maxdepth 1)
 	do
 		bn=$(basename "${f}")
+		# Temporarily tack on tmp to workaround a file collision
+		# issue. This is only necessary for 9.7 and earlier. 10 never
+		# had this issue.
 		dosym "../$(get_libdir)/postgresql-${SLOT}/bin/${bn}" \
-			  "/usr/bin/${bn}${SLOT/.}"
+			  "/usr/bin/${bn}${SLOT/.}tmp"
 	done
 
 	local linkname mansec
@@ -281,8 +284,18 @@ pkg_preinst() {
 	fi
 
 	local l
+	# First remove any symlinks in /usr/bin that may have been created
+	# by the old eselect
 	for l in $(find "${ROOT%/}/usr/bin" -mindepth 1 -maxdepth 1 -type l) ; do
-		[[ $(${canonicalise} "${l}") == *postgresql-${SLOT}* ]] && rm "${l}"
+		if [[ $(${canonicalise} "${l}") == *postgresql-${SLOT}* ]] ; then
+			rm "${l}" || ewarn "Couldn't remove ${l}"
+		fi
+	done
+
+	# Then move the symlinks created by the ebuild to their proper place.
+	for l in "${ED}"/usr/bin/*tmp ; do
+		mv "${l}" "${l%tmp}" \
+			|| ewarn "Couldn't rename $(basename ${l}) to $(basename ${l%tmp})"
 	done
 }
 
@@ -291,14 +304,6 @@ pkg_postinst() {
 
 	elog "If you need a global psqlrc-file, you can place it in:"
 	elog "    ${EROOT%/}/etc/postgresql-${SLOT}/"
-
-	if [[ -z ${REPLACING_VERSIONS} ]] ; then
-		elog
-		elog "It looks like this is your first time installing PostgreSQL. Run the"
-		elog "following command in all active shells to pick up changes to the default"
-		elog "environment:"
-		elog "    source /etc/profile"
-	fi
 
 	if use server ; then
 		elog
