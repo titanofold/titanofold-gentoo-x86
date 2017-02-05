@@ -35,8 +35,6 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/${MY_P}-${PV}"
 
 src_prepare() {
-	eapply "${FILESDIR}/${PN}-${PV}-correct-install-paths.patch"
-
 	eapply_user
 
 	cmake-utils_src_prepare
