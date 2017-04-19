@@ -1,9 +1,5 @@
 #!/sbin/openrc-run
-<<<<<<< HEAD
-# Copyright 1999-2015 Gentoo Foundation
-=======
 # Copyright 1999-2017 Gentoo Foundation
->>>>>>> master
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -67,21 +63,16 @@ checkconfig() {
         fi
     done
 
-    # Set the proper permission for the socket paths and create it if
+    # Set the proper permission for the socket path and create it if
     # it doesn't exist.
-    set -f; IFS=','
-    local s
-    for s in ${PG_SOCKET_DIRECTORIES}; do
-        checkpath -d -m 1775 -o root:postgres "${s}"
-        if [ -e "${s%/}/.s.PGSQL.${configured_port}" ] ; then
-            eerror "Socket conflict."
-            eerror "A server is already listening on:"
-            eerror "    ${s%/}/.s.PGSQL.${configured_port}"
-            eerror "HINT: Change PGPORT to listen on a different socket."
-            return 1
-        fi
-    done
-    set +f; unset IFS
+    checkpath -d -m 1775 -o root:postgres "${PG_SOCKET_DIRECTORY}"
+    if [ -e "${PG_SOCKET_DIRECTORY%/}/.s.PGSQL.${configured_port}" ] ; then
+        eerror "Socket conflict."
+        eerror "A server is already listening on:"
+        eerror "    ${PG_SOCKET_DIRECTORY%/}/.s.PGSQL.${configured_port}"
+        eerror "HINT: Change PGPORT to listen on a different socket."
+        return 1
+    fi
 }
 
 start() {
@@ -96,7 +87,7 @@ start() {
            -s -w -t ${START_TIMEOUT} -l ${DATA_DIR%/}/postmaster.log \
            -D ${PGDATA} \
            -o '--data-directory=${DATA_DIR} \
-               --unix-socket-directories=${PG_SOCKET_DIRECTORIES} \
+               --unix-socket-directory=${PG_SOCKET_DIRECTORY} \
                ${PGOPTS}'"
 
     local retval=$?
