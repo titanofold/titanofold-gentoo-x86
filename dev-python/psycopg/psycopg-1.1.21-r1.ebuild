@@ -1,9 +1,8 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-python/psycopg/psycopg-1.1.21-r1.ebuild,v 1.6 2014/10/23 17:22:30 floppym Exp $
 
 EAPI=5
-PYTHON_COMPAT=( python{2_6,2_7} )
+PYTHON_COMPAT=( python2_7 )
 
 inherit autotools-utils python-r1
 
@@ -13,7 +12,7 @@ SRC_URI="http://initd.org/pub/software/${PN}/${P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~alpha ~amd64 ~arm ~ia64 ~ppc ~ppc64 ~sparc ~x86"
+KEYWORDS="alpha amd64 arm ia64 ppc ppc64 sparc x86"
 IUSE="examples"
 
 RDEPEND=">=dev-python/egenix-mx-base-2.0.3[${PYTHON_USEDEP}]
@@ -66,8 +65,7 @@ src_install () {
 	dodoc RELEASE-1.0 SUCCESS doc/python-taylor.txt
 
 	if use examples; then
-		insinto /usr/share/doc/${PF}/examples
-		doins -r doc/examples/.
-		docompress -x "${INSDESTTREE}"
+		dodoc -r doc/examples
+		docompress -x /usr/share/doc/${PF}/examples
 	fi
 }

@@ -57,13 +57,12 @@ python_prepare_all() {
 }
 
 python_compile_all() {
-	use doc && emake -C doc -j1 html text
+	use doc && emake -C doc/src -j1 html text
 }
 
 python_install_all() {
 	if use doc; then
-		dodoc doc/psycopg2.txt
-		dohtml -r doc/html/.
+		dohtml -r doc/src/_build/html/.
 	fi
 
 	use examples && local EXAMPLES=( examples/. )
