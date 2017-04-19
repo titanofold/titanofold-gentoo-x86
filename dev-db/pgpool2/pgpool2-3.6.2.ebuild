@@ -1,10 +1,9 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
-POSTGRES_COMPAT=( 9.{1..6} )
+POSTGRES_COMPAT=( 9.{2..6} 10 )
 
 inherit postgres-multi
 
@@ -40,7 +39,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/pgpool2-3.5.0-path-fix.patch"
+	eapply "${FILESDIR}/pgpool2-3.5.0-path-fix.patch"
 
 	local pg_config_manual="$(pg_config --includedir)/pg_config_manual.h"
 	local pgsql_socket_dir=$(grep DEFAULT_PGSOCKET_DIR "${pg_config_manual}" | \
@@ -92,16 +91,18 @@ src_install() {
 
 	# Documentation!
 	dodoc NEWS TODO
-	use doc && dohtml -r doc/*
+	if use doc ; then
+		postgres-multi_forbest emake DESTDIR="${D}" -C doc install
+	fi
 
 	# Examples and extras
 	# mv some files that get installed to /usr/share/pgpool-II so that
 	# they all wind up in the same place
 	mv "${ED%/}/usr/share/${PN/2/-II}" "${ED%/}/usr/share/${PN}" || die
 	into "/usr/share/${PN}"
-	dobin doc/{pgpool_remote_start,basebackup.sh}
+	dobin src/sample/{pgpool_recovery,pgpool_recovery_pitr,pgpool_remote_start}
 	insinto "/usr/share/${PN}"
-	doins doc/recovery.conf.sample
+	doins src/sample/{{pcp,pgpool,pool_hba}.conf.sample*,pgpool.pam}
 
 	# One more thing: Evil la files!
 	find "${ED}" -name '*.la' -exec rm -f {} +
