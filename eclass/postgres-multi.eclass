@@ -131,6 +131,18 @@ postgres-multi_src_prepare() {
 		die "Did you forget to call postgres-multi_pkg_setup?"
 	fi
 
+	# Check that the slot has been emerged (Should be prevented by
+	# Portage, but won't be caught by /usr/bin/ebuild)
+	local slot
+	for slot in ${_POSTGRES_INTERSECT_SLOTS[@]} ; do
+		if [[ -z $(which pg_config${slot/.} 2> /dev/null) ]] ; then
+			eerror
+			eerror "postgres_targets_postgres${slot/.} use flag is enabled, but hasn't been emerged."
+			eerror
+			die "a postgres_targets use flag is enabled, but not emerged"
+		fi
+	done
+
 	case ${EAPI:-0} in
 		0|1|2|3|4|5) epatch_user ;;
 		6) eapply_user ;;
