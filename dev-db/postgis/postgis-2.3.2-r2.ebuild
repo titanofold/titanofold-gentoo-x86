@@ -1,8 +1,7 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI="5"
+EAPI="6"
 
 POSTGRES_COMPAT=( 9.{2,3,4,5,6} )
 POSTGRES_USEDEP="server"
@@ -60,7 +59,7 @@ MAKEOPTS+=' -j1'
 QA_FLAGS_IGNORED="usr/lib(64)?/(rt)?postgis-${PGIS}\.so"
 
 src_prepare() {
-	epatch "${FILESDIR}/${PN}-2.2.0-arflags.patch"
+	eapply "${FILESDIR}/${PN}-2.2.0-arflags.patch"
 
 	local AT_M4DIR="macros"
 	eautoreconf
