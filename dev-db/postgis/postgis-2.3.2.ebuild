@@ -80,24 +80,31 @@ src_compile() {
 	if use doc ; then
 		postgres-multi_foreach emake comments
 		postgres-multi_foreach emake cheatsheets
-		postgres-multi_foreach emake -C doc html
+		postgres-multi_forbest emake -C doc html
 	fi
 }
 
 src_install() {
 	postgres-multi_foreach emake DESTDIR="${D}" install
-	use doc && postgres-multi_foreach emake DESTDIR="${D}" comments-install
 	postgres-multi_foreach emake -C topology DESTDIR="${D}" install
 	postgres-multi_forbest dobin ./utils/postgis_restore.pl
 
 	dodoc CREDITS TODO loader/README.* doc/*txt
 
-	use doc && dohtml -r doc/html/*
-
 	docinto topology
 	dodoc topology/{TODO,README}
 
-	use static-libs || postgres-multi_foreach find "${ED}" -name '*.a' -delete
+	if use doc ; then
+		postgres-multi_foreach emake DESTDIR="${D}" comments-install
+
+		docinto html
+		postgres-multi_forbest dodoc doc/html/{postgis.html,style.css}
+
+		docinto html/images
+		postgres-multi_forbest dodoc doc/html/images/*
+	fi
+
+	use static-libs || find "${ED}" -name '*.a' -delete
 }
 
 pkg_postinst() {
