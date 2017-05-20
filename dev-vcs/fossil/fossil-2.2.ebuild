@@ -1,16 +1,14 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
-
-MY_P=${PN}-src-${PV}
 
 inherit toolchain-funcs
 
 DESCRIPTION="Simple, high-reliability, source control management, and more"
 HOMEPAGE="http://www.fossil-scm.org/"
-SRC_URI="http://www.fossil-scm.org/index.html/uv/download/${MY_P}.tar.gz"
+SRC_URI="http://www.fossil-scm.org/index.html/uv/fossil-src-${PV}.tar.gz"
+
 
 LICENSE="BSD-2"
 SLOT="0"
@@ -27,8 +25,6 @@ DEPEND="
 	tcl? ( dev-lang/tcl:0= )
 "
 RDEPEND="${DEPEND}"
-
-S="${WORKDIR}/Fossil_2017-01-16_205854_1669115ab9"
 
 src_configure() {
 	# this is not an autotools situation so don't make it seem like one
