@@ -1,6 +1,5 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2016 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/pgbouncer/pgbouncer-1.5.4.ebuild,v 1.2 2013/07/19 00:55:04 titanofold Exp $
 
 EAPI="5"
 
@@ -10,12 +9,11 @@ RESTRICT="test"
 inherit eutils user
 
 DESCRIPTION="Lightweight connection pooler for PostgreSQL"
-HOMEPAGE="http://pgfoundry.org/projects/pgbouncer/"
-SRC_URI="mirror://postgresql/projects/pgFoundry/${PN}/${PN}/${PV}/${P}.tar.gz"
-
+HOMEPAGE="https://pgbouncer.github.io"
+SRC_URI="https://pgbouncer.github.io/downloads/files/${PV}/${P}.tar.gz"
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS="amd64 x86"
 IUSE="debug doc libevent udns"
 REQUIRED_USE="
 	libevent? ( !udns )

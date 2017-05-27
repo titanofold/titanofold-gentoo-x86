@@ -1,6 +1,5 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI="5"
 
@@ -9,7 +8,7 @@ PYTHON_COMPAT=( python{2_7,3_4} )
 inherit eutils flag-o-matic linux-info multilib pam prefix python-single-r1 \
 		systemd user versionator
 
-KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 ~s390 ~sh sparc x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
 
@@ -210,7 +209,7 @@ src_install() {
 
 	if use server; then
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.confd" | newconfd - ${PN}-${SLOT}
+			"${FILESDIR}/${PN}.confd-9.3" | newconfd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
 			"${FILESDIR}/${PN}.init-9.3" | newinitd - ${PN}-${SLOT}
@@ -357,17 +356,10 @@ pkg_config() {
 	einfo "The database cluster will be created in:"
 	einfo "    ${DATA_DIR}"
 	einfo
-	while [ "$correct" != "true" ] ; do
-		einfo "Are you ready to continue? (y/n)"
-		read answer
-		if [[ $answer =~ ^[Yy]([Ee][Ss])?$ ]] ; then
-			correct="true"
-		elif [[ $answer =~ ^[Nn]([Oo])?$ ]] ; then
-			die "Aborting initialization."
-		else
-			echo "Answer not recognized"
-		fi
-	done
+
+	ebegin "Continuing initialization in 5 seconds (Control-C to cancel)"
+	sleep 5
+	eend 0
 
 	if [ -n "$(ls -A ${DATA_DIR} 2> /dev/null)" ] ; then
 		eerror "The given directory, '${DATA_DIR}', is not empty."
@@ -394,6 +386,10 @@ pkg_config() {
 		mv "${DATA_DIR%/}"/{pg_{hba,ident},postgresql}.conf "${PGDATA}"
 		ln -s "${PGDATA%/}"/{pg_{hba,ident},postgresql}.conf "${DATA_DIR%/}"
 	fi
+
+	# unix_socket_directory has no effect in postgresql.conf as it's
+	# overridden in the initscript
+	sed '/^#unix_socket_directories/,+1d' -i "${PGDATA%/}"/postgresql.conf
 
 	cat <<- EOF >> "${PGDATA%/}"/postgresql.conf
 		# This is here because of https://bugs.gentoo.org/show_bug.cgi?id=518522
