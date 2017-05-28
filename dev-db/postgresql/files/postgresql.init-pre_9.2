@@ -1,5 +1,5 @@
 #!/sbin/openrc-run
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2014 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 extra_started_commands="reload"
@@ -22,8 +22,8 @@ depend() {
 
 configured_port=$(get_config port)
 : ${configured_port:=${PGPORT}}
-socket_paths=$(get_config unix_socket_directories)
-: ${socket_paths:=/run/postgresql}
+socket_path=$(get_config unix_socket_directory)
+: ${socket_path:=/run/postgresql}
 
 checkconfig() {
     # Check that DATA_DIR has been set
@@ -58,21 +58,16 @@ checkconfig() {
         fi
     done
 
-    # Set the proper permission for the socket paths and create it if
+    # Set the proper permission for the socket path and create it if
     # it doesn't exist.
-	set -f; IFS=','
-	local s
-	for s in ${socket_paths}; do
-		checkpath -d -m 1775 -o postgres:postgres ${s}
-		if [ -e ${s%/}/.s.PGSQL.${configured_port} ] ; then
-			eerror "Socket conflict."
-			eerror "A server is already listening on:"
-			eerror "    ${s%/}/.s.PGSQL.${configured_port}"
-			eerror "HINT: Change PGPORT to listen on a different socket."
-			return 1
-		fi
-	done
-	set +f; unset IFS
+    checkpath -d -m 1775 -o postgres:postgres ${socket_path}
+    if [ -e ${socket_path%/}/.s.PGSQL.${configured_port} ] ; then
+        eerror "Socket conflict."
+        eerror "A server is already listening on:"
+        eerror "    ${socket_path%/}/.s.PGSQL.${configured_port}"
+        eerror "HINT: Change PGPORT to listen on a different socket."
+        return 1
+    fi
 }
 
 start() {
@@ -93,9 +88,11 @@ start() {
         --env "PGPORT=${configured_port}" \
         ${extraenv} \
         --pidfile ${DATA_DIR%/}/postmaster.pid \
-        --exec /usr/@LIBDIR@/postgresql-@SLOT@/bin/pg_ctl \
-        -- start -s -w -t ${START_TIMEOUT} -l ${DATA_DIR%/}/postmaster.log \
-                 -D ${PGDATA} -o "--data-directory=${DATA_DIR} ${PGOPTS}"
+        --wait $((${START_TIMEOUT}*1000)) \
+        --exec /usr/@LIBDIR@/postgresql-@SLOT@/bin/postgres \
+        -- -D ${PGDATA} --data-directory=${DATA_DIR} --silent-mode=true \
+        ${PGOPTS}
+
     local retval=$?
 
     if [ $retval -ne 0 ] ; then

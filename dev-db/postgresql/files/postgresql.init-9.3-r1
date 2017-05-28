@@ -62,16 +62,21 @@ checkconfig() {
         fi
     done
 
-    # Set the proper permission for the socket path and create it if
+    # Set the proper permission for the socket paths and create it if
     # it doesn't exist.
-    checkpath -d -m 1775 -o root:postgres "${PG_SOCKET_DIRECTORY}"
-    if [ -e "${PG_SOCKET_DIRECTORY%/}/.s.PGSQL.${configured_port}" ] ; then
-        eerror "Socket conflict."
-        eerror "A server is already listening on:"
-        eerror "    ${PG_SOCKET_DIRECTORY%/}/.s.PGSQL.${configured_port}"
-        eerror "HINT: Change PGPORT to listen on a different socket."
-        return 1
-    fi
+    set -f; IFS=','
+    local s
+    for s in ${PG_SOCKET_DIRECTORIES}; do
+        checkpath -d -m 1775 -o root:postgres "${s}"
+        if [ -e "${s%/}/.s.PGSQL.${configured_port}" ] ; then
+            eerror "Socket conflict."
+            eerror "A server is already listening on:"
+            eerror "    ${s%/}/.s.PGSQL.${configured_port}"
+            eerror "HINT: Change PGPORT to listen on a different socket."
+            return 1
+        fi
+    done
+    set +f; unset IFS
 }
 
 start() {
@@ -86,7 +91,7 @@ start() {
            -s -w -t ${START_TIMEOUT} -l ${DATA_DIR%/}/postmaster.log \
            -D ${PGDATA} \
            -o '--data-directory=${DATA_DIR} \
-               --unix-socket-directory=${PG_SOCKET_DIRECTORY} \
+               --unix-socket-directories=${PG_SOCKET_DIRECTORIES} \
                ${PGOPTS}'"
 
     local retval=$?

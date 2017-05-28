@@ -8,7 +8,7 @@ PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 inherit eutils flag-o-matic linux-info multilib pam prefix python-single-r1 \
 		systemd user versionator
 
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
+KEYWORDS="alpha amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ppc ppc64 ~s390 ~sh sparc x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
 
@@ -26,6 +26,7 @@ IUSE="doc kerberos kernel_linux ldap libressl nls pam perl -pg_legacytimestamp p
 for lingua in ${LINGUAS}; do
 	IUSE+=" linguas_${lingua}"
 done
+REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 wanted_languages() {
 	local enable_langs
@@ -245,7 +246,7 @@ src_install() {
 			"${FILESDIR}/${PN}.confd-9.3" | newconfd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.init-9.3" | newinitd - ${PN}-${SLOT}
+			"${FILESDIR}/${PN}.init-9.3-r1" | newinitd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
 			"${FILESDIR}/${PN}.service" | \
