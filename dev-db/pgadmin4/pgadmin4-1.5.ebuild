@@ -98,12 +98,15 @@ src_install() {
 	local APP_DIR=/usr/share/${PN}/web
 	insinto "${APP_DIR}"
 	doins -r web/*
-	echo "SERVER_MODE = False" > "${D}${APP_DIR}"/config_local.py || die
+	cat > "${D}${APP_DIR}"/config_local.py <<-EOF
+		SERVER_MODE = False
+		UPGRADE_CHECK_ENABLED = False
+	EOF
 	python_optimize "${D}${APP_DIR}"
 
 	local CONFIG_DIR="/etc/xdg/pgadmin"
 	dodir "${CONFIG_DIR}"
-	cat > "${D}${CONFIG_DIR}/pgadmin4.conf" <<-EOF
+	cat > "${D}${CONFIG_DIR}"/pgadmin4.conf <<-EOF
 		[General]
 		ApplicationPath=${APP_DIR}
 		PythonPath=$(python_get_sitedir)
