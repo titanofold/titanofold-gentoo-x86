@@ -31,7 +31,7 @@ DEPEND="${COMMON_DEPEND}
 	)"
 
 RDEPEND="${COMMON_DEPEND}
-	>=app-text/htmlmin-0.1.10
+	>=app-text/htmlmin-0.1.10[${PYTHON_USEDEP}]
 	>=dev-python/Babel-2.3.4[${PYTHON_USEDEP}]
 	>=dev-python/beautifulsoup-4.4.1[${PYTHON_USEDEP}]
 	>=dev-python/blinker-1.3[${PYTHON_USEDEP}]
@@ -54,19 +54,19 @@ RDEPEND="${COMMON_DEPEND}
 	>=dev-python/jinja-2.7.3[${PYTHON_USEDEP}]
 	>=dev-python/linecache2-1.0.0[${PYTHON_USEDEP}]
 	>=dev-python/markupsafe-0.23[${PYTHON_USEDEP}]
+	>=dev-python/mimeparse-1.5.1[${PYTHON_USEDEP}]
 	>=dev-python/passlib-1.6.2[${PYTHON_USEDEP}]
 	>=dev-python/pbr-1.9.1[${PYTHON_USEDEP}]
 	>=dev-python/psycopg-2.7.1[${PYTHON_USEDEP}]
 	>=dev-python/pycrypto-2.6.1[${PYTHON_USEDEP}]
 	>=dev-python/pyrsistent-0.11.13[${PYTHON_USEDEP}]
 	>=dev-python/python-dateutil-2.5.0[${PYTHON_USEDEP}]
-	>=dev-python/mimeparse-1.5.1[${PYTHON_USEDEP}]
+	>=dev-python/python-sqlparse-0.1.19[${PYTHON_USEDEP}]
 	>=dev-python/pytz-2014.10[${PYTHON_USEDEP}]
 	>=dev-python/simplejson-3.6.5[${PYTHON_USEDEP}]
 	>=dev-python/six-1.9.0[${PYTHON_USEDEP}]
 	>=dev-python/speaklater-1.3[${PYTHON_USEDEP}]
 	>=dev-python/sqlalchemy-1.0.14[${PYTHON_USEDEP}]
-	>=dev-python/python-sqlparse-0.1.19[${PYTHON_USEDEP}]
 	>=dev-python/werkzeug-0.9.6[${PYTHON_USEDEP}]
 	>=dev-python/wtforms-2.0.2[${PYTHON_USEDEP}]
 "
