@@ -16,7 +16,6 @@ REQUIRED_USE="|| ( mysql postgres )"
 
 DEPEND="
 	dev-lang/php:*[unicode,imap,postgres?,xmlrpc?]
-	mysql? ( dev-lang/php:*[mysqli] )
 	vacation? (
 		dev-perl/DBI
 		virtual/perl-MIME-Base64
