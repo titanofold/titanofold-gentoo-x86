@@ -6,7 +6,7 @@ EAPI=6
 MY_PN="Flask-Gravatar"
 MY_P=${MY_PN}-${PV}
 
-PYTHON_COMPAT=( python{2_7,3_4,3_5} )
+PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 inherit distutils-r1
 
 DESCRIPTION="Small extension for Flask to make usage of Gravatar service easy"
