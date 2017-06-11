@@ -15,7 +15,7 @@ SRC_URI="mirror://postgresql/pgadmin/${PN}/v${PV}/source/${P}.tar.gz"
 LICENSE="POSTGRESQL"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-IUSE="doc"
+IUSE="doc test"
 
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
@@ -28,7 +28,12 @@ COMMON_DEPEND="${PYTHON_DEPS}
 DEPEND="${COMMON_DEPEND}
 	doc? (
 		dev-python/sphinx[${PYTHON_USEDEP}]
-	)"
+	)
+	test? (
+		dev-python/selenium[${PYTHON_USEDEP}]
+		dev-python/testscenarios[${PYTHON_USEDEP}]
+	)
+"
 
 RDEPEND="${COMMON_DEPEND}
 	>=app-text/htmlmin-0.1.10
@@ -117,4 +122,8 @@ src_install() {
 		insinto /usr/share/${PN}/docs/en_US/_build
 		doins -r docs/en_US/_build/html
 	fi
+}
+
+src_test() {
+	emake check
 }
