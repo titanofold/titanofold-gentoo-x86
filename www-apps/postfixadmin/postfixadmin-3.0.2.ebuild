@@ -1,8 +1,7 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/www-apps/postfixadmin/postfixadmin-2.3.7.ebuild,v 1.4 2014/08/10 20:14:45 slyfox Exp $
 
-EAPI="4"
+EAPI="6"
 
 inherit user webapp
 
@@ -11,22 +10,26 @@ HOMEPAGE="http://postfixadmin.sourceforge.net"
 SRC_URI="mirror://sourceforge/project/${PN}/${PN}/${P}/${P}.tar.gz"
 
 LICENSE="GPL-2"
-KEYWORDS="amd64 ~ppc x86"
+KEYWORDS="~amd64 ~ppc ~x86"
 IUSE="+mysql postgres +vacation xmlrpc"
 REQUIRED_USE="|| ( mysql postgres )"
 
-DEPEND="vacation? ( dev-perl/DBI
+DEPEND="
+	dev-lang/php:*[unicode,imap,postgres?,xmlrpc?]
+	vacation? (
+		dev-perl/DBI
 		virtual/perl-MIME-Base64
 		dev-perl/MIME-EncWords
 		dev-perl/Email-Valid
 		dev-perl/Mail-Sender
-		dev-perl/log-dispatch
+		dev-perl/Log-Dispatch
 		dev-perl/Log-Log4perl
 		dev-perl/MIME-Charset
 		mysql? ( dev-perl/DBD-mysql )
-		postgres? ( dev-perl/DBD-Pg ) )
+		postgres? ( dev-perl/DBD-Pg )
+	 )
 	xmlrpc? ( dev-php/ZendFramework[-minimal] )
-	dev-lang/php[unicode,imap,postgres?,xmlrpc?]"
+"
 
 RDEPEND="${DEPEND}
 	virtual/httpd-php
@@ -53,7 +56,7 @@ src_install() {
 		fperms 770 /var/spool/vacation/vacation.pl-${SLOT}
 		dodoc VIRTUAL_VACATION/FILTER_README
 		newdoc VIRTUAL_VACATION/INSTALL.TXT VIRTUAL_VACATION_INSTALL.TXT
-		rm -r VIRTUAL_VACATION/{vacation.pl,INSTALL.TXT,tests,FILTER_README}
+		rm -r VIRTUAL_VACATION/{vacation.pl,INSTALL.TXT,tests,FILTER_README} || die
 	fi
 
 	insinto /usr/share/doc/${PF}/
@@ -80,7 +83,7 @@ pkg_postinst() {
 		chown vacation:vacation "${ROOT}"/var/spool/vacation/
 		einfo "/var/spool/vacation/vacation.pl symlink was updated to:"
 		einfo "/var/spool/vacation/vacation.pl-${SLOT}"
-		ln -sf "${ROOT}"/var/spool/vacation/vacation.pl{-${SLOT},}
+		ln -sf "${ROOT}"/var/spool/vacation/vacation.pl{-${SLOT},} || die
 	fi
 }
 
@@ -90,7 +93,7 @@ pkg_postrm() {
 	if [[ ! -e "${ROOT}"/var/spool/vacation/vacation.pl ]] &&
 		path_exists "${ROOT}"/var/spool/vacation/vacation.pl-*; then
 		ln -s $(LC_ALL=C ls -1 /var/spool/vacation/vacation.pl-* | tail -n1) \
-			"${ROOT}"/var/spool/vacation/vacation.pl
+			"${ROOT}"/var/spool/vacation/vacation.pl || die
 		ewarn "/var/spool/vacation/vacation.pl was updated to point on most"
 		ewarn "recent verion, but please, do your own checks"
 	fi
