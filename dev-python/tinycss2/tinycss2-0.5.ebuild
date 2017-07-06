@@ -16,12 +16,14 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="test"
 
+RESTRICT="test"
+
 RDEPEND="dev-python/webencodings[${PYTHON_USEDEP}]"
 DEPEND="${RDEPEND}
 	test? ( dev-python/pytest[${PYTHON_USEDEP}] )"
 
 DOCS=( CHANGES README.rst )
 
-src_test() {
-	python_foreach_impl py.test
+python_test() {
+	py.test || die "testsuite failed under ${EPYTHON}"
 }
