@@ -3,7 +3,7 @@
 
 EAPI=6
 
-POSTGRES_COMPAT=( 9.{2..6} 10 )
+POSTGRES_COMPAT=( 9.{2..6} )
 
 inherit postgres-multi
 
@@ -23,7 +23,7 @@ RDEPEND="
 	${POSTGRES_DEP}
 	memcached? ( dev-libs/libmemcached )
 	pam? ( sys-auth/pambase )
-	ssl? ( dev-libs/openssl )
+	ssl? ( dev-libs/openssl:* )
 "
 DEPEND="${RDEPEND}
 	sys-devel/bison
