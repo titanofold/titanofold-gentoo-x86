@@ -39,18 +39,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	eapply "${FILESDIR}/pgpool2-3.5.0-path-fix.patch"
-
-	local pg_config_manual="$(pg_config --includedir)/pg_config_manual.h"
-	local pgsql_socket_dir=$(grep DEFAULT_PGSOCKET_DIR "${pg_config_manual}" | \
-		sed 's|.*\"\(.*\)\"|\1|g')
-	local pgpool_socket_dir="$(dirname $pgsql_socket_dir)/pgpool"
-
-	sed "s|@PGSQL_SOCKETDIR@|${pgsql_socket_dir}|g" \
-		-i src/sample/pgpool.conf.sample* src/include/pool.h || die
-
-	sed "s|@PGPOOL_SOCKETDIR@|${pgpool_socket_dir}|g" \
-		-i src/sample/pgpool.conf.sample* src/include/pool.h || die
+	eapply "${FILESDIR}/pgpool_run_paths-3.6.4.patch"
 
 	postgres-multi_src_prepare
 }
