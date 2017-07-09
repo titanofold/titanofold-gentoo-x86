@@ -3,7 +3,7 @@
 
 EAPI="6"
 
-POSTGRES_COMPAT=( 9.{2,3,4,5,6} )
+POSTGRES_COMPAT=( 9.{2..6} )
 POSTGRES_USEDEP="server"
 
 inherit autotools eutils postgres-multi versionator
@@ -107,7 +107,9 @@ src_install() {
 }
 
 pkg_postinst() {
+	ebegin "Refreshing PostgreSQL symlinks"
 	postgresql-config update
+	eend $?
 
 	elog "To finish installing PostGIS, follow the directions detailed at:"
 	elog "http://postgis.net/docs/manual-${PGIS}/postgis_installation.html#create_new_db_extensions"
