@@ -51,3 +51,12 @@ src_install() {
 	newinitd "${FILESDIR}"/slony1.init slony1
 	newconfd "${FILESDIR}"/slony1.conf slony1
 }
+
+pkg_postinst() {
+	# Slony-I installs its executables into a directory that is
+	# processed by the PostgreSQL eselect module. Call it here so that
+	# the symlinks will be created.
+	ebegin "Refreshing PostgreSQL $(postgresql-config show) symlinks"
+	postgresql-config update
+	eend $?
+}
