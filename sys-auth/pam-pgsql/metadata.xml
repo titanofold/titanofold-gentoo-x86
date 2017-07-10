@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-<herd>pam</herd>
-<maintainer>
-<email>pam-bugs@gentoo.org</email>
-</maintainer>
+	<maintainer type="project">
+		<email>pam-bugs@gentoo.org</email>
+	</maintainer>
+	<upstream>
+		<remote-id type="sourceforge">pam-pgsql</remote-id>
+	</upstream>
 </pkgmetadata>
