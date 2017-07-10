@@ -1,10 +1,9 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
-POSTGRES_COMPAT=( 9.{1..6} )
+POSTGRES_COMPAT=( 9.{2..6} )
 
 inherit postgres-multi
 
