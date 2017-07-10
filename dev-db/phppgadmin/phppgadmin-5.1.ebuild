@@ -1,6 +1,6 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/dev-db/phppgadmin/phppgadmin-5.0.4.ebuild,v 1.6 2012/10/17 22:32:59 naota Exp $
+# $Id$
 
 EAPI="4"
 
@@ -13,7 +13,7 @@ HOMEPAGE="http://phppgadmin.sourceforge.net/"
 SRC_URI="mirror://sourceforge/${PN}/${MY_P}.tar.bz2"
 
 LICENSE="GPL-2"
-KEYWORDS="~amd64 ~hppa ~ppc ~x86 ~x86-fbsd"
+KEYWORDS="amd64 hppa ppc x86 ~x86-fbsd"
 IUSE=""
 
 RDEPEND="dev-lang/php[postgres,session]
@@ -35,9 +35,6 @@ src_install() {
 	done
 
 	webapp_configfile ${MY_HTDOCSDIR}/conf/config.inc.php
+	webapp_postinst_txt en "${FILESDIR}"/postinstall-en.txt
 	webapp_src_install
-}
-
-pkg_postinst() {
-	elog "Make sure you edit ${MY_INSTALLDIR}/conf/config.inc.php"
 }
