@@ -39,7 +39,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	eapply "${FILESDIR}/pgpool_run_paths-3.6.4.patch"
+	eapply "${FILESDIR}/pgpool_run_paths-3.6.5.patch"
 
 	postgres-multi_src_prepare
 }
@@ -80,9 +80,8 @@ src_install() {
 
 	# Documentation!
 	dodoc NEWS TODO
-	if use doc ; then
-		postgres-multi_forbest emake DESTDIR="${D}" -C doc install
-	fi
+	doman doc/src/sgml/man{1,8}/*
+	use doc && dodoc -r doc/src/sgml/html
 
 	# Examples and extras
 	# mv some files that get installed to /usr/share/pgpool-II so that
