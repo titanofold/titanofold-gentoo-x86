@@ -206,6 +206,30 @@ src_install() {
 	fi
 	docompress /usr/share/postgresql-${SLOT}/man/man{1,3,7}
 
+	# Create slot specific man pages
+	local bn f mansec slotted_name
+	for mansec in 1 3 7 ; do
+		local rel_manpath="../../postgresql-${SLOT}/man/man${mansec}"
+
+		mkdir -p "${ED}"/usr/share/man/man${mansec} || die "making man dir"
+		pushd "${ED}"/usr/share/man/man${mansec} > /dev/null
+
+		for f in "${ED}/usr/share/postgresql-${SLOT}/man/man${mansec}"/* ; do
+			bn=$(basename "${f}")
+			slotted_name=${bn%.${mansec}}${SLOT/.}.${mansec}
+			case ${bn} in
+				TABLE.7|WITH.7)
+					echo ".so ${rel_manpath}/SELECT.7" > ${slotted_name}
+					;;
+				*)
+					echo ".so ${rel_manpath}/${bn}" > ${slotted_name}
+					;;
+			esac
+		done
+
+		popd > /dev/null
+	done
+
 	insinto /etc/postgresql-${SLOT}
 	newins src/bin/psql/psqlrc.sample psqlrc
 
@@ -221,16 +245,6 @@ src_install() {
 		# had this issue.
 		dosym "../$(get_libdir)/postgresql-${SLOT}/bin/${bn}" \
 			  "/usr/bin/${bn}${SLOT/.}tmp"
-	done
-
-	local linkname mansec
-	for mansec in {1,3,7} ; do
-		for f in "${ED}"/usr/share/postgresql-${SLOT}/man/man${mansec}/* ; do
-			bn=$(basename "${f}")
-			linkname=${bn/%.${mansec}/${SLOT/.}.${mansec}}
-			dosym ../../postgresql-${SLOT}/man/man${mansec}/$bn \
-				  /usr/share/man/man${mansec}/${linkname}
-		done
 	done
 
 	if use doc ; then

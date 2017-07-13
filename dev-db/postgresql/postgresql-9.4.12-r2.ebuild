@@ -53,10 +53,32 @@ ssl? (
 	libressl? ( dev-libs/libressl:= )
 )
 tcl? ( >=dev-lang/tcl-8:0= )
-uuid? ( dev-libs/ossp-uuid )
 xml? ( dev-libs/libxml2 dev-libs/libxslt )
 zlib? ( sys-libs/zlib )
 "
+
+# uuid flags -- depend on sys-apps/util-linux for Linux libcs, or if no
+# supported libc in use depend on dev-libs/ossp-uuid. For BSD systems,
+# the libc includes UUID functions.
+UTIL_LINUX_LIBC=( elibc_{glibc,uclibc,musl} )
+BSD_LIBC=( elibc_{Free,Net,Open}BSD )
+
+nest_usedep() {
+	local front back
+	while [[ ${#} -gt 1 ]]; do
+		front+="${1}? ( "
+		back+=" )"
+		shift
+	done
+	echo "${front}${1}${back}"
+}
+
+IUSE+=" ${UTIL_LINUX_LIBC[@]} ${BSD_LIBC[@]}"
+CDEPEND+="
+uuid? (
+	${UTIL_LINUX_LIBC[@]/%/? ( sys-apps/util-linux )}
+	$(nest_usedep ${UTIL_LINUX_LIBC[@]/#/!} ${BSD_LIBC[@]/#/!} dev-libs/ossp-uuid)
+)"
 
 DEPEND="${CDEPEND}
 !!<sys-apps/sandbox-2.0
@@ -90,7 +112,12 @@ src_prepare() {
 	sed "s|\(PGSOCKET_DIR\s\+\)\"/tmp\"|\1\"${EPREFIX}/run/postgresql\"|" \
 		-i src/include/pg_config_manual.h || die
 
-	use server || epatch "${FILESDIR}/${PN}-${SLOT}-no-server.patch"
+	# Rely on $PATH being in the proper order so that the correct
+	# install program is used for modules utilizing PGXS in both
+	# hardened and non-hardened environments. (Bug #528786)
+	sed 's/@install_bin@/install -c/' -i src/Makefile.global.in || die
+
+	use server || epatch "${FILESDIR}/${PN}-9.4.10-no-server.patch"
 
 	# Fix bug 486556 where the server would crash at start up because of
 	# an infinite loop caused by a self-referencing symlink.
@@ -117,6 +144,17 @@ src_configure() {
 
 	local PO="${EPREFIX%/}"
 
+	local i uuid_config=""
+	if use uuid; then
+		for i in ${UTIL_LINUX_LIBC[@]}; do
+			use ${i} && uuid_config="--with-uuid=e2fs"
+		done
+		for i in ${BSD_LIBC[@]}; do
+			use ${i} && uuid_config="--with-uuid=bsd"
+		done
+		[[ -z $uuid_config ]] && uuid_config="--with-uuid=ossp"
+	fi
+
 	econf \
 		--prefix="${PO}/usr/$(get_libdir)/postgresql-${SLOT}" \
 		--datadir="${PO}/usr/share/postgresql-${SLOT}" \
@@ -128,7 +166,6 @@ src_configure() {
 		$(use_enable !pg_legacytimestamp integer-datetimes) \
 		$(use_enable threads thread-safety) \
 		$(use_with kerberos gssapi) \
-		$(use_with kerberos krb5) \
 		$(use_with ldap) \
 		$(use_with pam) \
 		$(use_with perl) \
@@ -136,7 +173,7 @@ src_configure() {
 		$(use_with readline) \
 		$(use_with ssl openssl) \
 		$(use_with tcl) \
-		$(use_with uuid ossp-uuid) \
+		${uuid_config} \
 		$(use_with xml libxml) \
 		$(use_with xml libxslt) \
 		$(use_with zlib) \
@@ -168,6 +205,30 @@ src_install() {
 	fi
 	docompress /usr/share/postgresql-${SLOT}/man/man{1,3,7}
 
+	# Create slot specific man pages
+	local bn f mansec slotted_name
+	for mansec in 1 3 7 ; do
+		local rel_manpath="../../postgresql-${SLOT}/man/man${mansec}"
+
+		mkdir -p "${ED}"/usr/share/man/man${mansec} || die "making man dir"
+		pushd "${ED}"/usr/share/man/man${mansec} > /dev/null
+
+		for f in "${ED}/usr/share/postgresql-${SLOT}/man/man${mansec}"/* ; do
+			bn=$(basename "${f}")
+			slotted_name=${bn%.${mansec}}${SLOT/.}.${mansec}
+			case ${bn} in
+				TABLE.7|WITH.7)
+					echo ".so ${rel_manpath}/SELECT.7" > ${slotted_name}
+					;;
+				*)
+					echo ".so ${rel_manpath}/${bn}" > ${slotted_name}
+					;;
+			esac
+		done
+
+		popd > /dev/null
+	done
+
 	insinto /etc/postgresql-${SLOT}
 	newins src/bin/psql/psqlrc.sample psqlrc
 
@@ -185,16 +246,6 @@ src_install() {
 			  "/usr/bin/${bn}${SLOT/.}tmp"
 	done
 
-	local linkname mansec
-	for mansec in {1,3,7} ; do
-		for f in "${ED}"/usr/share/postgresql-${SLOT}/man/man${mansec}/* ; do
-			bn=$(basename "${f}")
-			linkname=${bn/%.${mansec}/${SLOT/.}.${mansec}}
-			dosym ../../postgresql-${SLOT}/man/man${mansec}/$bn \
-				  /usr/share/man/man${mansec}/${linkname}
-		done
-	done
-
 	if use doc ; then
 		docinto html
 		dodoc doc/src/sgml/html/*
@@ -205,10 +256,10 @@ src_install() {
 
 	if use server; then
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.confd-9.2" | newconfd - ${PN}-${SLOT}
+			"${FILESDIR}/${PN}.confd-9.3" | newconfd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.init-9.2" | newinitd - ${PN}-${SLOT}
+			"${FILESDIR}/${PN}.init-9.3-r1" | newinitd - ${PN}-${SLOT}
 
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
 			"${FILESDIR}/${PN}.service" | \
@@ -385,7 +436,7 @@ pkg_config() {
 
 	# unix_socket_directory has no effect in postgresql.conf as it's
 	# overridden in the initscript
-	sed '/^#unix_socket_directory/d' -i "${PGDATA%/}"/postgresql.conf
+	sed '/^#unix_socket_directories/,+1d' -i "${PGDATA%/}"/postgresql.conf
 
 	cat <<- EOF >> "${PGDATA%/}"/postgresql.conf
 		# This is here because of https://bugs.gentoo.org/show_bug.cgi?id=518522
