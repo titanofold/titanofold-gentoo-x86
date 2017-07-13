@@ -212,7 +212,7 @@ src_install() {
 		local rel_manpath="../../postgresql-${SLOT}/man/man${mansec}"
 
 		mkdir -p "${ED}"/usr/share/man/man${mansec} || die "making man dir"
-		pushd "${ED}"/usr/share/man/man${mansec} > /dev/null
+		pushd "${ED}"/usr/share/man/man${mansec} > /dev/null || die "pushd failed"
 
 		for f in "${ED}/usr/share/postgresql-${SLOT}/man/man${mansec}"/* ; do
 			bn=$(basename "${f}")
