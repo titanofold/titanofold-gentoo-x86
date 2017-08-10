@@ -24,26 +24,31 @@ DEPEND="${PYTHON_DEPS}
 		)
 "
 
+DOCS=( AUTHORS NEWS README{.md,-UPGRADE} )
+
 src_prepare() {
+	default
+
 	sed -e 's/python/python2/' \
 		-i tools/{splitconfig,template2mak.py} \
 		|| die "Couldn't fix Python shebangs"
-
-	eapply_user
 }
 
 src_configure() {
-	local myconf
-	use static-libs && myconf="--enable-static" || myconf="--enable-shared"
-
-	econf ${myconf} $(use_enable doc documentation)
+	econf \
+		--enable-shared \
+		$(use_enable doc documentation) \
+		$(use_enable static-libs static)	local myconf
 }
 
 src_install () {
-	emake DESTDIR="${D}" install
+	use doc && HTML_DOCS=( doc/html/. )
 
-	dodoc AUTHORS ChangeLog NEWS README*
-	use doc && dodoc -r doc/html
+	default
+
+	if ! use static-libs; then
+		find "${D}" -name '*.la' -delete || die
+	fi
 }
 
 src_test() {
