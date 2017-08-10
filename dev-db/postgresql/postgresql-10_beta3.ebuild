@@ -271,9 +271,8 @@ src_install() {
 			sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
 				"${FILESDIR}/${PN}.service-9.6" | \
 				systemd_newunit - ${PN}-${SLOT}.service
+			newbin "${FILESDIR}"/${PN}-check-db-dir ${PN}-${SLOT}-check-db-dir
 		fi
-
-		newbin "${FILESDIR}"/${PN}-check-db-dir ${PN}-${SLOT}-check-db-dir
 
 		use pam && pamd_mimic system-auth ${PN}-${SLOT} auth account session
 
