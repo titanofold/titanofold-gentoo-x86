@@ -124,10 +124,6 @@ src_prepare() {
 
 	use server || eapply "${FILESDIR}/${PN}-${SLOT}beta2-no-server.patch"
 
-	# Fix bug 486556 where the server would crash at start up because of
-	# an infinite loop caused by a self-referencing symlink.
-	#eapply "${FILESDIR}/postgresql-9.2-9.4-tz-dir-overflow.patch"
-
 	if use pam ; then
 		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \
 			-i src/backend/libpq/auth.c || \
@@ -262,9 +258,6 @@ src_install() {
 	if use doc ; then
 		docinto html
 		dodoc doc/src/sgml/html/*
-
-		docinto sgml
-		dodoc doc/src/sgml/*.{sgml,dsl}
 	fi
 
 	if use server; then

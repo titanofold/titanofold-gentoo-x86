@@ -1,7 +1,7 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI="6"
 
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
@@ -95,11 +95,7 @@ src_prepare() {
 	# hardened and non-hardened environments. (Bug #528786)
 	sed 's/@install_bin@/install -c/' -i src/Makefile.global.in || die
 
-	use server || epatch "${FILESDIR}/${PN}-${SLOT}-no-server.patch"
-
-	# Fix bug 486556 where the server would crash at start up because of
-	# an infinite loop caused by a self-referencing symlink.
-	epatch "${FILESDIR}/postgresql-9.2-9.4-tz-dir-overflow.patch"
+	use server || eapply "${FILESDIR}/${PN}-${SLOT}-no-server.patch"
 
 	if use pam ; then
 		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \
@@ -107,7 +103,7 @@ src_prepare() {
 			die 'PGSQL_PAM_SERVICE rename failed.'
 	fi
 
-	epatch_user
+	eapply_user
 }
 
 src_configure() {
