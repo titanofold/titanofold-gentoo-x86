@@ -3,7 +3,7 @@
 
 EAPI="6"
 
-inherit user webapp
+inherit eutils user webapp
 
 DESCRIPTION="Web Based Management tool for Postfix style virtual domains and users"
 HOMEPAGE="http://postfixadmin.sourceforge.net"
