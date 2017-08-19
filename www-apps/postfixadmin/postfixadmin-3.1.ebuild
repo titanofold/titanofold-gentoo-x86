@@ -11,11 +11,11 @@ SRC_URI="mirror://sourceforge/project/${PN}/${PN}/${P}/${P}.tar.gz"
 
 LICENSE="GPL-2"
 KEYWORDS="~amd64 ~ppc ~x86"
-IUSE="+mysql postgres +vacation xmlrpc"
+IUSE="+mysql postgres +vacation"
 REQUIRED_USE="|| ( mysql postgres )"
 
 DEPEND="
-	dev-lang/php:*[unicode,imap,postgres?,xmlrpc?]
+	dev-lang/php:*[unicode,imap,postgres?]
 	vacation? (
 		dev-perl/DBI
 		virtual/perl-MIME-Base64
@@ -28,7 +28,6 @@ DEPEND="
 		mysql? ( dev-perl/DBD-mysql )
 		postgres? ( dev-perl/DBD-Pg )
 	 )
-	xmlrpc? ( dev-php/ZendFramework[-minimal] )
 "
 
 RDEPEND="${DEPEND}
