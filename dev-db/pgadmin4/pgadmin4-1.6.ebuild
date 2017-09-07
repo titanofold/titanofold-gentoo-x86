@@ -124,6 +124,6 @@ src_install() {
 	fi
 }
 
-src_test() {
-	emake check
-}
+# src_test() {
+# 	emake check
+# }
