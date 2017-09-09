@@ -8,14 +8,16 @@ PYTHON_REQ_USE="sqlite"
 
 inherit python-single-r1 qmake-utils
 
-DESCRIPTION="flask GUI for PostgreSQL"
+DESCRIPTION="GUI administration and development platform for PostgreSQL"
 HOMEPAGE="http://www.pgadmin.org/"
 SRC_URI="mirror://postgresql/pgadmin/${PN}/v${PV}/source/${P}.tar.gz"
 
 LICENSE="POSTGRESQL"
 KEYWORDS="~amd64 ~x86"
 SLOT="0"
-IUSE="doc test"
+IUSE="doc"
+
+RESTRICT="test"
 
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
@@ -26,13 +28,7 @@ COMMON_DEPEND="${PYTHON_DEPS}
 "
 
 DEPEND="${COMMON_DEPEND}
-	doc? (
-		dev-python/sphinx[${PYTHON_USEDEP}]
-	)
-	test? (
-		dev-python/selenium[${PYTHON_USEDEP}]
-		dev-python/testscenarios[${PYTHON_USEDEP}]
-	)
+	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )
 "
 
 RDEPEND="${COMMON_DEPEND}
@@ -91,7 +87,7 @@ src_compile() {
 	default
 	if use doc; then
 		cd "${WORKDIR}"/${P} || die
-		emake docs || die
+		emake docs
 	fi
 }
 
@@ -123,7 +119,3 @@ src_install() {
 		doins -r docs/en_US/_build/html
 	fi
 }
-
-# src_test() {
-# 	emake check
-# }
