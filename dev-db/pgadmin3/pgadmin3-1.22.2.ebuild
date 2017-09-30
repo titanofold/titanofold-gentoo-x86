@@ -1,14 +1,13 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
-EAPI="5"
+EAPI="6"
 
 inherit eutils multilib versionator wxwidgets
 
 DESCRIPTION="wxWidgets GUI for PostgreSQL"
 HOMEPAGE="http://www.pgadmin.org/"
-SRC_URI="mirror://postgresql/${PN}/release/v${PV}/src/${P}.tar.gz"
+SRC_URI="mirror://postgresql/pgadmin/pgadmin3/v${PV}/src/${P}.tar.gz"
 
 LICENSE="POSTGRESQL"
 KEYWORDS="~amd64 ~ppc ~x86 ~x86-fbsd"
@@ -22,21 +21,7 @@ DEPEND="
 	>=dev-libs/libxslt-1.1"
 RDEPEND="${DEPEND}"
 
-pkg_setup() {
-	local pgslot=$(postgresql-config show)
-
-	if [[ ${pgslot//.} < 84 ]] ; then
-		eerror "PostgreSQL slot must be set to 8.4 or higher."
-		eerror "    postgresql-config set 8.4"
-		die "PostgreSQL slot is not set to 8.4 or higher."
-	fi
-}
-
-src_prepare() {
-	epatch "${FILESDIR}/pgadmin3-desktop.patch"
-
-	epatch_user
-}
+PATCHES=( "${FILESDIR}"/pgadmin3-{desktop,gcc6-null-pointer}.patch )
 
 src_configure() {
 	WX_GTK_VER="3.0"
