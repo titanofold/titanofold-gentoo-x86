@@ -188,8 +188,9 @@ src_install() {
 
 	if use systemd; then
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.service-9.6" | \
+			"${FILESDIR}/${PN}.service-9.6-r1" | \
 			systemd_newunit - ${PN}-${SLOT}.service
+		systemd_newtmpfilesd "${FILESDIR}"/${PN}.tmpfiles ${PN}-${SLOT}.conf
 	fi
 
 	newbin "${FILESDIR}"/${PN}-check-db-dir ${PN}-${SLOT}-check-db-dir
@@ -234,7 +235,7 @@ src_install() {
 
 	if use prefix ; then
 		keepdir /run/postgresql
-		fperms 0775 /run/postgresql
+		fperms 1775 /run/postgresql
 	fi
 }
 
@@ -273,6 +274,7 @@ pkg_preinst() {
 }
 
 pkg_postinst() {
+	use server && use systemd && systemd_tmpfiles_create ${PN}-${SLOT}.conf
 	postgresql-config update
 
 	elog "If you need a global psqlrc-file, you can place it in:"

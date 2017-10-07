@@ -21,7 +21,7 @@ HOMEPAGE="http://www.postgresql.org/"
 LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr
 		 zh_CN zh_TW"
 IUSE="doc kerberos kernel_linux ldap libressl nls pam perl -pg_legacytimestamp python
-	  +readline selinux +server ssl static-libs tcl threads uuid xml zlib"
+	  +readline selinux +server systemd ssl static-libs tcl threads uuid xml zlib"
 
 for lingua in ${LINGUAS}; do
 	IUSE+=" linguas_${lingua}"
@@ -258,9 +258,12 @@ src_install() {
 		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
 			"${FILESDIR}/${PN}.init-9.3-r1" | newinitd - ${PN}-${SLOT}
 
-		sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-			"${FILESDIR}/${PN}.service" | \
-			systemd_newunit - ${PN}-${SLOT}.service
+		if use systemd; then
+			sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
+				"${FILESDIR}/${PN}.service-9.2" | \
+				systemd_newunit - ${PN}-${SLOT}.service
+			systemd_newtmpfilesd "${FILESDIR}"/${PN}.tmpfiles ${PN}-${SLOT}.conf
+		fi
 
 		newbin "${FILESDIR}"/${PN}-check-db-dir ${PN}-${SLOT}-check-db-dir
 
@@ -268,7 +271,7 @@ src_install() {
 
 		if use prefix ; then
 			keepdir /run/postgresql
-			fperms 0775 /run/postgresql
+			fperms 1775 /run/postgresql
 		fi
 	fi
 }
@@ -308,6 +311,7 @@ pkg_preinst() {
 }
 
 pkg_postinst() {
+	use server && use systemd && systemd_tmpfiles_create ${PN}-${SLOT}.conf
 	postgresql-config update
 
 	if use alpha && use server ; then
