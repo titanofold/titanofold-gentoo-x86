@@ -8,14 +8,11 @@ PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 inherit eutils flag-o-matic linux-info multilib pam prefix python-single-r1 \
 		systemd user versionator
 
-KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT="$(get_version_component_range 1-2)"
 
-MY_PV=${PV/_/}
-S="${WORKDIR}/${PN}-${MY_PV}"
-
-SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2"
+SRC_URI="mirror://postgresql/source/v${PV}/postgresql-${PV}.tar.bz2"
 
 LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"
@@ -55,7 +52,6 @@ ssl? (
 	!libressl? ( >=dev-libs/openssl-0.9.6-r1:0= )
 	libressl? ( dev-libs/libressl:= )
 )
-server? ( systemd? ( sys-apps/systemd ) )
 tcl? ( >=dev-lang/tcl-8:0= )
 xml? ( dev-libs/libxml2 dev-libs/libxslt )
 zlib? ( sys-libs/zlib )
@@ -121,7 +117,7 @@ src_prepare() {
 	# hardened and non-hardened environments. (Bug #528786)
 	sed 's/@install_bin@/install -c/' -i src/Makefile.global.in || die
 
-	use server || eapply "${FILESDIR}/${PN}-${SLOT}.3-no-server.patch"
+	use server || eapply "${FILESDIR}/${PN}-9.4.10-no-server.patch"
 
 	if use pam ; then
 		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \
@@ -163,7 +159,6 @@ src_configure() {
 		--mandir="${PO}/usr/share/postgresql-${SLOT}/man" \
 		--sysconfdir="${PO}/etc/postgresql-${SLOT}" \
 		--with-system-tzdata="${PO}/usr/share/zoneinfo" \
-		$(use_enable !alpha spinlocks) \
 		$(use_enable !pg_legacytimestamp integer-datetimes) \
 		$(use_enable threads thread-safety) \
 		$(use_with kerberos gssapi) \
@@ -173,7 +168,6 @@ src_configure() {
 		$(use_with python) \
 		$(use_with readline) \
 		$(use_with ssl openssl) \
-		$(usex server "$(use_with systemd)" '--without-systemd') \
 		$(use_with tcl) \
 		${uuid_config} \
 		$(use_with xml libxml) \
@@ -265,8 +259,9 @@ src_install() {
 
 		if use systemd; then
 			sed -e "s|@SLOT@|${SLOT}|g" -e "s|@LIBDIR@|$(get_libdir)|g" \
-				"${FILESDIR}/${PN}.service-9.6" | \
+				"${FILESDIR}/${PN}.service-9.2" | \
 				systemd_newunit - ${PN}-${SLOT}.service
+			systemd_newtmpfilesd "${FILESDIR}"/${PN}.tmpfiles ${PN}-${SLOT}.conf
 		fi
 
 		newbin "${FILESDIR}"/${PN}-check-db-dir ${PN}-${SLOT}-check-db-dir
@@ -275,7 +270,7 @@ src_install() {
 
 		if use prefix ; then
 			keepdir /run/postgresql
-			fperms 0775 /run/postgresql
+			fperms 1775 /run/postgresql
 		fi
 	fi
 }
@@ -315,6 +310,7 @@ pkg_preinst() {
 }
 
 pkg_postinst() {
+	use server && use systemd && systemd_tmpfiles_create ${PN}-${SLOT}.conf
 	postgresql-config update
 
 	elog "If you need a global psqlrc-file, you can place it in:"
@@ -454,11 +450,9 @@ pkg_config() {
 	einfo "by default. You can disable it in the cluster's:"
 	einfo "    ${PGDATA%/}/postgresql.conf"
 	einfo
-	if ! use systemd; then
-		einfo "The PostgreSQL server, by default, will log events to:"
-		einfo "    ${DATA_DIR%/}/postmaster.log"
-		einfo
-	fi
+	einfo "The PostgreSQL server, by default, will log events to:"
+	einfo "    ${DATA_DIR%/}/postmaster.log"
+	einfo
 	if use prefix ; then
 		einfo "The location of the configuration files have moved to:"
 		einfo "    ${PGDATA}"
@@ -469,9 +463,6 @@ pkg_config() {
 		einfo
 		einfo "Or move the configuration files back:"
 		einfo "mv ${PGDATA}*.conf ${DATA_DIR}"
-	elif use systemd; then
-		einfo "You should use the 'postgresql-${SLOT}.service' unit to run PostgreSQL"
-		einfo "instead of 'pg_ctl'."
 	else
 		einfo "You should use the '${EROOT%/}/etc/init.d/postgresql-${SLOT}' script to run PostgreSQL"
 		einfo "instead of 'pg_ctl'."
