@@ -14,4 +14,9 @@
 		<email>proxy-maint@gentoo.org</email>
 		<name>Proxy Maintainers</name>
 	</maintainer>
+	<use>
+		<flag name="filter_audio">
+			Filter audio using media-libs/libfilteraudio
+		</flag>
+	</use>
 </pkgmetadata>
