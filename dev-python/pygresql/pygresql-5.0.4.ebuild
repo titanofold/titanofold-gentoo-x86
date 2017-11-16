@@ -17,7 +17,7 @@ SRC_URI="mirror://pypi/P/PyGreSQL/${MY_P}.tar.gz"
 LICENSE="POSTGRESQL"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~hppa ~ia64 ~ppc ~sparc ~x86"
-IUSE="doc"
+IUSE=""
 
 DEPEND="${POSTGRES_DEP}"
 
@@ -26,12 +26,7 @@ RDEPEND="${DEPEND}"
 S="${WORKDIR}/${MY_P}"
 
 python_install_all() {
-	local DOCS=( docs/*.rst )
-	distutils-r1_python_install_all
+	local DOCS=( docs/*.rst docs/community/* docs/contents/tutorial.rst )
 
-	if use doc; then
-		insinto /usr/share/doc/${PF}/tutorial
-		doins tutorial/*
-		dohtml docs/*.{html,css}
-	fi
+	distutils-r1_python_install_all
 }
