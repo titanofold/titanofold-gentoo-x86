@@ -1,17 +1,16 @@
 # Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
 PLOCALES=(
-ar ca-ES cs-CZ da de-DE el en-GB en-US es-AR es-ES et-EE eu-ES fi-FI fr-FR he-IL
-hu-HU id-ID it-IT ja-JP ko-KR lt lv-LV nb-NO nl-NL pl-PL pt-BR pt-PT ro-RO ru-RU
-sk sv-SE tr-TR vi zh-CN
+ar ca cs da de el en-GB en-US es-AR es-ES et eu fi fr he hu id it ja ko
+lt lv nb nl pl pt-BR pt-PT ro ru sk sv tr uz vi zh-CN
 )
 
 CMAKE_MAKEFILE_GENERATOR=ninja
 
-inherit cmake-utils
+inherit cmake-utils gnome2-utils
 
 DESCRIPTION="Fast and usable calculator for power users"
 HOMEPAGE="http://speedcrunch.org/"
@@ -33,15 +32,10 @@ RDEPEND="${DEPEND}"
 S="${WORKDIR}/heldercorreia-speedcrunch-ea93b21f9498/src"
 
 src_prepare() {
-	my_rm_loc() {
-		rm "resources/locale/${1}.qm" || die
-		sed -i resources/speedcrunch.qrc \
-			-e "s|<file>locale/${1}.qm</file>||" || die
-	}
-
 	local i
 	for i in "${PLOCALES[@]}" ; do
-		use l10n_${i} || my_rm_loc ${i}
+		use l10n_${i} || \
+			sed "\|locale/${i/-/_}|d" -i resources/speedcrunch.qrc || die
 	done
 
 	cmake-utils_src_prepare
@@ -51,5 +45,28 @@ src_install() {
 	cmake-utils_src_install
 	cd .. || die
 	doicon -s scalable gfx/speedcrunch.svg
-	use doc && dodoc doc/*.pdf
+
+	if use doc ; then
+		local i doclangs
+		for i in de en_US es_ES fr ; do
+			use l10n_${i/_/-} && doclangs+=" ${i}"
+		done
+
+		if [[ -z ${doclangs} ]] ; then
+			ewarn "Couldn't find a matching translation for documentation. Defaulting to: en_US"
+			doclangs="en_US"
+		fi
+
+		for i in ${doclangs} ; do
+			dodoc -r doc/build_html_embedded/${i}*/
+		done
+	fi
+}
+
+pkg_postinst() {
+	gnome2_icon_cache_update
+}
+
+pkg_postrm() {
+	gnome2_icon_cache_update
 }
