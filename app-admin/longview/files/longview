@@ -1,32 +1,23 @@
 #!/sbin/openrc-run
 
-DAEMON="/opt/linode/longview/Linode/Longview.pl"
-PIDFILE="/run/longview.pid"
+command="/opt/linode/longview/Linode/Longview.pl"
+pidfile="/run/longview.pid"
+
+extra_started_commands="reload"
+extra_stopped_commands="debug"
 
 depend() {
     need net
 }
 
-start() {
-    ebegin "Starting Longview Agent"
-    start-stop-daemon --start -p $PIDFILE --exec $DAEMON
-    eend $?
-}
-
 debug() {
-    ebegin "Starting Longview Agent (With Debug Flag)"
-    start-stop-daemon --start -p $PIDFILE --exec $DAEMON Debug
-    eend $?
-}
-
-stop() {
-    ebegin "Stopping Longview Agent"
-    start-stop-daemon --stop --quiet -p $PIDFILE
+    ebegin "Starting ${RC_SVCNAME} (With Debug Flag)"
+    start-stop-daemon --start -p $pidfile --exec $command Debug
     eend $?
 }
 
 reload() {
-    ebegin "Reloading Longview Agent"
-    start-stop-daemon --signal HUP -p $PIDFILE
+    ebegin "Reloading ${RC_SVCNAME}"
+    start-stop-daemon --signal HUP -p $pidfile
     eend $?
 }
