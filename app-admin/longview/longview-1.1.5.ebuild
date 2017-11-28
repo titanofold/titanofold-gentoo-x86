@@ -15,6 +15,7 @@ KEYWORDS="~amd64"
 IUSE="apache2 mysql nginx systemd"
 
 RDEPEND="
+	app-portage/eix
 	dev-lang/perl
 	dev-perl/Crypt-SSLeay
 	dev-perl/DBI
@@ -67,4 +68,37 @@ src_install() {
 
 	doinitd "${FILESDIR}"/${PN}
 	systemd_dounit Extras/init/longview.service
+}
+
+pkg_postinst() {
+	local api_key
+	[[ -f /etc/linode/longview.key ]] && api_key=$(</etc/linode/longview.key)
+
+	if [[ -z $api_key ]] ; then
+		elog "Before you start Longview, you need to get the API key for this host."
+	fi
+
+
+	if [[ -z ${REPLACING_VERSIONS} ]] ; then
+		if use apache2 ; then
+			elog "You'll need to configure Apache as detailed in the following link:"
+			elog "https://www.linode.com/docs/platform/longview/longview-app-for-apache#manual-configuration-all-distributions"
+			elog
+		fi
+
+		elog "You'll need to open the firewall a bit so Longview client can talk with"
+		elog "the monitoring server:"
+		elog
+		elog "    # iptables -I INPUT -s longview.linode.com -j ACCEPT"
+		elog "    # iptables -I OUTPUT -d longview.linode.com -j ACCEPT"
+		elog "    # ip6tables -I INPUT -s longview.linode.com -j ACCEPT"
+		elog "    # ip6tables -I OUTPUT -d longview.linode.com -j ACCEPT"
+		elog
+		elog "    # rc-service iptables save"
+		elog "    # rc-service ip6tables save"
+		elog
+
+		elog "    # rc-service longview start"
+		elog "    # rc-update add longview"
+	fi
 }
