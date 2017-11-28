@@ -71,12 +71,19 @@ src_install() {
 
 pkg_postinst() {
 	local api_key
-	[[ -f /etc/linode/longview.key ]] && api_key=$(</etc/linode/longview.key)
+	local api_key_path=/etc/linode/longview.key
+
+	[[ -f ${api_key_path} ]] && api_key=$(<${api_key_path})
 
 	if [[ -z $api_key ]] ; then
 		elog "Before you start Longview, you need to get the API key for this host."
+		elog "Go to:"
+		elog "    https://manager.linode.com/longview/"
+		elog "Click on the 'i' button of the client matching this host (or create a"
+		elog "new one), and save the Longview API Key to:"
+		elog "    ${api_key_path}"
+		elog
 	fi
-
 
 	if [[ -z ${REPLACING_VERSIONS} ]] ; then
 		if use apache2 ; then
@@ -97,6 +104,7 @@ pkg_postinst() {
 		elog "    # rc-service ip6tables save"
 		elog
 
+		elog "Once you've done the above, you can start it:"
 		elog "    # rc-service longview start"
 		elog "    # rc-update add longview"
 	fi
