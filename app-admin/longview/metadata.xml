@@ -5,4 +5,7 @@
 		<email>titanofold@gentoo.org</email>
 		<name>Aaron W. Swenson</name>
 	</maintainer>
+	<use>
+		<flag name="nginx">Install longview configuration for Nginx</flag>
+	</use>
 </pkgmetadata>

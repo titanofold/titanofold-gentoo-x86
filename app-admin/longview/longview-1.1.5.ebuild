@@ -12,7 +12,7 @@ SRC_URI="https://github.com/linode/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="mysql systemd"
+IUSE="apache2 mysql nginx systemd"
 
 RDEPEND="
 	dev-lang/perl
@@ -22,7 +22,9 @@ RDEPEND="
 	dev-perl/JSON
 	dev-perl/Linux-Distribution
 	dev-perl/Log-LogLite
+	dev-perl/perl-headers
 	dev-perl/Try-Tiny
+	apache2? ( www-servers/apache[apache2_modules_status] )
 	mysql? ( dev-perl/DBD-mysql )
 	systemd? ( sys-apps/systemd )
 "
@@ -56,6 +58,12 @@ src_install() {
 	doins Extras/Modules/Packages/Gentoo.pm
 
 	keepdir /var/log/linode/
+
+	insinto /etc/linode/longview.d/
+	keepdir /etc/linode/longview.d/
+	use apache2 && doins Extras/conf/Apache.conf
+	use mysql   && doins Extras/conf/MySQL.conf
+	use nginx   && doins Extras/conf/Nginx.conf
 
 	doinitd "${FILESDIR}"/${PN}
 	systemd_dounit Extras/init/longview.service
