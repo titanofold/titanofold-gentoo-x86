@@ -3,7 +3,7 @@
 
 EAPI=6
 
-DESCRIPTION="A better pager for psql"
+DESCRIPTION="A better pager for psql and mysql"
 HOMEPAGE="https://github.com/okbob/${PN}"
 SRC_URI="https://github.com/okbob/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
