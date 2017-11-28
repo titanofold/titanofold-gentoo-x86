@@ -12,7 +12,7 @@ SRC_URI="https://github.com/linode/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE="apache2 mysql nginx systemd"
+IUSE="apache2 mysql nginx"
 
 RDEPEND="
 	app-portage/eix
@@ -27,7 +27,6 @@ RDEPEND="
 	dev-perl/Try-Tiny
 	apache2? ( www-servers/apache[apache2_modules_status] )
 	mysql? ( dev-perl/DBD-mysql )
-	systemd? ( sys-apps/systemd )
 "
 
 src_prepare() {
