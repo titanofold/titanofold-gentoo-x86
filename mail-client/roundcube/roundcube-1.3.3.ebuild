@@ -6,11 +6,11 @@ EAPI="6"
 inherit webapp
 
 MY_PN=${PN}mail
-MY_P=${MY_PN}-${PV/_/-}
+MY_P=${MY_PN}-${PV}
 
 DESCRIPTION="A browser-based multilingual IMAP client with an application-like user interface"
 HOMEPAGE="https://roundcube.net"
-SRC_URI="https://github.com/${PN}/${MY_PN}/releases/download/${PV/_/-}/${MY_P}.tar.gz"
+SRC_URI="https://github.com/${PN}/${MY_PN}/releases/download/${PV}/${MY_P}-complete.tar.gz"
 
 # roundcube is GPL-licensed, the rest of the licenses here are
 # for bundled PEAR components, googiespell and utf8.class.php
@@ -26,7 +26,7 @@ need_httpd_cgi
 # :TODO: Support "endriod/qrcode: ~1.6.5" dep (ebuild needed)
 RDEPEND="
 	${DEPEND}
-	>=dev-lang/php-5.4.0[crypt,filter,gd,iconv,json,ldap?,pdo,postgres?,session,sockets,sqlite?,ssl?,unicode,xml]
+	>=dev-lang/php-5.4.0[filter,gd,iconv,json,ldap?,pdo,postgres?,session,sockets,sqlite?,ssl?,unicode,xml]
 	>=dev-php/PEAR-Auth_SASL-1.1.0
 	>=dev-php/PEAR-Mail_Mime-1.10.0
 	>=dev-php/PEAR-Mail_mimeDecode-1.5.5
@@ -72,10 +72,5 @@ pkg_postinst() {
 	ewarn
 	ewarn "The new config.inc.php should only contain options that"
 	ewarn "differ from the ones listed in defaults.inc.php."
-	ewarn
-	ewarn
-	ewarn "When installing for the first time or upgrading from <= 1.2.5,"
-	ewarn "run the ./bin/install-jsdeps.sh script to download required"
-	ewarn "javascript files into the ./temp/js_cache/ folder."
 	ewarn
 }
