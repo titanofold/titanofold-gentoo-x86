@@ -19,7 +19,7 @@ UNIX_SOCKET_DIR="$(get_config unix_socket_dir)"
 
 prep() {
     if [ -n "${UNIX_SOCKET_DIR}" ] ; then
-        checkpath -o postgres:postgres -m 0775 -d "${UNIX_SOCKET_DIR}" \
+        checkpath -o postgres:postgres -m 1775 -d "${UNIX_SOCKET_DIR}" \
             || return 1
     fi
     checkpath -o pgbouncer:postgres -m 0755 -d "$(dirname ${PIDFILE})" \

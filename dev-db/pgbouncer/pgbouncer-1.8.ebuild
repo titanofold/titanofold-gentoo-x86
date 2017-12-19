@@ -1,10 +1,7 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
-
-# Upstream has *way* broken tests.
-RESTRICT="test"
+EAPI="6"
 
 inherit eutils user
 
@@ -13,23 +10,24 @@ HOMEPAGE="https://pgbouncer.github.io"
 SRC_URI="https://pgbouncer.github.io/downloads/files/${PV}/${P}.tar.gz"
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="amd64 x86"
-IUSE="debug doc libevent udns"
-REQUIRED_USE="
-	libevent? ( !udns )
-	udns? ( !libevent )
-"
+KEYWORDS="~amd64 ~x86"
+IUSE="+c-ares debug doc pam ssl -udns"
+
+# At-most-one-of, one can be enabled but not both
+REQUIRED_USE="?? ( c-ares udns )"
+
 RDEPEND="
+	>=dev-libs/libevent-2.0
 	>=sys-libs/glibc-2.10
-	libevent? ( >=dev-libs/libevent-2.0 )
+	c-ares? ( >=net-dns/c-ares-1.10 )
 	udns? ( >=net-libs/udns-0.1 )
 "
 
 DEPEND="
 	${RDEPEND}
+	>=app-text/asciidoc-8.4
 	app-text/docbook-xml-dtd:4.5
 	app-text/xmlto
-	>=app-text/asciidoc-8.4
 "
 
 pkg_setup() {
@@ -40,7 +38,10 @@ pkg_setup() {
 }
 
 src_prepare() {
-	epatch "${FILESDIR}/pgbouncer-dirs.patch"
+	eapply "${FILESDIR}/pgbouncer-dirs-1.8.patch" \
+		   "${FILESDIR}/pgbouncer-1.8-missing-pam-h.patch"
+
+	eapply_user
 }
 
 src_configure() {
@@ -48,9 +49,16 @@ src_configure() {
 	econf \
 		--docdir=/usr/share/doc/${PF} \
 		--enable-debug \
+		$(use_with c-ares cares) \
 		$(use_enable debug cassert) \
-		$(use_with libevent) \
+		$(use_with pam) \
+		$(use_with ssl openssl) \
 		$(use_with udns)
+}
+
+src_test() {
+	cd "${S}/test"
+	emake
 }
 
 src_install() {
