@@ -11,21 +11,17 @@ get_config() {
     [ -f "${INIFILE}" ] || eend 1 "'${INIFILE}' not found"
 
     eval echo $(sed -e 's:;.*::' "${INIFILE}" | \
-        awk '$1 == "'$1'" { print ($2 == "=" ? $3 : $2) }')
+                    awk '$1 == "'$1'" { print ($2 == "=" ? $3 : $2) }')
 }
 
-PIDFILE="$(get_config pidfile)"
+PIDFILE="/run/pgbouncer.pid"
 UNIX_SOCKET_DIR="$(get_config unix_socket_dir)"
 
-prep() {
+start_pre() {
     if [ -n "${UNIX_SOCKET_DIR}" ] ; then
         checkpath -o postgres:postgres -m 1775 -d "${UNIX_SOCKET_DIR}" \
             || return 1
     fi
-    checkpath -o pgbouncer:postgres -m 0755 -d "$(dirname ${PIDFILE})" \
-        || return 1
-    checkpath -o pgbouncer:postgres -m 0644 -f "${PIDFILE}" \
-        || return 1
     checkpath -o pgbouncer:postgres -m 0755 -d "$(dirname $(get_config logfile))" \
         || return 1
     checkpath -o pgbouncer:postgres -m 0640 -f "$(get_config logfile)" \
@@ -36,16 +32,15 @@ prep() {
 
 start() {
     ebegin "Starting PgBouncer"
-    prep
-    local ret=$?
-    if [ $ret -ne 0 ] ; then
-        eend $ret
-        exit $ret
-    fi
+    [ -f ${PIDFILE} ] && rm ${PIDFILE}
+
     start-stop-daemon --start \
-        --pidfile ${PIDFILE} \
-        --user pgbouncer \
-        --exec /usr/bin/pgbouncer -- -q -d "${INIFILE}"
+                      --pidfile ${PIDFILE} \
+                      --background \
+                      --make-pidfile \
+                      --user pgbouncer \
+                      --exec /usr/bin/pgbouncer \
+                      -- -q "${INIFILE}"
     eend $?
 }
 
@@ -62,23 +57,11 @@ stop() {
 
     # Loops through nice and force quit in one go.
     start-stop-daemon --stop \
-        --pidfile ${PIDFILE} \
-        --retry ${retries}
+                      --user pgbouncer \
+                      --pidfile ${PIDFILE} \
+                      --retry ${retries}
 
     eend $?
-}
-
-restart() {
-    if [ -n "${UNIX_SOCKET_DIR}" ] ; then
-        ebegin "Performing online restart of PgBouncer"
-        start-stop-daemon --start \
-            --pidfile ${PIDFILE} \
-            --user pgbouncer \
-            --exec /usr/bin/pgbouncer -- -q -d -R "${INIFILE}"
-        eend $?
-    else
-        stop && start
-    fi
 }
 
 reload() {

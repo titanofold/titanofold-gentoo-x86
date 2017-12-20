@@ -23,12 +23,7 @@ RDEPEND="
 	udns? ( >=net-libs/udns-0.1 )
 "
 
-DEPEND="
-	${RDEPEND}
-	>=app-text/asciidoc-8.4
-	app-text/docbook-xml-dtd:4.5
-	app-text/xmlto
-"
+DEPEND="${RDEPEND}"
 
 pkg_setup() {
 	enewgroup postgres 70
@@ -65,6 +60,7 @@ src_install() {
 	emake DESTDIR="${D}" install
 
 	dodoc AUTHORS
+	use doc && dodoc doc/*.rst
 
 	newconfd "${FILESDIR}/${PN}.confd" "${PN}"
 	newinitd "${FILESDIR}/${PN}.initd" "${PN}"
