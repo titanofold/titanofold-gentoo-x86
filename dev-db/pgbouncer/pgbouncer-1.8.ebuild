@@ -33,7 +33,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	eapply "${FILESDIR}/pgbouncer-dirs-1.8.patch" \
+	eapply "${FILESDIR}/pgbouncer-1.8-dirs.patch" \
 		   "${FILESDIR}/pgbouncer-1.8-missing-pam-h.patch"
 
 	eapply_user
