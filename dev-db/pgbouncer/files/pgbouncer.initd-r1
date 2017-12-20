@@ -17,9 +17,21 @@ get_config() {
 }
 
 start_pre() {
-    if [ -n "$(get_config unix_socket_dir)" ] ; then
-        checkpath -o root:postgres -m 1775 \
-                  -d "$(get_config unix_socket_dir)" || return 1
+    local s="$(get_config unix_socket_dir)"
+
+    if [ -n "${s}" ] ; then
+        checkpath -o root:postgres -m 1775 -d "${s}" || return 1
+
+        local listen_port="$(get_config listen_port)"
+
+        if [ -e "${s%/}/.s.PGSQL.${listen_port}" ] ; then
+            eerror "Socket conflict."
+            eerror "A server is already listening on:"
+            eerror "    ${s%/}/.s.PGSQL.${listen_port}"
+            eerror "HINT: Change listen_port in pgbouncer.ini to listen on a"
+            eerror "different socket."
+            return 1
+        fi
     fi
 
     checkpath -o pgbouncer:postgres -m 0755 \
