@@ -3,7 +3,7 @@
 
 EAPI="6"
 
-inherit eutils user
+inherit user
 
 DESCRIPTION="Lightweight connection pooler for PostgreSQL"
 HOMEPAGE="https://pgbouncer.github.io"
@@ -63,7 +63,7 @@ src_install() {
 	use doc && dodoc doc/*.rst
 
 	newconfd "${FILESDIR}/${PN}.confd" "${PN}"
-	newinitd "${FILESDIR}/${PN}.initd" "${PN}"
+	newinitd "${FILESDIR}/${PN}.initd-r1" "${PN}"
 
 	insinto /etc
 	doins etc/pgbouncer.ini
