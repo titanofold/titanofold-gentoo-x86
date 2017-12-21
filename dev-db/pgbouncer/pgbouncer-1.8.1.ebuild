@@ -20,6 +20,7 @@ RDEPEND="
 	>=dev-libs/libevent-2.0
 	>=sys-libs/glibc-2.10
 	c-ares? ( >=net-dns/c-ares-1.10 )
+	ssl? ( >=dev-libs/openssl-1.0.1:=[-bindist] )
 	udns? ( >=net-libs/udns-0.1 )
 "
 
@@ -33,10 +34,9 @@ pkg_setup() {
 }
 
 src_prepare() {
-	eapply "${FILESDIR}/pgbouncer-1.8-dirs.patch" \
-		   "${FILESDIR}/pgbouncer-1.8-missing-pam-h.patch"
+	eapply "${FILESDIR}/pgbouncer-1.8-dirs.patch"
 
-	eapply_user
+	default
 }
 
 src_configure() {
