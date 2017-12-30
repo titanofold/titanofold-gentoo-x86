@@ -6,6 +6,7 @@ EAPI=6
 MY_PN="Flask-Paranoid"
 MY_P=${MY_PN}-${PV}
 
+DISTUTILS_IN_SOURCE_BUILD=1
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 inherit distutils-r1
 
@@ -23,3 +24,9 @@ IUSE=""
 RDEPEND="dev-python/flask[${PYTHON_USEDEP}]"
 
 S=${WORKDIR}/${MY_P}
+
+python_test() {
+	TOXENV=$(echo ${PYTHON} | sed 's:[^py0-9]::g')
+	echo "This is the setting of PYTHON: ${TOXENV}; and some stuff"
+	tox || die "Testing failed with ${EPYTHON}"
+}
