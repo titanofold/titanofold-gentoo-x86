@@ -5,14 +5,11 @@ EAPI=6
 
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
-inherit distutils-r1 vcs-snapshot
-
-HTMLMIN_GIT_REVISION="6831a2b5d30c77e12de1733768a0805747eb559a"
+inherit distutils-r1
 
 DESCRIPTION="A configurable HTML Minifier with safety features"
-HOMEPAGE="https://htmlmin.readthedocs.org/en/latest/"
-SRC_URI="https://github.com/mankyd/${PN}/archive/${HTMLMIN_GIT_REVISION}.tar.gz
-			 -> ${P}.tar.gz"
+HOMEPAGE="https://github.com/mankyd/htmlmin"
+SRC_URI="mirror://pypi/${PN:0:1}/${PN}/${P}.tar.gz"
 
 LICENSE="BSD"
 
