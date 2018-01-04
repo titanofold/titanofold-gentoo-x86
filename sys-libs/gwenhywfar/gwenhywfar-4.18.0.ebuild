@@ -46,8 +46,9 @@ src_configure() {
 
 	if use qt5 ; then
 		guis="${guis} qt5"
-		extra_opts+=" --with-qt5-qmake=\"$(qt5_get_bindir)/qmake\""
-		extra_opts+=" --with-qt5-moc=\"$(qt5_get_bindir)/moc\""
+		extra_opts+=" --with-qt5-qmake=$(qt5_get_bindir)/qmake"
+		extra_opts+=" --with-qt5-moc=$(qt5_get_bindir)/moc"
+		extra_opts+=" --with-qt5-uic=$(qt5_get_bindir)/uic"
 	fi
 
 	econf \
