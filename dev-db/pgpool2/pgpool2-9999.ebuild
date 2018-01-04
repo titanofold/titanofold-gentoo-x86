@@ -5,7 +5,7 @@ EAPI=6
 
 EGIT_REPO_URI="https://git.postgresql.org/git/pgpool2.git"
 
-POSTGRES_COMPAT=( 9.{2..6} )
+POSTGRES_COMPAT=( 9.{2..6} 10 )
 
 inherit git-r3 postgres-multi
 
@@ -21,6 +21,7 @@ IUSE="doc memcached pam ssl static-libs"
 
 RDEPEND="
 	${POSTGRES_DEP}
+	net-libs/libnsl:0=
 	memcached? ( dev-libs/libmemcached )
 	pam? ( sys-auth/pambase )
 	ssl? ( dev-libs/openssl:* )
@@ -64,6 +65,7 @@ src_compile() {
 	# of that directory built, too.
 	postgres-multi_foreach emake
 	postgres-multi_foreach emake -C src/sql
+	postgres-multi_forbest emake DESTDIR="${D}" -C doc
 }
 
 src_install() {
@@ -78,14 +80,12 @@ src_install() {
 
 	# Documentation!
 	dodoc NEWS TODO
-	if use doc ; then
-		postgres-multi_forbest emake DESTDIR="${D}" -C doc install
-	fi
+	postgres-multi_forbest emake DESTDIR="${D}" -C doc install
 
 	# Examples and extras
 	# mv some files that get installed to /usr/share/pgpool-II so that
 	# they all wind up in the same place
-	mv "${ED%/}/usr/share/${PN/2/-II}" "${ED%/}/usr/share/${PN}" || die
+	#mv "${ED%/}/usr/share/${PN/2/-II}" "${ED%/}/usr/share/${PN}" || die
 	into "/usr/share/${PN}"
 	dobin src/sample/{pgpool_recovery,pgpool_recovery_pitr,pgpool_remote_start}
 	insinto "/usr/share/${PN}"

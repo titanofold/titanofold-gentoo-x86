@@ -5,7 +5,11 @@ EAPI="6"
 
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
-inherit eutils flag-o-matic linux-info multilib pam prefix python-single-r1 \
+PLOCALES="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN
+		  zh_TW"
+PLOCALE_BACKUP="en"
+
+inherit flag-o-matic l10n linux-info multilib pam prefix python-single-r1 \
 		systemd user versionator
 
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~sparc-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
@@ -18,25 +22,11 @@ LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"
 HOMEPAGE="http://www.postgresql.org/"
 
-LINGUAS="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr
-		 zh_CN zh_TW"
-IUSE="doc kerberos kernel_linux ldap libressl nls pam perl -pg_legacytimestamp python
-	  +readline selinux +server systemd ssl static-libs tcl threads uuid xml zlib"
+IUSE="doc kerberos kernel_linux ldap libressl nls pam perl -pg_legacytimestamp
+	  python +readline selinux +server systemd ssl static-libs tcl threads uuid
+	  xml zlib"
 
-for lingua in ${LINGUAS}; do
-	IUSE+=" linguas_${lingua}"
-done
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
-
-wanted_languages() {
-	local enable_langs
-
-	for lingua in ${LINGUAS} ; do
-		use linguas_${lingua} && enable_langs+="${lingua} "
-	done
-
-	echo -n ${enable_langs}
-}
 
 CDEPEND="
 >=app-eselect/eselect-postgresql-2.0
@@ -173,7 +163,7 @@ src_configure() {
 		$(use_with xml libxml) \
 		$(use_with xml libxslt) \
 		$(use_with zlib) \
-		"$(use_enable nls nls "$(wanted_languages)")"
+		$(use_enable nls nls "'$(l10n_get_locales)'")
 }
 
 src_compile() {
