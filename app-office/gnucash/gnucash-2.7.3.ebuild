@@ -16,19 +16,21 @@ SLOT="0"
 LICENSE="GPL-2"
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 
-# Add doc back in for 3.0
-IUSE="chipcard debug gnome-keyring hbci mysql ofx postgres python quotes sqlite"
-REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
+# Add doc back in for 3.0 and bump app-doc/gnucash-docs
+IUSE="aqbanking chipcard debug gnome-keyring mysql nls ofx postgres python
+	  quotes register2 sqlite"
+REQUIRED_USE="
+	chipcard? ( aqbanking )
+	python? ( ${PYTHON_REQUIRED_USE} )"
 
-# README.dependencies mentions qof, but ${PN} has their own fork in the
-# source code that appears to have deviated from that project.
-#
 # libdbi version requirement for sqlite taken from bug #455134
+#
+# dev-libs/boost must always be built with nls enabled.
 RDEPEND="
 	>=dev-cpp/gtest-1.8.0-r1[source]
 	>=dev-libs/glib-2.40.0:2
 	>=dev-libs/libxml2-2.7.0:2
-	>=dev-scheme/guile-2.2.0:12=[regex]
+	>=dev-scheme/guile-2.0.0:12=[regex]
 	>=sys-libs/zlib-1.1.4
 	>=x11-libs/goffice-0.7.0:0.8[gnome]
 	>=x11-libs/gtk+-3.14.0:3
@@ -37,12 +39,12 @@ RDEPEND="
 	dev-libs/libxslt
 	gnome-base/dconf
 	net-libs/webkit-gtk:4=
-	gnome-keyring? ( >=app-crypt/libsecret-0.18 )
-	hbci? (
+	aqbanking? (
 		>=net-libs/aqbanking-5[gtk,ofx?]
 		sys-libs/gwenhywfar[gtk]
 		chipcard? ( sys-libs/libchipcard )
 	)
+	gnome-keyring? ( >=app-crypt/libsecret-0.18 )
 	mysql? (
 		dev-db/libdbi
 		dev-db/libdbi-drivers[mysql]
@@ -65,6 +67,7 @@ RDEPEND="
 "
 
 DEPEND="${RDEPEND}
+	dev-lang/perl
 	dev-util/intltool
 	gnome-base/gnome-common
 	sys-devel/libtool
@@ -81,6 +84,17 @@ pkg_setup() {
 	use python && python-single-r1_pkg_setup
 }
 
+src_prepare() {
+	# We need to run eautoreconf to prevent linking against system libs,
+	# this can be noticed, for example, when updating an old version
+	# compiled against guile-1.8 to a newer one relying on 2.0
+	# https://bugs.gentoo.org/show_bug.cgi?id=590536#c39
+	# https://bugzilla.gnome.org/show_bug.cgi?id=775634
+	eautoreconf
+
+	gnome2_src_prepare
+}
+
 src_configure() {
 	local myconf
 
@@ -95,12 +109,13 @@ src_configure() {
 	gnome2_src_configure \
 		--disable-doxygen \
 		--disable-error-on-warning \
-		--disable-nls \
+		$(use_enable nls) \
 		$(use_enable debug) \
 		$(use_enable gnome-keyring password-storage) \
-		$(use_enable hbci aqbanking) \
+		$(use_enable aqbanking) \
 		$(use_enable ofx) \
 		$(use_enable python) \
+		$(use_enable register2) \
 		${myconf}
 }
 
