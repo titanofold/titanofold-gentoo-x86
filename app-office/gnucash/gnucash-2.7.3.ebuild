@@ -32,7 +32,6 @@ RDEPEND="
 	>=dev-libs/libxml2-2.7.0:2
 	>=dev-scheme/guile-2.0.0:12=[regex]
 	>=sys-libs/zlib-1.1.4
-	>=x11-libs/goffice-0.7.0:0.8[gnome]
 	>=x11-libs/gtk+-3.14.0:3
 	dev-libs/boost:=[icu,nls]
 	dev-libs/icu:=
