@@ -14,7 +14,7 @@ SRC_URI="mirror://sourceforge/${PN}/${P}.tar.bz2"
 
 SLOT="0"
 LICENSE="GPL-2"
-KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
+#KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 
 # Add doc back in for 3.0 and bump app-doc/gnucash-docs
 IUSE="aqbanking chipcard debug gnome-keyring mysql nls ofx postgres python
@@ -125,4 +125,11 @@ src_install() {
 	rm -r "${ED}"/usr/share/doc/${PF}/{COPYING,INSTALL,*win32-bin.txt,projects.html} || die
 	mv "${ED}"/usr/share/doc/${PF} "${T}"/cantuseprepalldocs || die
 	dodoc "${T}"/cantuseprepalldocs/*
+}
+
+pkg_postinst() {
+	ewarn "Backup all financial files before using GnuCash >=2.7.0!"
+	ewarn
+	ewarn "GnuCash 2.7.0 introduced large changes in its file format that WILL"
+	ewarn "prevent you from reverting back to GnuCash 2.6."
 }
