@@ -26,7 +26,8 @@ RDEPEND="
 	>=dev-libs/glib-2.32.0:2
 	>=dev-libs/libxml2-2.5.10:2
 	>=dev-libs/popt-1.5
-	>=dev-scheme/guile-2.0.0:12=[deprecated,regex]
+	>=dev-scheme/guile-1.8.5:12=[deprecated,regex]
+	<dev-scheme/guile-2.2
 	>=net-libs/webkit-gtk-1.2:2
 	>=sys-libs/zlib-1.1.4
 	>=x11-libs/goffice-0.7.0:0.8[gnome]
@@ -110,7 +111,6 @@ src_configure() {
 		--disable-error-on-warning \
 		--disable-gtkmm \
 		--enable-locale-specific-tax \
-		--with-guile=2.0 \
 		$(use_enable debug) \
 		$(use_enable gnome-keyring password-storage) \
 		$(use_enable hbci aqbanking) \
