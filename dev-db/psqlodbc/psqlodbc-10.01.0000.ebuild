@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
@@ -9,7 +9,7 @@ SRC_URI="mirror://postgresql/odbc/versions/src/${P}.tar.gz"
 SLOT="0"
 LICENSE="LGPL-2"
 KEYWORDS="~amd64 ~x86"
-IUSE="doc iodbc ssl threads unicode"
+IUSE="doc iodbc ssl threads"
 
 DEPEND="dev-db/postgresql:*[ssl?]
 		!iodbc? ( dev-db/unixODBC )
@@ -21,8 +21,7 @@ src_configure() {
 	econf \
 		$(use_with iodbc) \
 		$(use_with !iodbc unixodbc) \
-		$(use_enable threads pthreads) \
-		$(use_enable unicode)
+		$(use_enable threads pthreads)
 }
 
 src_install() {
