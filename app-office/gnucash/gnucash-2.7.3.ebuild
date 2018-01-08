@@ -1,12 +1,18 @@
 # Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+EAPI=6
 
+# We need to run eautoreconf to prevent linking against system libs,
+# this can be noticed, for example, when updating an old version
+# compiled against guile-1.8 to a newer one relying on 2.0
+# https://bugs.gentoo.org/show_bug.cgi?id=590536#c39
+# https://bugzilla.gnome.org/show_bug.cgi?id=775634
+GNOME2_EAUTORECONF="yes"
 GNOME2_LA_PUNT="yes"
 PYTHON_COMPAT=( python2_7 )
 
-inherit autotools gnome2 python-single-r1
+inherit gnome2 python-single-r1
 
 DESCRIPTION="A personal finance manager"
 HOMEPAGE="http://www.gnucash.org/"
@@ -18,7 +24,7 @@ LICENSE="GPL-2"
 
 # Add doc back in for 3.0 and bump app-doc/gnucash-docs
 IUSE="aqbanking chipcard debug gnome-keyring mysql nls ofx postgres python
-	  quotes register2 sqlite"
+	  quotes -register2 sqlite"
 REQUIRED_USE="
 	chipcard? ( aqbanking )
 	python? ( ${PYTHON_REQUIRED_USE} )"
@@ -83,21 +89,8 @@ pkg_setup() {
 	use python && python-single-r1_pkg_setup
 }
 
-src_prepare() {
-	# We need to run eautoreconf to prevent linking against system libs,
-	# this can be noticed, for example, when updating an old version
-	# compiled against guile-1.8 to a newer one relying on 2.0
-	# https://bugs.gentoo.org/show_bug.cgi?id=590536#c39
-	# https://bugzilla.gnome.org/show_bug.cgi?id=775634
-	eautoreconf
-
-	gnome2_src_prepare
-}
-
 src_configure() {
 	local myconf
-
-	DOCS="doc/README.OFX doc/README.HBCI"
 
 	if use sqlite || use mysql || use postgres ; then
 		myconf+=" --enable-dbi"
@@ -105,16 +98,20 @@ src_configure() {
 		myconf+=" --disable-dbi"
 	fi
 
+	# As of 2.7.3, the presence of --disable-register2 would enable register2 as
+	# well.
+	use register2 && myconf+=" --enable-register2"
+
 	gnome2_src_configure \
 		--disable-doxygen \
 		--disable-error-on-warning \
+		--disable-binreloc \
 		$(use_enable nls) \
 		$(use_enable debug) \
 		$(use_enable gnome-keyring password-storage) \
 		$(use_enable aqbanking) \
 		$(use_enable ofx) \
 		$(use_enable python) \
-		$(use_enable register2) \
 		${myconf}
 }
 
@@ -122,11 +119,14 @@ src_install() {
 	gnome2_src_install
 
 	rm -r "${ED}"/usr/share/doc/${PF}/{COPYING,INSTALL,*win32-bin.txt,projects.html} || die
-	mv "${ED}"/usr/share/doc/${PF} "${T}"/cantuseprepalldocs || die
-	dodoc "${T}"/cantuseprepalldocs/*
+
+	use aqbanking && dodoc doc/README.HBCI
+	use ofx && dodoc doc/README.OFX
 }
 
 pkg_postinst() {
+	gnome2_pkg_postinst
+
 	ewarn "Backup all financial files before using GnuCash >=2.7.0!"
 	ewarn
 	ewarn "GnuCash 2.7.0 introduced large changes in its file format that WILL"

@@ -16,7 +16,7 @@
 		<flag name="hbci">Enable HBCI support, for connecting to some internet
 		banks</flag>
 		<flag name="quotes">Enable Online Stock Quote retrieval</flag>
-		<flag name="register2">Use the new register</flag>
+		<flag name="register2">Use the new register (Experimental)</flag>
 	</use>
 	<upstream>
 		<remote-id type="sourceforge">gnucash</remote-id>
