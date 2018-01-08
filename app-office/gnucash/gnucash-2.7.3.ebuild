@@ -115,6 +115,10 @@ src_configure() {
 		${myconf}
 }
 
+src_test() {
+	emake check
+}
+
 src_install() {
 	gnome2_src_install
 
