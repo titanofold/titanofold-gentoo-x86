@@ -73,6 +73,7 @@ RDEPEND="
 
 DEPEND="${RDEPEND}
 	dev-lang/perl
+	dev-perl/XML-Parser
 	dev-util/intltool
 	gnome-base/gnome-common
 	sys-devel/libtool
