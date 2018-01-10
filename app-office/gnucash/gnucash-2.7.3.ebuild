@@ -131,7 +131,8 @@ src_test() {
 src_install() {
 	gnome2_src_install
 
-	rm -r "${ED}"/usr/share/doc/${PF}/{COPYING,INSTALL,*win32-bin.txt,projects.html} || die
+	rm "${ED}"/usr/share/doc/${PF}/{COPYING,INSTALL,projects.html} || die
+	rm "${ED}"/usr/share/doc/${PF}/*win32-bin.txt || die
 
 	use aqbanking && dodoc doc/README.HBCI
 	use ofx && dodoc doc/README.OFX
