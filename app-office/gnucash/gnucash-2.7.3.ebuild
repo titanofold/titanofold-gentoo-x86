@@ -71,7 +71,13 @@ RDEPEND="
 "
 
 DEPEND="${RDEPEND}
-	dev-cpp/gtest
+	|| (
+		>=dev-cpp/gtest-1.8.0
+		(
+			dev-cpp/gmock
+			dev-cpp/gtest
+		)
+	)
 	dev-lang/perl
 	dev-perl/XML-Parser
 	dev-util/intltool
