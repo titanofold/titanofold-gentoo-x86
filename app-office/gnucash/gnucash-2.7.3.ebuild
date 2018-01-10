@@ -33,7 +33,6 @@ REQUIRED_USE="
 #
 # dev-libs/boost must always be built with nls enabled.
 RDEPEND="
-	>=dev-cpp/gtest-1.8.0-r1[source]
 	>=dev-libs/glib-2.40.0:2
 	>=dev-libs/libxml2-2.7.0:2
 	>=dev-scheme/guile-2.0.0:12=[regex]
@@ -72,6 +71,7 @@ RDEPEND="
 "
 
 DEPEND="${RDEPEND}
+	dev-cpp/gtest
 	dev-lang/perl
 	dev-perl/XML-Parser
 	dev-util/intltool
@@ -85,6 +85,8 @@ DEPEND="${RDEPEND}
 # 	~app-doc/gnucash-docs-${PV}
 # 	gnome-extra/yelp
 # )"
+
+PATCHES=( "${FILESDIR}"/gnucash-2.7.3-no-gtest-src.patch )
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
