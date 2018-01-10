@@ -92,6 +92,8 @@ DEPEND="${RDEPEND}
 # 	gnome-extra/yelp
 # )"
 
+# Bug 643566: Conditional didn't enclose everything related to gtest source
+# files and they're not needed.
 PATCHES=( "${FILESDIR}"/gnucash-2.7.3-no-gtest-src.patch )
 
 pkg_setup() {
