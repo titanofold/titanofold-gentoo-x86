@@ -22,13 +22,18 @@ IUSE="debug doc examples"
 RDEPEND=">=dev-db/postgresql-8.1:*"
 DEPEND="${RDEPEND}
 	doc? (
-		dev-python/sphinx[${PYTHON_USEDEP}]
-		>=dev-python/python-docs-2.7.6-r1:2.7
+		>=dev-python/pygments-2.2[${PYTHON_USEDEP}]
+		>=dev-python/sphinx-1.6[${PYTHON_USEDEP}]
 	)"
 
 RESTRICT="test"
-# Remove py3.2 entry from intersphinx setting
-PATCHES=(  )
+
+# Avoid using mxdatetime: https://bugs.gentoo.org/452028
+# Fixes build error with sphinx: https://bugs.gentoo.org/634730
+PATCHES=(
+	${FILESDIR}/psycopg-2.7.3-avoid-mxdatetime.patch
+	${FILESDIR}/psycopg-2.7.3-sphinx-1.6.patch
+)
 
 S="${WORKDIR}/${MY_P}"
 
@@ -45,30 +50,23 @@ python_prepare_all() {
 		sed -i 's/^\(define=\)/\1PSYCOPG_DEBUG,/' setup.cfg || die
 	fi
 
-	# Source local copy of objects.inv
-	if use doc; then
-		local PYTHON_DOC_ATOM=$(best_version --host-root dev-python/python-docs:2.7)
-		local PYTHON_DOC_VERSION="${PYTHON_DOC_ATOM#dev-python/python-docs-}"
-		local PYTHON_DOC="/usr/share/doc/python-docs-${PYTHON_DOC_VERSION}/html"
-		local PYTHON_DOC_INVENTORY="${PYTHON_DOC}/objects.inv"
-		sed -e "s|'http://docs.python.org/', None|'${PYTHON_DOC}', '${PYTHON_DOC_INVENTORY}'|" \
-			-e "/^    'py3':/d" -i doc/src/conf.py || die
-		einfo "conf.py patched"
-	fi
-
 	distutils-r1_python_prepare_all
 }
 
 python_compile_all() {
-	use doc && emake -C doc/src -j1 html text
+	use doc && emake -C doc/src html text
 }
 
 python_install_all() {
 	if use doc; then
-		dodoc -r doc/src/_build/html/.
+		dodoc -r doc/src/_build/html
+		dodoc doc/src/_build/text/*
 	fi
 
-	use examples && local EXAMPLES=( examples/. )
+	if use examples ; then
+	   dodoc -r examples
+	   docompress -x /usr/share/doc/${PF}/examples
+	fi
 
 	distutils-r1_python_install_all
 }
