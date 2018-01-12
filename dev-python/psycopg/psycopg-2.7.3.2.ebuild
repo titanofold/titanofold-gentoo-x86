@@ -31,8 +31,8 @@ RESTRICT="test"
 # Avoid using mxdatetime: https://bugs.gentoo.org/452028
 # Fixes build error with sphinx: https://bugs.gentoo.org/634730
 PATCHES=(
-	${FILESDIR}/psycopg-2.7.3-avoid-mxdatetime.patch
-	${FILESDIR}/psycopg-2.7.3-sphinx-1.6.patch
+	"${FILESDIR}"/psycopg-2.7.3-avoid-mxdatetime.patch
+	"${FILESDIR}"/psycopg-2.7.3-sphinx-1.6.patch
 )
 
 S="${WORKDIR}/${MY_P}"
