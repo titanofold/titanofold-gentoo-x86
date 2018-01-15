@@ -20,7 +20,7 @@ SRC_URI="mirror://sourceforge/${PN}/${P}.tar.bz2"
 
 SLOT="0"
 LICENSE="GPL-2"
-#KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 
 # Add doc back in for 3.0 and bump app-doc/gnucash-docs
 IUSE="aqbanking chipcard debug gnome-keyring mysql nls ofx postgres python
