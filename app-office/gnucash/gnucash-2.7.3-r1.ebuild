@@ -3,28 +3,24 @@
 
 EAPI=6
 
-# We need to run eautoreconf to prevent linking against system libs,
-# this can be noticed, for example, when updating an old version
-# compiled against guile-1.8 to a newer one relying on 2.0
-# https://bugs.gentoo.org/show_bug.cgi?id=590536#c39
-# https://bugzilla.gnome.org/show_bug.cgi?id=775634
-GNOME2_EAUTORECONF="yes"
-GNOME2_LA_PUNT="yes"
+# google{test,mock} version
+GV="1.8.0"
 PYTHON_COMPAT=( python2_7 )
 
-inherit gnome2 python-single-r1
+inherit cmake-utils gnome2-utils python-single-r1 xdg-utils
 
 DESCRIPTION="A personal finance manager"
 HOMEPAGE="http://www.gnucash.org/"
-SRC_URI="mirror://sourceforge/${PN}/${P}.tar.bz2"
+SRC_URI="mirror://sourceforge/${PN}/${P}.tar.bz2
+		 https://github.com/google/googletest/archive/release-${GV}.tar.gz -> gtest-${GV}.tar.gz"
 
 SLOT="0"
 LICENSE="GPL-2"
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 
 # Add doc back in for 3.0 and bump app-doc/gnucash-docs
-IUSE="aqbanking chipcard debug gnome-keyring mysql nls ofx postgres python
-	  quotes -register2 sqlite"
+IUSE="aqbanking chipcard debug examples gnome-keyring mysql nls ofx postgres
+	  python quotes -register2 sqlite"
 REQUIRED_USE="
 	chipcard? ( aqbanking )
 	python? ( ${PYTHON_REQUIRED_USE} )"
@@ -71,13 +67,7 @@ RDEPEND="
 "
 
 DEPEND="${RDEPEND}
-	|| (
-		>=dev-cpp/gtest-1.8.0
-		(
-			dev-cpp/gmock
-			dev-cpp/gtest
-		)
-	)
+	~dev-cpp/gtest-${GV}
 	dev-lang/perl
 	dev-perl/XML-Parser
 	dev-util/intltool
@@ -92,60 +82,70 @@ DEPEND="${RDEPEND}
 # 	gnome-extra/yelp
 # )"
 
-# Bug 643566: Conditional didn't enclose everything related to gtest source
-# files and they're not needed.
-PATCHES=( "${FILESDIR}"/gnucash-2.7.3-no-gtest-src.patch )
-
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
+	xdg_environment_reset
 }
 
 src_configure() {
-	local myconf
-
-	if use sqlite || use mysql || use postgres ; then
-		myconf+=" --enable-dbi"
-	else
-		myconf+=" --disable-dbi"
+	local sql_on_off="OFF"
+	if use mysql || use postgres || use sqlite ; then
+		sql_on_off="ON"
 	fi
 
-	# As of 2.7.3, the presence of --disable-register2 would enable register2 as
-	# well.
-	use register2 && myconf+=" --enable-register2"
+	local mycmakeargs=(
+		-DGMOCK_ROOT="${WORKDIR}"/googletest-release-${GV}/googlemock
+		-DGTEST_ROOT="${WORKDIR}"/googletest-release-${GV}/googletest
 
-	gnome2_src_configure \
-		--disable-doxygen \
-		--disable-error-on-warning \
-		--disable-binreloc \
-		$(use_enable nls) \
-		$(use_enable debug) \
-		$(use_enable gnome-keyring password-storage) \
-		$(use_enable aqbanking) \
-		$(use_enable ofx) \
-		$(use_enable python) \
-		${myconf}
+		-DDISABLE_NLS=$(usex !nls)
+		-DENABLE_REGISTER2=$(usex register2)
+		-DWITH_AQBANKING=$(usex aqbanking)
+		-DWITH_OFX=$(usex ofx)
+		-DWITH_PYTHON=$(usex python)
+		-DWITH_SQL=${sql_on_off}
+	)
+
+	cmake-utils_src_configure
 }
 
 src_test() {
-	emake check
+	local myctestargs=( check )
+	cmake-utils_src_test
 }
 
 src_install() {
-	gnome2_src_install
+	cmake-utils_src_install
 
-	rm "${ED}"/usr/share/doc/${PF}/{COPYING,INSTALL,projects.html} || die
-	rm "${ED}"/usr/share/doc/${PF}/*win32-bin.txt || die
+	rm "${ED%/}"/usr/share/glib-2.0/schemas/gschemas.compiled || die
+	rm -r "${ED%/}"/usr/share/doc/Gnucash || die
+
+	if use examples ; then
+		mv "${ED%/}"/usr/share/doc/gnucash \
+		   "${ED%/}"/usr/share/doc/${PF}/examples || die
+		rm "${ED%/}"/usr/share/doc/${PF}/examples/*win32-bin.txt || die
+	else
+		rm -r "${ED%/}"/usr/share/doc/gnucash || die
+	fi
 
 	use aqbanking && dodoc doc/README.HBCI
 	use ofx && dodoc doc/README.OFX
 }
 
 pkg_postinst() {
-	gnome2_pkg_postinst
+	gnome2_icon_cache_update
+	gnome2_schemas_update
+	xdg_desktop_database_update
+	xdg_mimeinfo_database_update
 
 	ewarn "Backup all financial files or databases before using GnuCash >=2.7.0!"
 	ewarn
 	ewarn "GnuCash 2.7.0 introduced large changes in its file format and database"
 	ewarn "schema that WILL prevent you from reverting back to GnuCash 2.6."
+}
 
+pkg_postrm() {
+	gnome2_icon_cache_update
+	gnome2_schemas_update
+	xdg_desktop_database_update
+	xdg_mimeinfo_database_update
 }
