@@ -1,7 +1,7 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+EAPI=6
 
 inherit webapp
 
@@ -33,18 +33,40 @@ RDEPEND="
 	>=dev-php/PEAR-Net_IDNA2-0.2.0
 	>=dev-php/PEAR-Net_SMTP-1.7.1
 	>=dev-php/PEAR-Net_Socket-1.2.1
+	dev-php/PEAR-Console_CommandLine
+	dev-php/PEAR-Console_Getopt
+	dev-php/PEAR-Exception
 	virtual/httpd-php
-	enigma? ( >=dev-php/PEAR-Crypt_GPG-1.6.0 app-crypt/gnupg )
-	ldap? ( >=dev-php/PEAR-Net_LDAP2-2.2.0 dev-php/PEAR-Net_LDAP3 )
+	enigma? (
+		>=dev-php/PEAR-Crypt_GPG-1.6.0
+		app-crypt/gnupg
+	)
+	ldap? (
+		>=dev-php/PEAR-Net_LDAP2-2.2.0
+		dev-php/PEAR-Net_LDAP3
+	)
 	managesieve? ( >=dev-php/PEAR-Net_Sieve-1.4.0 )
-	mysql? ( || ( dev-lang/php[mysql] dev-lang/php[mysqli] ) )
+	mysql? (
+		|| (
+			dev-lang/php[mysql]
+			dev-lang/php[mysqli]
+		)
+	)
 	spell? ( dev-lang/php[curl,spell] )
 "
 
 S=${WORKDIR}/${MY_P}
 
+src_prepare() {
+	default
+
+	# Redundant. (Bug #644896)
+	rm -r vendor/pear || die
+}
+
 src_install() {
 	webapp_src_preinst
+
 	dodoc CHANGELOG INSTALL README.md UPGRADING
 
 	insinto "${MY_HTDOCSDIR}"
@@ -56,6 +78,7 @@ src_install() {
 
 	webapp_configfile "${MY_HTDOCSDIR}"/config/defaults.inc.php
 	webapp_postupgrade_txt en "${FILESDIR}/POST-UPGRADE.txt"
+
 	webapp_src_install
 }
 
