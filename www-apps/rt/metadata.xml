@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
 <pkgmetadata>
-	<herd>web-apps</herd>
-	<herd>proxy-maintainers</herd>
-	<maintainer>
-	<email>pva@gentoo.org</email>
-	<name>Peter Volkov</name>
+	<maintainer type="person">
+		<email>titanofold@gentoo.org</email>
+		<name>Aaron W. Swenson</name>
 	</maintainer>
- 	<maintainer>
-		<email>eric.joshua.martin@gmail.com</email>
-		<name>Eric Martin</name>
+	<maintainer type="project">
+		<email>web-apps@gentoo.org</email>
+		<name>Gentoo Webapps</name>
 	</maintainer>
 	<use>
 		<flag name="lighttpd">Add <pkg>www-servers/lighttpd</pkg> support</flag>

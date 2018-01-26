@@ -1,6 +1,5 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: /var/cvsroot/gentoo-x86/www-apps/rt/rt-4.2.4.ebuild,v 1.6 2014/09/29 13:27:03 titanofold Exp $
 
 EAPI=5
 
@@ -45,13 +44,14 @@ DEPEND="
 	>=dev-perl/Text-WikiFormat-0.76
 	>=dev-perl/Tree-Simple-1.04
 	>=dev-perl/XML-RSS-1.05
-	>=dev-perl/dbix-searchbuilder-1.660.0
+	>=dev-perl/DBIx-SearchBuilder-1.660.0
 	>=virtual/perl-Digest-MD5-2.27
 	>=virtual/perl-Encode-2.730.0
 	>=virtual/perl-File-Spec-0.8
 	>=virtual/perl-Getopt-Long-2.24
 	>=virtual/perl-Locale-Maketext-1.06
 	>=virtual/perl-Storable-2.08
+	dev-perl/Business-Hours
 	dev-perl/CGI-Emulate-PSGI
 	dev-perl/CGI-PSGI
 	dev-perl/Cache-Simple-TimedExpiry
@@ -60,10 +60,12 @@ DEPEND="
 	dev-perl/Crypt-Eksblowfish
 	dev-perl/Crypt-SSLeay
 	dev-perl/Crypt-X509
+	dev-perl/CSS-Minifier-XS
+	dev-perl/Data-Page-Pageset
 	dev-perl/DBD-SQLite
 	dev-perl/Data-GUID
 	dev-perl/Data-ICal
-	dev-perl/DateManip
+	dev-perl/Date-Manip
 	dev-perl/Devel-GlobalDestruction
 	dev-perl/Email-Address
 	dev-perl/Email-Address-List
@@ -74,7 +76,7 @@ DEPEND="
 	dev-perl/GD[png,gif]
 	dev-perl/GnuPG-Interface
 	dev-perl/GraphViz
-	dev-perl/HTML-Format
+	dev-perl/HTML-Formatter
 	dev-perl/HTML-FormatText-WithLinks-AndTables
 	dev-perl/HTML-Mason-PSGIHandler
 	dev-perl/HTML-Parser
@@ -83,7 +85,7 @@ DEPEND="
 	dev-perl/HTML-Tree
 	dev-perl/IPC-Run3
 	dev-perl/JSON
-	dev-perl/JavaScript-Minifier
+	dev-perl/JavaScript-Minifier-XS
 	dev-perl/MIME-Types
 	dev-perl/Module-Refresh
 	dev-perl/Mozilla-CA
@@ -92,20 +94,22 @@ DEPEND="
 	dev-perl/Plack
 	dev-perl/Regexp-Common-net-CIDR
 	dev-perl/Regexp-IPv6
+	dev-perl/Scope-Upper
 	dev-perl/Starlet
 	dev-perl/String-ShellQuote
 	dev-perl/TermReadKey
 	dev-perl/Text-Autoformat
 	dev-perl/Text-Password-Pronounceable
-	dev-perl/Time-modules
+	dev-perl/Time-ParseDate
 	dev-perl/TimeDate
 	dev-perl/UNIVERSAL-require
 	dev-perl/libwww-perl
-	dev-perl/locale-maketext-fuzzy
-	dev-perl/net-server
-	dev-perl/regexp-common
-	dev-perl/text-template
-	dev-perl/text-wrapper
+	dev-perl/Locale-Maketext-Fuzzy
+	dev-perl/Net-IP
+	dev-perl/Net-Server
+	dev-perl/Regexp-Common
+	dev-perl/Text-Template
+	dev-perl/Text-Wrapper
 	virtual/perl-Digest
 	virtual/perl-File-Temp
 	virtual/perl-Scalar-List-Utils
@@ -232,6 +236,10 @@ src_configure() {
 		web="apache"
 		depsconf+=" --with-MODPERL2"
 	fi
+	# Any loading Date::Manip from here on
+	# may fail if TZ=Factory as it is on gentoo install
+	# media ( affects install as well )
+	export TZ=UTC
 
 	./configure --enable-layout=Gentoo \
 		--with-bin-owner=rt \
