@@ -109,20 +109,24 @@ src_configure() {
 }
 
 src_test() {
-	local myctestargs=( check )
-	cmake-utils_src_test
+	cd "${BUILD_DIR}" || die
+	emake check
 }
 
 src_install() {
 	cmake-utils_src_install
 
+	rm "${ED%/}"/usr/share/doc/${PF}/README.dependencies || die
 	rm "${ED%/}"/usr/share/glib-2.0/schemas/gschemas.compiled || die
-	rm -r "${ED%/}"/usr/share/doc/Gnucash || die
 
 	if use examples ; then
 		mv "${ED%/}"/usr/share/doc/gnucash \
 		   "${ED%/}"/usr/share/doc/${PF}/examples || die
-		rm "${ED%/}"/usr/share/doc/${PF}/examples/*win32-bin.txt || die
+		pushd "${ED%/}"/usr/share/doc/${PF}/examples/ > /dev/null || die
+		rm AUTHORS DOCUMENTERS LICENSE NEWS projects.html ChangeLog* \
+		   *win32-bin.txt || die
+		popd > /dev/null || die
+		docompress -x /usr/share/doc/${PF}/examples/
 	else
 		rm -r "${ED%/}"/usr/share/doc/gnucash || die
 	fi
