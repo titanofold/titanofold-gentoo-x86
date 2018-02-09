@@ -122,7 +122,7 @@ diff -Naruw a/src/bin/Makefile b/src/bin/Makefile
 diff -Naruw a/src/Makefile b/src/Makefile
 --- a/src/Makefile	2017-07-10 16:26:20.000000000 -0400
 +++ b/src/Makefile	2017-07-12 10:10:04.128087426 -0400
-@@ -15,20 +15,12 @@
+@@ -15,21 +15,12 @@
  SUBDIRS = \
  	common \
  	port \
@@ -139,6 +139,7 @@ diff -Naruw a/src/Makefile b/src/Makefile
 -	pl \
 -	makefiles \
 -	test/regress \
+-	test/isolation \
 -	test/perl
 +	makefiles
  
