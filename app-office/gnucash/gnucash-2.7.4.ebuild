@@ -82,6 +82,8 @@ DEPEND="${RDEPEND}
 # 	gnome-extra/yelp
 # )"
 
+PATCHES=( "${FILESDIR}"/gnucash-2.7.4-double_free.patch )
+
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
 	xdg_environment_reset
@@ -109,8 +111,13 @@ src_configure() {
 }
 
 src_test() {
+	if use python ; then
+		cp common/test-core/unittest_support.py \
+		   "${BUILD_DIR}"/common/test-core/ || die
+	fi
+
 	cd "${BUILD_DIR}" || die
-	emake check
+	XDG_DATA_HOME="${T}/$(whoami)" emake check
 }
 
 src_install() {
