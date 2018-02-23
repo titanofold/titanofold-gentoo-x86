@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
@@ -43,6 +43,14 @@ pkg_setup() {
 		enewgroup vacation
 		enewuser vacation -1 -1 -1 vacation
 	fi
+}
+
+src_prepare() {
+	default
+	sed 's/maildirmake "$maildir"/courier-maildirmake "$maildir"/' \
+		-i ADDITIONS/postfixadmin-mailbox-postcreation.sh || die
+	sed 's/$0: maildirmake/$0: courier-maildirmake/' \
+		-i ADDITIONS/postfixadmin-mailbox-postcreation.sh || die
 }
 
 src_install() {
