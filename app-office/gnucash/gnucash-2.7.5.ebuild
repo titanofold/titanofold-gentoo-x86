@@ -82,7 +82,7 @@ DEPEND="${RDEPEND}
 # 	gnome-extra/yelp
 # )"
 
-PATCHES=( "${FILESDIR}"/gnucash-2.7.4-double_free.patch )
+PATCHES=( "${FILESDIR}"/${PN}-2.7.4-fix-tests-for-32bit-platforms.patch )
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
