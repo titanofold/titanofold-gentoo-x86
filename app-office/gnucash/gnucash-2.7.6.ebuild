@@ -68,9 +68,9 @@ RDEPEND="
 
 DEPEND="${RDEPEND}
 	~dev-cpp/gtest-${GV}
+	>=sys-devel/gettext-0.19.6
 	dev-lang/perl
 	dev-perl/XML-Parser
-	dev-util/intltool
 	gnome-base/gnome-common
 	sys-devel/libtool
 	virtual/pkgconfig
@@ -82,7 +82,7 @@ DEPEND="${RDEPEND}
 # 	gnome-extra/yelp
 # )"
 
-PATCHES=( "${FILESDIR}"/${PN}-2.7.4-fix-tests-for-32bit-platforms.patch )
+#PATCHES=( "${FILESDIR}"/${PN}-2.7.4-fix-tests-for-32bit-platforms.patch )
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
