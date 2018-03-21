@@ -5,7 +5,7 @@ EAPI=6
 
 POSTGRES_COMPAT=( 9.{2..6} 10 )
 
-inherit postgres qmake-utils
+inherit desktop postgres qmake-utils
 
 DESCRIPTION="PostgreSQL Database Modeler"
 HOMEPAGE="https://pgmodeler.io"
@@ -51,4 +51,7 @@ src_install() {
 	rm "${D}"/usr/share/${PN}/{CHANGELOG.md,LICENSE,README.md,RELEASENOTES.md}
 
 	einstalldocs
+
+	doicon conf/${PN}_logo.png
+	make_desktop_entry ${PN} ${PN} ${PN}_logo Development
 }
