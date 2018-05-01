@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -9,11 +9,11 @@ MY_P="uTox"
 
 DESCRIPTION="Lightweight Tox client"
 HOMEPAGE="https://github.com/uTox/uTox"
-SRC_URI="https://github.com/uTox/uTox/archive/v${PV}.tar.gz -> ${PN}-${PV}.tar.gz"
+SRC_URI="https://github.com/uTox/uTox/releases/download/v0.17.0/uTox-0.17.0-full.tar.gz"
 
 LICENSE="GPL-3"
 SLOT="0"
-IUSE="+dbus +filter_audio"
+IUSE="+dbus +filter_audio lto"
 KEYWORDS="~amd64 ~x86"
 
 RDEPEND="
@@ -34,7 +34,7 @@ DEPEND="${RDEPEND}
 S="${WORKDIR}/${MY_P}-${PV}"
 
 src_prepare() {
-	eapply_user
+	default
 
 	cmake-utils_src_prepare
 }
@@ -46,8 +46,9 @@ src_configure() {
 	fi
 
 	local mycmakeargs=(
-		HAVE_DBUS=$(usex dbus "1" "0")
-		FILTER_AUDIO=$(usex filter_audio "1" "0")
+		-DENABLE_DBUS=$(usex dbus)
+		-DENABLE_FILTERAUDIO=$(usex filter_audio)
+		-DENABLE_LTO=$(usex lto)
 	)
 	cmake-utils_src_configure
 }

@@ -18,5 +18,8 @@
 		<flag name="filter_audio">
 			Filter audio using media-libs/libfilteraudio
 		</flag>
+		<flag name="lto">
+			Link time optimization
+		</flag>
 	</use>
 </pkgmetadata>
