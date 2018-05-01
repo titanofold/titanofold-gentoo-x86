@@ -11,7 +11,7 @@ inherit cmake-utils gnome2-utils python-single-r1 xdg-utils
 
 DESCRIPTION="A personal finance manager"
 HOMEPAGE="http://www.gnucash.org/"
-SRC_URI="mirror://sourceforge/${PN}/${P}.tar.bz2
+SRC_URI="https://github.com/Gnucash/gnucash/archive/${PV}.tar.gz -> ${P}.tar.gz
 		 https://github.com/google/googletest/archive/release-${GV}.tar.gz -> gtest-${GV}.tar.gz"
 
 SLOT="0"
