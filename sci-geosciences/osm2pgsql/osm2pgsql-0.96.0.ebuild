@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -6,7 +6,8 @@ EAPI=6
 inherit cmake-utils
 
 DESCRIPTION="Converts OSM data to SQL and insert into PostgreSQL db"
-HOMEPAGE="https://wiki.openstreetmap.org/wiki/Osm2pgsql https://github.com/openstreetmap/osm2pgsql"
+HOMEPAGE="https://wiki.openstreetmap.org/wiki/Osm2pgsql
+		  https://github.com/openstreetmap/osm2pgsql"
 SRC_URI="https://github.com/openstreetmap/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-2"
