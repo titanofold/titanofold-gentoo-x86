@@ -50,7 +50,7 @@ python_prepare_all() {
 }
 
 python_compile_all() {
-	use doc && emake -C doc/src html text
+	use doc && emake -C doc/src -j1 html text
 }
 
 python_install_all() {
