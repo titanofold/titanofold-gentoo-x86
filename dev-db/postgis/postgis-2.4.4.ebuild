@@ -3,7 +3,7 @@
 
 EAPI="6"
 
-POSTGRES_COMPAT=( 9.{2..6} 10 )
+POSTGRES_COMPAT=( 9.{3..6} 10 )
 POSTGRES_USEDEP="server"
 
 inherit autotools eutils postgres-multi versionator
@@ -61,8 +61,7 @@ MAKEOPTS+=' -j1'
 QA_FLAGS_IGNORED="usr/lib(64)?/(rt)?postgis-${PGIS}\.so"
 
 src_prepare() {
-	eapply "${FILESDIR}/${PN}-2.2.0-arflags.patch" \
-		   "${FILESDIR}/postgis-2.4.2-jsonc_0.13.patch"
+	eapply "${FILESDIR}/${PN}-2.2.0-arflags.patch"
 
 	local AT_M4DIR="macros"
 	eautoreconf
