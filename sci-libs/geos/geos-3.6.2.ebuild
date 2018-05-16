@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -28,6 +28,8 @@ DEPEND="${RDEPEND}
 "
 
 PATCHES=( "${FILESDIR}"/3.4.2-solaris-isnan.patch )
+
+RESTRICT="test"
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
