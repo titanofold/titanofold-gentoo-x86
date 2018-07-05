@@ -89,9 +89,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	# Work around PPC{,64} compilation bug where bool is already defined
-	sed '/#ifndef __cplusplus/a #undef bool' -i src/include/c.h || die
-
 	# Set proper run directory
 	sed "s|\(PGSOCKET_DIR\s\+\)\"/tmp\"|\1\"${EPREFIX}/run/postgresql\"|" \
 		-i src/include/pg_config_manual.h || die

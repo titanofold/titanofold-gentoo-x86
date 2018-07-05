@@ -5,8 +5,8 @@ EAPI="6"
 
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
-PLOCALES="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN
-		 zh_TW"
+PLOCALES="af cs de en es fa fr hr hu it ko nb pl pt-BR ro ru sk sl sv tr zh-CN
+		 zh-TW"
 
 inherit flag-o-matic l10n linux-info multilib pam prefix python-single-r1 \
 		systemd user versionator
@@ -26,6 +26,10 @@ HOMEPAGE="http://www.postgresql.org/"
 
 IUSE="doc kerberos kernel_linux ldap libressl nls pam perl python +readline
 	  selinux +server systemd ssl static-libs tcl threads uuid xml zlib"
+for my_locale in ${PLOCALES}; do
+	IUSE+=" l10n_${my_locale}"
+done
+
 
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
