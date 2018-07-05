@@ -2,7 +2,11 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-inherit autotools gnome2
+
+PLOCALES="C de it ja pt ru"
+PLOCALE_BACKUP="C"
+
+inherit autotools gnome2 l10n
 
 DESCRIPTION="Documentation package for GnuCash"
 HOMEPAGE="http://www.gnucash.org/"
@@ -11,21 +15,40 @@ SRC_URI="https://github.com/Gnucash/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 SLOT="0"
 LICENSE="GPL-2 FDL-1.1"
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
-IUSE="test"
 
-RDEPEND="!<=app-office/gnucash-2.2.1"
-DEPEND="${RDEPEND}
-	>=dev-libs/libxml2-2.5.10:2
-	dev-libs/libxslt
+for locale in ${PLOCALES}; do
+	IUSE+=" l10n_${locale}"
+done
+
+DEPEND="
+	app-text/docbook-xml-dtd
 	app-text/docbook-xsl-stylesheets
-	app-text/docbook-xml-dtd:4.1.2
 	app-text/rarian
-	test? ( app-text/docbook-xml-dtd:4.4 )
+	dev-libs/libxml2
+	dev-libs/libxslt
 "
 
 src_prepare() {
 	default
 	eautoreconf
+}
+
+src_compile() {
+	:
+}
+
+src_install() {
+	local doc_type lang
+
+	for doc_type in help guide ; do
+		for lang in $(l10n_get_locales); do
+			cd ${S}/${doc_type}/${lang} || die
+			emake DESTDIR="${D}" install
+		done
+	done
+
+	cd ${S} || die
+	einstalldocs
 }
 
 pkg_postinst() {
