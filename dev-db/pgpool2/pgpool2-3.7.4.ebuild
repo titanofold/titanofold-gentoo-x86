@@ -3,9 +3,9 @@
 
 EAPI=6
 
-POSTGRES_COMPAT=( 9.{2..6} 10 )
+POSTGRES_COMPAT=( 9.{3..6} {10..11} )
 
-inherit postgres-multi
+inherit autotools postgres-multi
 
 MY_P="${PN/2/-II}-${PV}"
 
@@ -29,6 +29,7 @@ RDEPEND="
 DEPEND="${RDEPEND}
 	sys-devel/bison
 	!!dev-db/pgpool
+	virtual/pkgconfig
 "
 
 S=${WORKDIR}/${MY_P}
@@ -40,25 +41,27 @@ pkg_setup() {
 }
 
 src_prepare() {
-	eapply "${FILESDIR}/pgpool_run_paths-3.6.5.patch"
+	eapply \
+		"${FILESDIR}/pgpool-configure-memcached.patch" \
+		"${FILESDIR}/pgpool-pam-configure.patch" \
+		"${FILESDIR}/pgpool-pthread.patch" \
+		"${FILESDIR}/pgpool_run_paths-3.6.5.patch"
+
+	eautoreconf
 
 	postgres-multi_src_prepare
 }
 
 src_configure() {
-	local myconf
-	use memcached && \
-		myconf="--with-memcached=\"${EROOT%/}/usr/include/libmemcached\""
-	use pam && myconf+=' --with-pam'
-
 	postgres-multi_foreach econf \
 		--disable-rpath \
 		--sysconfdir="${EROOT%/}/etc/${PN}" \
 		--with-pgsql-includedir='/usr/include/postgresql-@PG_SLOT@' \
 		--with-pgsql-libdir="/usr/$(get_libdir)/postgresql-@PG_SLOT@/$(get_libdir)" \
-		$(use_with ssl openssl) \
 		$(use_enable static-libs static) \
-		${myconf}
+		$(use_with memcached) \
+		$(use_with pam) \
+		$(use_with ssl openssl)
 }
 
 src_compile() {

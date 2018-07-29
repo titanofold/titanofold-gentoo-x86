@@ -1,13 +1,13 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
 EGIT_REPO_URI="https://git.postgresql.org/git/pgpool2.git"
 
-POSTGRES_COMPAT=( 9.{2..6} 10 )
+POSTGRES_COMPAT=( 9.{3..6} {10..11} )
 
-inherit git-r3 postgres-multi
+inherit autotools git-r3 postgres-multi
 
 DESCRIPTION="Connection pool server for PostgreSQL"
 HOMEPAGE="http://www.pgpool.net/"
@@ -38,25 +38,27 @@ pkg_setup() {
 }
 
 src_prepare() {
-	eapply "${FILESDIR}/pgpool_run_paths-9999.patch"
+	eapply \
+		"${FILESDIR}/pgpool-configure-memcached.patch" \
+		"${FILESDIR}/pgpool-pam-configure.patch" \
+		"${FILESDIR}/pgpool-pthread.patch" \
+		"${FILESDIR}/pgpool_run_paths-9999.patch"
+
+	eautoreconf
 
 	postgres-multi_src_prepare
 }
 
 src_configure() {
-	local myconf
-	use memcached && \
-		myconf="--with-memcached=\"${EROOT%/}/usr/include/libmemcached\""
-	use pam && myconf+=' --with-pam'
-
 	postgres-multi_foreach econf \
 		--disable-rpath \
 		--sysconfdir="${EROOT%/}/etc/${PN}" \
 		--with-pgsql-includedir='/usr/include/postgresql-@PG_SLOT@' \
 		--with-pgsql-libdir="/usr/$(get_libdir)/postgresql-@PG_SLOT@/$(get_libdir)" \
+		$(use_with memcached) \
+		$(use_with pam) \
 		$(use_with ssl openssl) \
-		$(use_enable static-libs static) \
-		${myconf}
+		$(use_enable static-libs static)
 }
 
 src_compile() {
