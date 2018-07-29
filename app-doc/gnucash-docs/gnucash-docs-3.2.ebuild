@@ -16,8 +16,8 @@ SLOT="0"
 LICENSE="GPL-2 FDL-1.1"
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 
-for locale in ${PLOCALES}; do
-	IUSE+=" l10n_${locale}"
+for my_locale in ${PLOCALES}; do
+	IUSE+=" l10n_${my_locale}"
 done
 
 DEPEND="
@@ -42,12 +42,12 @@ src_install() {
 
 	for doc_type in help guide ; do
 		for lang in $(l10n_get_locales); do
-			cd ${S}/${doc_type}/${lang} || die
+			cd "${S}/${doc_type}/${lang}" || die
 			emake DESTDIR="${D}" install
 		done
 	done
 
-	cd ${S} || die
+	cd "${S}" || die
 	einstalldocs
 }
 
