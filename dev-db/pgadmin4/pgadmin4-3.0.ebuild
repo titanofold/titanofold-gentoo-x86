@@ -41,6 +41,7 @@ RDEPEND="${COMMON_DEPEND}
 	>=dev-python/fixtures-3.0.0[${PYTHON_USEDEP}]
 	>=dev-python/flask-0.12.2[${PYTHON_USEDEP}]
 	>=dev-python/flask-babel-0.11.1[${PYTHON_USEDEP}]
+	>=dev-python/flask-babelex-0.9.3[${PYTHON_USEDEP}]
 	>=dev-python/flask-gravatar-0.5.0[${PYTHON_USEDEP}]
 	>=dev-python/flask-htmlmin-1.3.2[${PYTHON_USEDEP}]
 	>=dev-python/flask-login-0.3.2[${PYTHON_USEDEP}]
