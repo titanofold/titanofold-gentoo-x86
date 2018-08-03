@@ -27,8 +27,8 @@ RDEPEND="
 	ssl? ( dev-libs/openssl:* )
 "
 DEPEND="${RDEPEND}
-	sys-devel/bison
 	!!dev-db/pgpool
+	sys-devel/bison
 	virtual/pkgconfig
 "
 
@@ -43,8 +43,8 @@ pkg_setup() {
 src_prepare() {
 	eapply \
 		"${FILESDIR}/pgpool-configure-memcached.patch" \
-		"${FILESDIR}/pgpool-pam-configure.patch" \
-		"${FILESDIR}/pgpool-pthread.patch" \
+		"${FILESDIR}/pgpool-configure-pam.patch" \
+		"${FILESDIR}/pgpool-configure-pthread.patch" \
 		"${FILESDIR}/pgpool_run_paths-3.6.5.patch"
 
 	eautoreconf

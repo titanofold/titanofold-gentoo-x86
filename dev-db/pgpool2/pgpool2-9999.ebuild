@@ -27,8 +27,14 @@ RDEPEND="
 	ssl? ( dev-libs/openssl:* )
 "
 DEPEND="${RDEPEND}
-	sys-devel/bison
 	!!dev-db/pgpool
+	sys-devel/bison
+	virtual/pkgconfig
+	doc? (
+		 app-text/openjade
+		 dev-libs/libxml2
+		 dev-libs/libxslt
+	 )
 "
 
 pkg_setup() {
@@ -40,8 +46,8 @@ pkg_setup() {
 src_prepare() {
 	eapply \
 		"${FILESDIR}/pgpool-configure-memcached.patch" \
-		"${FILESDIR}/pgpool-pam-configure.patch" \
-		"${FILESDIR}/pgpool-pthread.patch" \
+		"${FILESDIR}/pgpool-configure-pam.patch" \
+		"${FILESDIR}/pgpool-configure-pthread.patch" \
 		"${FILESDIR}/pgpool_run_paths-9999.patch"
 
 	eautoreconf
@@ -55,10 +61,10 @@ src_configure() {
 		--sysconfdir="${EROOT%/}/etc/${PN}" \
 		--with-pgsql-includedir='/usr/include/postgresql-@PG_SLOT@' \
 		--with-pgsql-libdir="/usr/$(get_libdir)/postgresql-@PG_SLOT@/$(get_libdir)" \
+		$(use_enable static-libs static) \
 		$(use_with memcached) \
 		$(use_with pam) \
-		$(use_with ssl openssl) \
-		$(use_enable static-libs static)
+		$(use_with ssl openssl)
 }
 
 src_compile() {
@@ -67,7 +73,7 @@ src_compile() {
 	# of that directory built, too.
 	postgres-multi_foreach emake
 	postgres-multi_foreach emake -C src/sql
-	postgres-multi_forbest emake DESTDIR="${D}" -C doc
+	use doc && postgres-multi_forbest emake DESTDIR="${D}" -C doc
 }
 
 src_install() {
@@ -82,12 +88,12 @@ src_install() {
 
 	# Documentation!
 	dodoc NEWS TODO
-	postgres-multi_forbest emake DESTDIR="${D}" -C doc install
+	use doc && postgres-multi_forbest emake DESTDIR="${D}" -C doc install
 
 	# Examples and extras
 	# mv some files that get installed to /usr/share/pgpool-II so that
 	# they all wind up in the same place
-	#mv "${ED%/}/usr/share/${PN/2/-II}" "${ED%/}/usr/share/${PN}" || die
+	mv "${ED%/}/usr/share/${PN/2/-II}" "${ED%/}/usr/share/${PN}" || die
 	into "/usr/share/${PN}"
 	dobin src/sample/{pgpool_recovery,pgpool_recovery_pitr,pgpool_remote_start}
 	insinto "/usr/share/${PN}"
