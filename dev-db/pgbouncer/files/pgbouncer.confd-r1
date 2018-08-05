@@ -1,5 +1,6 @@
 # Location of configuration file for PgBouncer.
 INIFILE="/etc/pgbouncer.ini"
+PIDFILE="/run/pgbouncer.pid"
 
 # How long to wait in seconds for a safe shutdown. Equivalent to
 # issuing 'PAUSE;' and 'SHUTDOWN;' on psql console. (See 'man 1 pgbouncer'.)

@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
@@ -62,8 +62,8 @@ src_install() {
 	dodoc AUTHORS
 	use doc && dodoc doc/*.rst
 
-	newconfd "${FILESDIR}/${PN}.confd" "${PN}"
-	newinitd "${FILESDIR}/${PN}.initd-r1" "${PN}"
+	newconfd "${FILESDIR}/${PN}.confd-r1" "${PN}"
+	newinitd "${FILESDIR}/${PN}.initd-r2" "${PN}"
 
 	insinto /etc
 	doins etc/pgbouncer.ini
