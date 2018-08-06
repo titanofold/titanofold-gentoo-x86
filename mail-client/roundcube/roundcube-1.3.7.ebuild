@@ -63,7 +63,7 @@ src_prepare() {
 	# Redundant. (Bug #644896)
 	rm -r vendor/pear || die
 	# Remove references to PEAR. (Bug #650910)
-	mv "${FILESDIR}"/${P}-pear-removed-installed.json \
+	cp "${FILESDIR}"/${P}-pear-removed-installed.json \
 	   vendor/composer/installed.json \
 	   || die
 }
@@ -89,15 +89,8 @@ src_install() {
 pkg_postinst() {
 	webapp_pkg_postinst
 
-	ewarn
-	ewarn "When upgrading from <= 0.9, note that the old configuration files"
-	ewarn "named main.inc.php and db.inc.php are deprecated and should be"
-	ewarn "replaced with one single config.inc.php file."
-	ewarn
-	ewarn "Run the ./bin/update.sh script to convert those"
-	ewarn "or manually merge the files."
-	ewarn
-	ewarn "The new config.inc.php should only contain options that"
-	ewarn "differ from the ones listed in defaults.inc.php."
-	ewarn
+	if [[ -n ${REPLACING_VERSIONS} ]]; then
+		elog "You can review the post-upgrade instructions at:"
+		elog "${EROOT%/}/usr/share/webapps/${PN}/${PV}/postupgrade-en.txt"
+	fi
 }
