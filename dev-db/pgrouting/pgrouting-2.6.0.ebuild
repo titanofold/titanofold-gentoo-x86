@@ -26,8 +26,8 @@ RDEPEND="${POSTGRES_DEP}
 "
 
 DEPEND="
-	doc? ( >=dev-python/sphinx-1.1 )
-	pdf? ( >=dev-python/sphinx-1.1[latex] )
+	doc? ( >=dev-python/sphinx-1.2 )
+	pdf? ( >=dev-python/sphinx-1.2[latex] )
 "
 
 # Needs a running psql instance, doesn't work out of the box
@@ -41,7 +41,6 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_HTML=$(usex html)
 		-DBUILD_LATEX=$(usex pdf)
-		-DBUILD_MAN=$(usex doc)
 		-DWITH_DD=$(usex drivingdistance)
 		-DWITH_DOC=$(usex doc)
 	)
@@ -51,14 +50,14 @@ src_configure() {
 
 src_compile() {
 	local make_opts
-	use doc && make_opts="all doc"
+	#use doc && make_opts="all doc"
 	cmake-utils_src_make ${make_opts}
 }
 
 src_install() {
 	cmake-utils_src_install
 
-	use doc && doman "${BUILD_DIR}"/doc/man/en/pgrouting.7
+	#use doc && doman "${BUILD_DIR}"/doc/man/en/pgrouting.7
 	use html && dodoc -r "${BUILD_DIR}"/doc/html
 	use pdf && dodoc "${BUILD_DIR}"/doc/latex/en/*.pdf
 }
