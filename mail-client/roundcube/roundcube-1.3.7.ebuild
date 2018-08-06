@@ -15,9 +15,9 @@ SRC_URI="https://github.com/${PN}/${MY_PN}/releases/download/${PV}/${MY_P}-compl
 # roundcube is GPL-licensed, the rest of the licenses here are
 # for bundled PEAR components, googiespell and utf8.class.php
 LICENSE="GPL-3 BSD PHP-2.02 PHP-3 MIT public-domain"
-KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~x86"
+KEYWORDS="~amd64 ~arm ~ppc ~ppc64 ~sparc ~x86"
 
-IUSE="enigma ldap managesieve mysql postgres sqlite ssl spell"
+IUSE="change-password enigma ldap managesieve mysql postgres sqlite ssl spell"
 REQUIRED_USE="|| ( mysql postgres sqlite )"
 
 # this function only sets DEPEND so we need to include that in RDEPEND
@@ -26,17 +26,17 @@ need_httpd_cgi
 # :TODO: Support "endriod/qrcode: ~1.6.5" dep (ebuild needed)
 RDEPEND="
 	${DEPEND}
-	>=dev-lang/php-5.4.0[filter,gd,iconv,json,ldap?,pdo,postgres?,session,sockets,sqlite?,ssl?,unicode,xml]
+	>=dev-lang/php-5.4.0[filter,gd,iconv,json,ldap?,pdo,postgres?,session,sqlite?,ssl?,unicode,xml]
 	>=dev-php/PEAR-Auth_SASL-1.1.0
 	>=dev-php/PEAR-Mail_Mime-1.10.0
 	>=dev-php/PEAR-Mail_mimeDecode-1.5.5
 	>=dev-php/PEAR-Net_IDNA2-0.2.0
 	>=dev-php/PEAR-Net_SMTP-1.7.1
-	>=dev-php/PEAR-Net_Socket-1.2.1
-	dev-php/PEAR-Console_CommandLine
-	dev-php/PEAR-Console_Getopt
-	dev-php/PEAR-Exception
 	virtual/httpd-php
+	change-password? (
+		>=dev-php/PEAR-Net_Socket-1.2.1
+		dev-lang/php[sockets]
+	)
 	enigma? (
 		>=dev-php/PEAR-Crypt_GPG-1.6.0
 		app-crypt/gnupg
@@ -55,13 +55,17 @@ RDEPEND="
 	spell? ( dev-lang/php[curl,spell] )
 "
 
-S=${WORKDIR}/${MY_P}
+S="${WORKDIR}/${MY_P}"
 
 src_prepare() {
 	default
 
 	# Redundant. (Bug #644896)
 	rm -r vendor/pear || die
+	# Remove references to PEAR. (Bug #650910)
+	mv "${FILESDIR}"/${P}-pear-removed-installed.json \
+	   vendor/composer/installed.json \
+	   || die
 }
 
 src_install() {
