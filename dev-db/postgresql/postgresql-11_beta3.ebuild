@@ -5,10 +5,10 @@ EAPI="6"
 
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
-PLOCALES="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN
-		 zh_TW"
+PLOCALES="af cs de en es fa fr hr hu it ko nb pl pt-BR ro ru sk sl sv tr zh-CN
+		 zh-TW"
 
-inherit flag-o-matic l10n linux-info multilib pam prefix python-single-r1 \
+inherit flag-o-matic linux-info multilib pam prefix python-single-r1 \
 		systemd user versionator
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
@@ -22,10 +22,13 @@ SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2"
 
 LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"
-HOMEPAGE="http://www.postgresql.org/"
+HOMEPAGE="https://www.postgresql.org/"
 
-IUSE="doc kerberos kernel_linux ldap libressl nls pam perl python +readline
+IUSE="doc kerberos kernel_linux ldap libressl llvm nls pam perl python +readline
 	  selinux +server systemd ssl static-libs tcl threads uuid xml zlib"
+for my_locale in ${PLOCALES}; do
+	IUSE+=" l10n_${my_locale}"
+done
 
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
@@ -35,6 +38,10 @@ sys-apps/less
 virtual/libintl
 kerberos? ( virtual/krb5 )
 ldap? ( net-nds/openldap )
+llvm? (
+	sys-devel/llvm:=
+	sys-devel/clang:=
+)
 pam? ( virtual/pam )
 perl? ( >=dev-lang/perl-5.8:= )
 python? ( ${PYTHON_DEPS} )
@@ -87,6 +94,14 @@ RDEPEND="${CDEPEND}
 selinux? ( sec-policy/selinux-postgresql )
 "
 
+my_get_locales() {
+	local my_locale locale_list
+	for my_locale in ${PLOCALES[@]}; do
+		use l10n_${my_locale} && locale_list+=( ${my_locale} )
+	done
+	echo -n ${locale_list[@]}
+}
+
 pkg_setup() {
 	use server && CONFIG_CHECK="~SYSVIPC" linux-info_pkg_setup
 
@@ -97,9 +112,6 @@ pkg_setup() {
 }
 
 src_prepare() {
-	# Work around PPC{,64} compilation bug where bool is already defined
-	sed '/#ifndef __cplusplus/a #undef bool' -i src/include/c.h || die
-
 	# Set proper run directory
 	sed "s|\(PGSOCKET_DIR\s\+\)\"/tmp\"|\1\"${EPREFIX}/run/postgresql\"|" \
 		-i src/include/pg_config_manual.h || die
@@ -109,10 +121,10 @@ src_prepare() {
 	# hardened and non-hardened environments. (Bug #528786)
 	sed 's/@install_bin@/install -c/' -i src/Makefile.global.in || die
 
-	use server || eapply "${FILESDIR}/${PN}-10.2-no-server.patch"
+	use server || eapply "${FILESDIR}/${PN}-11_beta1-no-server.patch"
 
 	if use pam ; then
-		sed -e "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \
+		sed "s/\(#define PGSQL_PAM_SERVICE \"postgresql\)/\1-${SLOT}/" \
 			-i src/backend/libpq/auth.c || \
 			die 'PGSQL_PAM_SERVICE rename failed.'
 	fi
@@ -152,21 +164,22 @@ src_configure() {
 		--sysconfdir="${PO}/etc/postgresql-${SLOT}" \
 		--with-system-tzdata="${PO}/usr/share/zoneinfo" \
 		$(use_enable !alpha spinlocks) \
+		$(use_enable nls nls "'$(my_get_locales)'") \
 		$(use_enable threads thread-safety) \
 		$(use_with kerberos gssapi) \
 		$(use_with ldap) \
+		$(use_with llvm) \
 		$(use_with pam) \
 		$(use_with perl) \
 		$(use_with python) \
 		$(use_with readline) \
 		$(use_with ssl openssl) \
-		$(usex server "$(use_with systemd)" '--without-systemd') \
 		$(use_with tcl) \
-		${uuid_config} \
 		$(use_with xml libxml) \
 		$(use_with xml libxslt) \
 		$(use_with zlib) \
-		$(use_enable nls nls "'$(l10n_get_locales)'")
+		$(usex server "$(use_with systemd)" '--without-systemd') \
+		${uuid_config}
 }
 
 src_compile() {
@@ -283,7 +296,7 @@ pkg_postinst() {
 		elog "https://wiki.gentoo.org/wiki/PostgreSQL"
 		elog
 		elog "Official documentation:"
-		elog "http://www.postgresql.org/docs/${SLOT}/static/index.html"
+		elog "https://www.postgresql.org/docs/${SLOT}/static/index.html"
 		elog
 		elog "The default location of the Unix-domain socket is:"
 		elog "    ${EROOT%/}/run/postgresql/"
@@ -348,8 +361,8 @@ pkg_config() {
 	einfo "    ${EROOT%/}/etc/conf.d/postgresql-${SLOT}"
 	einfo
 	einfo "Information on options that can be passed to initdb are found at:"
-	einfo "    http://www.postgresql.org/docs/${SLOT}/static/creating-cluster.html"
-	einfo "    http://www.postgresql.org/docs/${SLOT}/static/app-initdb.html"
+	einfo "    https://www.postgresql.org/docs/${SLOT}/static/creating-cluster.html"
+	einfo "    https://www.postgresql.org/docs/${SLOT}/static/app-initdb.html"
 	einfo
 	einfo "PG_INITDB_OPTS is currently set to:"
 	if [[ -z "${PG_INITDB_OPTS}" ]] ; then
