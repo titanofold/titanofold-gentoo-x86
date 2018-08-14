@@ -20,7 +20,7 @@ REQUIRED_USE="ssl? ( !miniz )"
 DEPEND="
 	sys-libs/zlib
 	|| ( sys-libs/readline:0 dev-libs/libedit )
-	system-sqlite? ( >=dev-db/sqlite-3.22.0:3 )
+	system-sqlite? ( >=dev-db/sqlite-3.24.0:3 )
 	ssl? ( dev-libs/openssl:0 )
 	tcl? ( dev-lang/tcl:0= )
 "
