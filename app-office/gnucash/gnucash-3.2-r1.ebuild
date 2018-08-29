@@ -19,7 +19,7 @@ LICENSE="GPL-2"
 KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 
 IUSE="aqbanking chipcard debug doc examples gnome-keyring mysql nls ofx postgres
-	  python quotes -register2 sqlite"
+	  python quotes -register2 sqlite +gui"
 REQUIRED_USE="
 	chipcard? ( aqbanking )
 	python? ( ${PYTHON_REQUIRED_USE} )"
@@ -30,14 +30,16 @@ REQUIRED_USE="
 RDEPEND="
 	>=dev-libs/glib-2.40.0:2
 	>=dev-libs/libxml2-2.7.0:2
-	>=dev-scheme/guile-2.0.0:12=[regex]
 	>=sys-libs/zlib-1.1.4
-	>=x11-libs/gtk+-3.14.0:3
+	>=dev-scheme/guile-2.0.0:12=[regex]
+	gui? (
+	  gnome-base/dconf
+	  net-libs/webkit-gtk:4=
+	  >=x11-libs/gtk+-3.14.0:3
+	  )
 	dev-libs/boost:=[icu,nls]
 	dev-libs/icu:=
 	dev-libs/libxslt
-	gnome-base/dconf
-	net-libs/webkit-gtk:4=
 	aqbanking? (
 		>=net-libs/aqbanking-5[gtk,ofx?]
 		sys-libs/gwenhywfar[gtk]
@@ -70,7 +72,7 @@ DEPEND="${RDEPEND}
 	>=sys-devel/gettext-0.19.6
 	dev-lang/perl
 	dev-perl/XML-Parser
-	gnome-base/gnome-common
+	gui? ( gnome-base/gnome-common )
 	sys-devel/libtool
 	virtual/pkgconfig
 "
@@ -80,11 +82,14 @@ PDEPEND="doc? (
 	gnome-extra/yelp
 )"
 
-#PATCHES=( "${FILESDIR}"/${PN}-2.7.4-fix-tests-for-32bit-platforms.patch )
-
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
 	xdg_environment_reset
+}
+
+src_prepare() {
+	use gui || eapply "${FILESDIR}"/${PN}-3.2-no-gui.patch
+	default
 }
 
 src_configure() {
@@ -103,6 +108,7 @@ src_configure() {
 		-DWITH_OFX=$(usex ofx)
 		-DWITH_PYTHON=$(usex python)
 		-DWITH_SQL=${sql_on_off}
+		-DWITH_GNUCASH=$(usex gui)
 	)
 
 	cmake-utils_src_configure
@@ -122,7 +128,10 @@ src_install() {
 	cmake-utils_src_install
 
 	rm "${ED%/}"/usr/share/doc/${PF}/README.dependencies || die
-	rm "${ED%/}"/usr/share/glib-2.0/schemas/gschemas.compiled || die
+
+	if use gui ; then
+	  rm "${ED%/}"/usr/share/glib-2.0/schemas/gschemas.compiled || die
+	fi
 
 	if use examples ; then
 		mv "${ED%/}"/usr/share/doc/gnucash \
@@ -141,8 +150,10 @@ src_install() {
 }
 
 pkg_postinst() {
-	gnome2_icon_cache_update
-	gnome2_schemas_update
+	if use gui ; then
+		gnome2_icon_cache_update
+		gnome2_schemas_update
+	fi
 	xdg_desktop_database_update
 	xdg_mimeinfo_database_update
 
@@ -153,8 +164,10 @@ pkg_postinst() {
 }
 
 pkg_postrm() {
-	gnome2_icon_cache_update
-	gnome2_schemas_update
+	if use gui ; then
+		gnome2_icon_cache_update
+		gnome2_schemas_update
+	fi
 	xdg_desktop_database_update
 	xdg_mimeinfo_database_update
 }
