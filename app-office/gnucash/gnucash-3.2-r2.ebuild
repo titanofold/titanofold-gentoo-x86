@@ -32,11 +32,6 @@ RDEPEND="
 	>=dev-libs/libxml2-2.7.0:2
 	>=sys-libs/zlib-1.1.4
 	>=dev-scheme/guile-2.0.0:12=[regex]
-	gui? (
-	  gnome-base/dconf
-	  net-libs/webkit-gtk:4=
-	  >=x11-libs/gtk+-3.14.0:3
-	  )
 	dev-libs/boost:=[icu,nls]
 	dev-libs/icu:=
 	dev-libs/libxslt
@@ -46,6 +41,11 @@ RDEPEND="
 		chipcard? ( sys-libs/libchipcard )
 	)
 	gnome-keyring? ( >=app-crypt/libsecret-0.18 )
+	gui? (
+	  gnome-base/dconf
+	  net-libs/webkit-gtk:4=
+	  >=x11-libs/gtk+-3.14.0:3
+	)
 	mysql? (
 		dev-db/libdbi
 		dev-db/libdbi-drivers[mysql]
@@ -72,7 +72,6 @@ DEPEND="${RDEPEND}
 	>=sys-devel/gettext-0.19.6
 	dev-lang/perl
 	dev-perl/XML-Parser
-	gui? ( gnome-base/gnome-common )
 	sys-devel/libtool
 	virtual/pkgconfig
 "
@@ -82,14 +81,11 @@ PDEPEND="doc? (
 	gnome-extra/yelp
 )"
 
+PATCHES=( "${FILESDIR}"/${PN}-3.2-no-gui.patch )
+
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
 	xdg_environment_reset
-}
-
-src_prepare() {
-	use gui || eapply "${FILESDIR}"/${PN}-3.2-no-gui.patch
-	default
 }
 
 src_configure() {
