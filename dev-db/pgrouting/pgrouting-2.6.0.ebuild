@@ -3,7 +3,7 @@
 
 EAPI=6
 
-POSTGRES_COMPAT=( 9.{4,5,6} 10 )
+POSTGRES_COMPAT=( 9.{3..6} 10 11 )
 POSTGRES_USEDEP="server"
 
 inherit  postgres cmake-utils
@@ -15,14 +15,14 @@ LICENSE="GPL-2 MIT Boost-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 SRC_URI="https://github.com/pgRouting/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-IUSE="+drivingdistance doc pdf html"
+IUSE="doc pdf html"
 
 REQUIRED_USE="html? ( doc ) pdf? ( doc )"
 
 RDEPEND="${POSTGRES_DEP}
 	>=dev-db/postgis-2.0
 	dev-libs/boost
-	drivingdistance? ( sci-mathematics/cgal )
+	sci-mathematics/cgal
 "
 
 DEPEND="
@@ -33,6 +33,8 @@ DEPEND="
 # Needs a running psql instance, doesn't work out of the box
 RESTRICT="test"
 
+PATCHES=( "${FILESDIR}"/${PN}-2.6.0-man-doc.patch )
+
 pkg_setup() {
 	postgres_pkg_setup
 }
@@ -41,7 +43,7 @@ src_configure() {
 	local mycmakeargs=(
 		-DBUILD_HTML=$(usex html)
 		-DBUILD_LATEX=$(usex pdf)
-		-DWITH_DD=$(usex drivingdistance)
+		-DBUILD_MAN=ON
 		-DWITH_DOC=$(usex doc)
 	)
 
@@ -50,7 +52,7 @@ src_configure() {
 
 src_compile() {
 	local make_opts
-	#use doc && make_opts="all doc"
+	use doc && make_opts="all doc"
 	cmake-utils_src_make ${make_opts}
 }
 
