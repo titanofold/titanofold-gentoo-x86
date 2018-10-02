@@ -21,7 +21,7 @@ RDEPEND="
 	media-libs/libv4l
 	media-libs/libvpx
 	media-libs/openal
-	net-libs/tox:0/0.1[av]
+	>=net-libs/tox-0.2:=[av]
 	x11-libs/libX11
 	x11-libs/libXext
 	dbus? ( sys-apps/dbus )
@@ -31,7 +31,7 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig
 "
 
-S="${WORKDIR}/${MY_P}-${PV}"
+S="${WORKDIR}/${MY_P}"
 
 src_prepare() {
 	default
@@ -61,4 +61,15 @@ src_install() {
 		newicon -s ${size} icons/utox-${size}x${size}.png utox.png
 	done
 	doicon -s scalable icons/utox.svg
+}
+
+pkg_postinst() {
+	gnome2_icon_cache_update
+	xdg_desktop_database_update
+
+}
+
+pkg_postrm() {
+	gnome2_icon_cache_update
+	xdg_desktop_database_update
 }
