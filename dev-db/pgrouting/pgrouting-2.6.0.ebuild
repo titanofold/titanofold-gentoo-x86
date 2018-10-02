@@ -59,7 +59,8 @@ src_compile() {
 src_install() {
 	cmake-utils_src_install
 
-	#use doc && doman "${BUILD_DIR}"/doc/man/en/pgrouting.7
+	doman "${BUILD_DIR}"/doc/man/en/pgrouting.7
+
 	use html && dodoc -r "${BUILD_DIR}"/doc/html
 	use pdf && dodoc "${BUILD_DIR}"/doc/latex/en/*.pdf
 }
