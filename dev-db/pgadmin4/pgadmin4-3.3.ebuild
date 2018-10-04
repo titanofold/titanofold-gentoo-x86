@@ -3,13 +3,13 @@
 
 EAPI=6
 
-PYTHON_COMPAT=( python3_{4,5} )
+PYTHON_COMPAT=( python3_{4,5,6} )
 PYTHON_REQ_USE="sqlite"
 
 inherit python-single-r1 qmake-utils
 
 DESCRIPTION="GUI administration and development platform for PostgreSQL"
-HOMEPAGE="http://www.pgadmin.org/"
+HOMEPAGE="https://www.pgadmin.org/"
 SRC_URI="mirror://postgresql/pgadmin/${PN}/v${PV}/source/${P}.tar.gz"
 
 LICENSE="POSTGRESQL"
@@ -39,7 +39,7 @@ RDEPEND="${COMMON_DEPEND}
 	>=dev-python/click-6.6[${PYTHON_USEDEP}]
 	>=dev-python/extras-1.0.0[${PYTHON_USEDEP}]
 	>=dev-python/fixtures-3.0.0[${PYTHON_USEDEP}]
-	>=dev-python/flask-0.12.2[${PYTHON_USEDEP}]
+	>=dev-python/flask-1.0.2[${PYTHON_USEDEP}]
 	>=dev-python/flask-babel-0.11.1[${PYTHON_USEDEP}]
 	>=dev-python/flask-babelex-0.9.3[${PYTHON_USEDEP}]
 	>=dev-python/flask-gravatar-0.5.0[${PYTHON_USEDEP}]
@@ -70,6 +70,7 @@ RDEPEND="${COMMON_DEPEND}
 	>=dev-python/six-1.11.0[${PYTHON_USEDEP}]
 	>=dev-python/speaklater-1.3[${PYTHON_USEDEP}]
 	>=dev-python/sqlalchemy-1.2.5[${PYTHON_USEDEP}]
+	>=dev-python/sshtunnel-0.1.3[${PYTHON_USEDEP}]
 	>=dev-python/werkzeug-0.9.6[${PYTHON_USEDEP}]
 	>=dev-python/wtforms-2.1[${PYTHON_USEDEP}]
 "
