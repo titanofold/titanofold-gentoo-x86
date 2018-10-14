@@ -22,9 +22,8 @@ RESTRICT="test"
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 COMMON_DEPEND="${PYTHON_DEPS}
+	dev-qt/qtnetwork:5
 	dev-qt/qtwidgets:5
-	dev-qt/qtwebkit:5
-	dev-qt/qtwebengine:5[widgets]
 "
 
 DEPEND="${COMMON_DEPEND}
