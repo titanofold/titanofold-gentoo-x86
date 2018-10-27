@@ -63,7 +63,7 @@ src_prepare() {
 	# Redundant. (Bug #644896)
 	rm -r vendor/pear || die
 	# Remove references to PEAR. (Bug #650910)
-	cp "${FILESDIR}"/${P}-pear-removed-installed.json \
+	cp "${FILESDIR}"/roundcube-1.3.7-pear-removed-installed.json \
 	   vendor/composer/installed.json \
 	   || die
 }
