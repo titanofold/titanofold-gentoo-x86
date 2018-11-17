@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
@@ -278,6 +278,14 @@ pkg_postinst() {
 	elog "    ${EROOT%/}/etc/postgresql-${SLOT}/"
 
 	if use server ; then
+		if [[ -n ${REPLACING_VERSIONS} ]] ; then
+			ewarn "If your system is using 'pg_stat_statements' and you are running a"
+			ewarn "version of PostgreSQL ${SLOT}, we advise that you execute"
+			ewarn "the following command after upgrading:"
+			ewarn
+			ewarn "ALTER EXTENSION pg_stat_statements UPDATE;"
+		fi
+
 		elog
 		elog "Gentoo specific documentation:"
 		elog "https://wiki.gentoo.org/wiki/PostgreSQL"

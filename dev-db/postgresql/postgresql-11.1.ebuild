@@ -11,7 +11,7 @@ PLOCALES="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN
 inherit flag-o-matic l10n linux-info multilib pam prefix python-single-r1 \
 		systemd user versionator
 
-KEYWORDS="~alpha ~amd64 ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~ppc-macos ~x86-solaris"
 
 SLOT=$(get_major_version)
 
@@ -278,6 +278,14 @@ pkg_postinst() {
 	elog "    ${EROOT%/}/etc/postgresql-${SLOT}/"
 
 	if use server ; then
+		if [[ -n ${REPLACING_VERSIONS} ]] ; then
+			ewarn "If your system is using 'pg_stat_statements' and you are running a"
+			ewarn "version of PostgreSQL ${SLOT}, we advise that you execute"
+			ewarn "the following command after upgrading:"
+			ewarn
+			ewarn "ALTER EXTENSION pg_stat_statements UPDATE;"
+		fi
+
 		elog
 		elog "Gentoo specific documentation:"
 		elog "https://wiki.gentoo.org/wiki/PostgreSQL"
@@ -377,17 +385,18 @@ pkg_config() {
 
 	einfo "Creating the data directory ..."
 	if [[ ${EUID} == 0 ]] ; then
-		mkdir -p "${DATA_DIR}"
-		chown -Rf postgres:postgres "${DATA_DIR}"
-		chmod 0700 "${DATA_DIR}"
+		mkdir -p "$(dirname ${DATA_DIR%/})" || die "Couldn't parent dirs"
+		mkdir -m 0700 "${DATA_DIR%/}" || die "Couldn't make DATA_DIR"
+		chown -h postgres:postgres "${DATA_DIR%/}" || die "Couldn't chown"
 	fi
 
 	einfo "Initializing the database ..."
+	local pgbindir="${EROOT%/}"/usr/$(get_libdir)/postgresql-${SLOT}/bin
 
 	if [[ ${EUID} == 0 ]] ; then
-		su postgres -c "${EROOT%/}/usr/$(get_libdir)/postgresql-${SLOT}/bin/initdb -D \"${DATA_DIR}\" ${PG_INITDB_OPTS}"
+		su postgres -c "${pgbindir}/initdb -D \"${DATA_DIR}\" ${PG_INITDB_OPTS}"
 	else
-		"${EROOT%/}"/usr/$(get_libdir)/postgresql-${SLOT}/bin/initdb -U postgres -D "${DATA_DIR}" ${PG_INITDB_OPTS}
+		"${pgbindir}"/initdb -U postgres -D "${DATA_DIR}" ${PG_INITDB_OPTS}
 	fi
 
 	if [[ "${DATA_DIR%/}" != "${PGDATA%/}" ]] ; then
@@ -400,17 +409,12 @@ pkg_config() {
 	sed '/^#unix_socket_directories/,+1d' -i "${PGDATA%/}"/postgresql.conf
 
 	cat <<- EOF >> "${PGDATA%/}"/postgresql.conf
-		# This is here because of https://bugs.gentoo.org/show_bug.cgi?id=518522
+		# This is here because of https://bugs.gentoo.org/518522
 		# On the off-chance that you might need to work with UTF-8 encoded
 		# characters in PL/Perl
 		plperl.on_init = 'use utf8; use re; package utf8; require "utf8_heavy.pl";'
 	EOF
 
-	einfo "The autovacuum function, which was in contrib, has been moved to the main"
-	einfo "PostgreSQL functions starting with 8.1, and starting with 8.4 is now enabled"
-	einfo "by default. You can disable it in the cluster's:"
-	einfo "    ${PGDATA%/}/postgresql.conf"
-	einfo
 	if ! use systemd; then
 		einfo "The PostgreSQL server, by default, will log events to:"
 		einfo "    ${DATA_DIR%/}/postmaster.log"
