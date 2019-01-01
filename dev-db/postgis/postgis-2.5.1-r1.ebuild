@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="6"
@@ -52,8 +52,6 @@ REQUIRED_USE="test? ( doc ) ${POSTGRES_REQ_USE}"
 
 # Needs a running psql instance, doesn't work out of the box
 RESTRICT="test"
-
-MAKEOPTS+=' -j1'
 
 # These modules are built using the same *FLAGS that were used to build
 # dev-db/postgresql. The right thing to do is to ignore the current
