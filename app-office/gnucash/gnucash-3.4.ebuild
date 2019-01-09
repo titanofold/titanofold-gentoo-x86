@@ -92,6 +92,13 @@ pkg_setup() {
 	xdg_environment_reset
 }
 
+src_unpack() {
+	default
+	cp "${FILESDIR}"/gnucash-3.4-test-stress-options.scm \
+	   ${PN}-${PV}/${PN}/report/standard-reports/test/test-stress-options.scm \
+		|| die "Failed copying scm"
+}
+
 src_configure() {
 	local sql_on_off="OFF"
 	if use mysql || use postgres || use sqlite ; then
