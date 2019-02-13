@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Authors
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -61,7 +61,6 @@ RDEPEND="${COMMON_DEPEND}
 	>=dev-python/pbr-3.1.1[${PYTHON_USEDEP}]
 	>=dev-python/psutil-5.4.7[${PYTHON_USEDEP}]
 	>=dev-python/psycopg-2.7.4[${PYTHON_USEDEP}]
-	>=dev-python/pycrypto-2.6.1[${PYTHON_USEDEP}]
 	>=dev-python/pyrsistent-0.14.2[${PYTHON_USEDEP}]
 	>=dev-python/python-dateutil-2.7.1[${PYTHON_USEDEP}]
 	>=dev-python/python-sqlparse-0.2.4[${PYTHON_USEDEP}]

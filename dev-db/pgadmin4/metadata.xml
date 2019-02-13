@@ -3,6 +3,6 @@
 <pkgmetadata>
     <maintainer type="project">
         <email>pgsql-bugs@gentoo.org</email>
-        <name>PostgreSQL and Related Package Development</name>
+        <name>PostgreSQL</name>
     </maintainer>
 </pkgmetadata>
