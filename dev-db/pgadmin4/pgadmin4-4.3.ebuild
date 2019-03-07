@@ -36,6 +36,7 @@ RDEPEND="${COMMON_DEPEND}
 	>=dev-python/beautifulsoup-4.4.1[${PYTHON_USEDEP}]
 	>=dev-python/blinker-1.4[${PYTHON_USEDEP}]
 	>=dev-python/click-6.6[${PYTHON_USEDEP}]
+	>=dev-python/cryptography-2.2.2-r1[${PYTHON_USEDEP}]
 	>=dev-python/extras-1.0.0[${PYTHON_USEDEP}]
 	>=dev-python/fixtures-3.0.0[${PYTHON_USEDEP}]
 	>=dev-python/flask-0.12.4[${PYTHON_USEDEP}]
