@@ -1,10 +1,10 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
 DIST_AUTHOR=DWHEELER
-DIST_VERSION=3.33
+DIST_VERSION=3.34
 inherit perl-module
 
 DESCRIPTION="Stream TAP from pgTAP test scripts"
