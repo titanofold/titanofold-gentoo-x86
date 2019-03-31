@@ -1,7 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="6"
+EAPI=7
 
 PYTHON_COMPAT=( python2_7 python3_{4,5,6} )
 
@@ -9,11 +9,11 @@ PLOCALES="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN
 		  zh_TW"
 
 inherit flag-o-matic l10n linux-info multilib pam prefix python-single-r1 \
-		systemd user versionator
+		systemd user
 
 KEYWORDS="~alpha ~amd64 ~arm ~arm64 ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~amd64-fbsd ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
 
-SLOT="$(get_version_component_range 1-2)"
+SLOT=$(ver_cut 1-2)
 
 MY_PV=${PV/_/}
 S="${WORKDIR}/${PN}-${MY_PV}"
