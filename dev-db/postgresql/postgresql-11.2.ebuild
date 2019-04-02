@@ -24,7 +24,7 @@ LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"
 HOMEPAGE="http://www.postgresql.org/"
 
-IUSE="doc kerberos kernel_linux ldap libressl llvm nls pam perl python +readline
+IUSE="doc icu kerberos kernel_linux ldap libressl llvm nls pam perl python +readline
 	  selinux +server systemd ssl static-libs tcl threads uuid xml zlib"
 
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
@@ -33,6 +33,7 @@ CDEPEND="
 >=app-eselect/eselect-postgresql-2.0
 sys-apps/less
 virtual/libintl
+icu? ( dev-libs/icu:= )
 kerberos? ( virtual/krb5 )
 ldap? ( net-nds/openldap )
 llvm? ( sys-devel/llvm:=
@@ -152,6 +153,7 @@ src_configure() {
 		--with-system-tzdata="${PO}/usr/share/zoneinfo" \
 		$(use_enable !alpha spinlocks) \
 		$(use_enable threads thread-safety) \
+		$(use_with icu) \
 		$(use_with kerberos gssapi) \
 		$(use_with ldap) \
 		$(use_with llvm) \
