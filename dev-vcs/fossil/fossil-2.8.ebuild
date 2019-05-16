@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -20,7 +20,7 @@ REQUIRED_USE="ssl? ( !miniz )"
 DEPEND="
 	sys-libs/zlib
 	|| ( sys-libs/readline:0 dev-libs/libedit )
-	system-sqlite? ( >=dev-db/sqlite-3.25.0:3 )
+	system-sqlite? ( >=dev-db/sqlite-3.27.1:3 )
 	ssl? ( dev-libs/openssl:0 )
 	tcl? ( dev-lang/tcl:0= )
 "
