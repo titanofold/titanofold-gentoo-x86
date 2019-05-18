@@ -21,9 +21,9 @@ LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"
 HOMEPAGE="https://www.postgresql.org/"
 
-IUSE="doc kerberos kernel_linux ldap libressl nls pam perl -pg_legacytimestamp
-	  python +readline selinux +server systemd ssl static-libs tcl threads uuid
-	  xml zlib"
+IUSE="debug doc kerberos kernel_linux ldap libressl nls pam perl
+	  -pg_legacytimestamp python +readline selinux +server systemd ssl
+	  static-libs tcl threads uuid xml zlib"
 
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
@@ -150,6 +150,7 @@ src_configure() {
 		--with-system-tzdata="${PO}/usr/share/zoneinfo" \
 		$(use_enable !alpha spinlocks) \
 		$(use_enable !pg_legacytimestamp integer-datetimes) \
+		$(use_enable debug) \
 		$(use_enable threads thread-safety) \
 		$(use_with kerberos gssapi) \
 		$(use_with ldap) \

@@ -24,8 +24,9 @@ LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"
 HOMEPAGE="http://www.postgresql.org/"
 
-IUSE="doc icu kerberos kernel_linux ldap libressl llvm nls pam perl python +readline
-	  selinux +server systemd ssl static-libs tcl threads uuid xml zlib"
+IUSE="debug doc icu kerberos kernel_linux ldap libressl llvm nls pam
+	  perl python +readline selinux +server systemd ssl static-libs tcl
+	  threads uuid xml zlib"
 
 REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
@@ -36,8 +37,10 @@ virtual/libintl
 icu? ( dev-libs/icu:= )
 kerberos? ( virtual/krb5 )
 ldap? ( net-nds/openldap )
-llvm? ( sys-devel/llvm:=
-	sys-devel/clang:= )
+llvm? (
+	sys-devel/llvm:=
+	sys-devel/clang:=
+)
 pam? ( virtual/pam )
 perl? ( >=dev-lang/perl-5.8:= )
 python? ( ${PYTHON_DEPS} )
@@ -152,6 +155,7 @@ src_configure() {
 		--sysconfdir="${PO}/etc/postgresql-${SLOT}" \
 		--with-system-tzdata="${PO}/usr/share/zoneinfo" \
 		$(use_enable !alpha spinlocks) \
+		$(use_enable debug) \
 		$(use_enable threads thread-safety) \
 		$(use_with icu) \
 		$(use_with kerberos gssapi) \

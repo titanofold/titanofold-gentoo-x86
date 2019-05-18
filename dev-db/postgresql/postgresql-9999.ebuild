@@ -23,8 +23,9 @@ LICENSE="POSTGRESQL GPL-2"
 DESCRIPTION="PostgreSQL RDBMS"
 HOMEPAGE="https://www.postgresql.org/"
 
-IUSE="kerberos kernel_linux ldap libressl llvm nls pam perl python +readline
-	  selinux systemd ssl static-libs tcl threads uuid xml zlib"
+IUSE="debug icu kerberos kernel_linux ldap libressl llvm nls pam perl
+	  python +readline selinux systemd ssl static-libs tcl threads uuid
+	  xml zlib"
 for my_locale in ${PLOCALES}; do
 	IUSE+=" l10n_${my_locale}"
 done
@@ -35,6 +36,7 @@ CDEPEND="
 >=app-eselect/eselect-postgresql-2.0
 sys-apps/less
 virtual/libintl
+icu? ( dev-libs/icu:= )
 kerberos? ( virtual/krb5 )
 ldap? ( net-nds/openldap )
 llvm? (
@@ -178,8 +180,10 @@ src_configure() {
 		--sysconfdir="${PO}/etc/postgresql-${SLOT}" \
 		--with-system-tzdata="${PO}/usr/share/zoneinfo" \
 		$(use_enable !alpha spinlocks) \
+		$(use_enable debug) \
 		$(use_enable nls nls "'$(my_get_locales)'") \
 		$(use_enable threads thread-safety) \
+		$(use_with icu) \
 		$(use_with kerberos gssapi) \
 		$(use_with ldap) \
 		$(use_with llvm) \
