@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-POSTGRES_COMPAT=( 9.{3..6} 10 )
+POSTGRES_COMPAT=( 9.{4..6} {10..12} )
 POSTGRES_USEDEP="server"
 
 inherit autotools eutils postgres-multi subversion versionator
