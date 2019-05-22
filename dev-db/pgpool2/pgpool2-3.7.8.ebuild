@@ -1,9 +1,9 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
-POSTGRES_COMPAT=( 9.{3..6} {10..11} )
+POSTGRES_COMPAT=( 9.{3..6} 10 )
 
 inherit autotools postgres-multi
 
@@ -25,7 +25,7 @@ RDEPEND="
 	memcached? ( dev-libs/libmemcached )
 	pam? ( sys-auth/pambase )
 	ssl? (
-		!libressl? ( dev-libs/openssl:* )
+		!libressl? ( dev-libs/openssl:0= )
 		libressl? ( dev-libs/libressl:= )
 	)
 "
