@@ -3,15 +3,15 @@
 
 EAPI=6
 
-POSTGRES_COMPAT=( 9.{3..6} 10 )
+POSTGRES_COMPAT=( 9.{4..6} 10 )
 
 inherit autotools postgres-multi
 
 MY_P="${PN/2/-II}-${PV}"
 
 DESCRIPTION="Connection pool server for PostgreSQL"
-HOMEPAGE="http://www.pgpool.net/"
-SRC_URI="http://www.pgpool.net/download.php?f=${MY_P}.tar.gz -> ${MY_P}.tar.gz"
+HOMEPAGE="https://www.pgpool.net/"
+SRC_URI="https://www.pgpool.net/download.php?f=${MY_P}.tar.gz -> ${MY_P}.tar.gz"
 LICENSE="BSD"
 SLOT="0"
 
@@ -48,7 +48,7 @@ src_prepare() {
 		"${FILESDIR}/pgpool-configure-memcached.patch" \
 		"${FILESDIR}/pgpool-configure-pam.patch" \
 		"${FILESDIR}/pgpool-configure-pthread.patch" \
-		"${FILESDIR}/pgpool_run_paths-3.6.5.patch"
+		"${FILESDIR}/pgpool_run_paths-3.7.10.patch"
 
 	eautoreconf
 
