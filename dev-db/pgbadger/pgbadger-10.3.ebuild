@@ -18,3 +18,7 @@ DEPEND="
 		dev-perl/Text-CSV_XS
 "
 RDEPEND="${DEPEND}"
+
+src_test() {
+	prove || die
+}
