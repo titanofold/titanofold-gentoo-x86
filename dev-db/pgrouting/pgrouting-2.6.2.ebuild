@@ -1,9 +1,9 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
 
-POSTGRES_COMPAT=( 9.{3..6} 10 11 )
+POSTGRES_COMPAT=( 9.{4..6} 10 11 )
 POSTGRES_USEDEP="server"
 
 inherit  postgres cmake-utils
@@ -32,8 +32,6 @@ DEPEND="
 
 # Needs a running psql instance, doesn't work out of the box
 RESTRICT="test"
-
-PATCHES=( "${FILESDIR}"/${PN}-2.6.0-man-doc.patch )
 
 pkg_setup() {
 	postgres_pkg_setup
