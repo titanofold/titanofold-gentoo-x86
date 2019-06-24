@@ -4,7 +4,7 @@
 EAPI=6
 
 DIST_AUTHOR=DWHEELER
-DIST_VERSION=3.34
+DIST_VERSION=3.35
 inherit perl-module
 
 DESCRIPTION="Stream TAP from pgTAP test scripts"
@@ -13,9 +13,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE="test"
 
-RDEPEND="
-	virtual/perl-Test-Harness
-"
+RDEPEND="virtual/perl-Test-Harness"
 DEPEND="${RDEPEND}
 	>=dev-perl/Module-Build-0.300.0
 	test? (
