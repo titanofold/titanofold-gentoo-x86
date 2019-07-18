@@ -1,13 +1,13 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=5
+EAPI=6
 
 inherit webapp eutils depend.apache user
 
 DESCRIPTION="RT is an enterprise-grade ticketing system"
-HOMEPAGE="http://www.bestpractical.com/rt/"
-SRC_URI="http://download.bestpractical.com/pub/${PN}/release/${P}.tar.gz"
+HOMEPAGE="https://www.bestpractical.com/rt/"
+SRC_URI="https://download.bestpractical.com/pub/${PN}/release/${P}.tar.gz"
 
 KEYWORDS="~amd64"
 LICENSE="GPL-2"
@@ -78,6 +78,7 @@ DEPEND="
 	dev-perl/GraphViz
 	dev-perl/HTML-Formatter
 	dev-perl/HTML-FormatText-WithLinks-AndTables
+	dev-perl/HTML-Gumbo
 	dev-perl/HTML-Mason-PSGIHandler
 	dev-perl/HTML-Parser
 	dev-perl/HTML-Quoted
