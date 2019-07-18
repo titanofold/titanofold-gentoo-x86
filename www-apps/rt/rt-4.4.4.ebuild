@@ -28,7 +28,8 @@ DEPEND="
 	>=dev-perl/Date-Extract-0.02
 	>=dev-perl/DateTime-Format-Natural-0.67
 	>=dev-perl/Devel-StackTrace-1.19
-	>=dev-perl/Email-Address-1.908.0
+	>=dev-perl/Email-Address-1.912.0
+	>=dev-perl/Email-Address-List-0.60.0
 	>=dev-perl/HTML-FormatText-WithLinks-0.14
 	>=dev-perl/HTML-Mason-1.43
 	>=dev-perl/HTML-Scrubber-0.08
@@ -68,7 +69,6 @@ DEPEND="
 	dev-perl/Data-ICal
 	dev-perl/Date-Manip
 	dev-perl/Devel-GlobalDestruction
-	dev-perl/Email-Address-List
 	dev-perl/File-ShareDir
 	dev-perl/File-Which
 	dev-perl/GDGraph
@@ -206,7 +206,8 @@ src_prepare() {
 	sed -e "s|\$args{'with-DEV'} =1;|#\$args{'with-DEV'} =1;|" \
 		-i sbin/rt-test-dependencies.in || die 'dev sed failed'
 
-	epatch "${FILESDIR}/rt-makefile-serialize-install-prereqs.patch"
+	eapply "${FILESDIR}/rt-makefile-serialize-install-prereqs.patch"
+	eapply_user
 }
 
 src_configure() {
