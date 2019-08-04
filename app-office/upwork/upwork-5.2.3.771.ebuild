@@ -1,9 +1,9 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-inherit rpm eutils pax-utils
+inherit desktop pax-utils rpm
 
 # Binary only distribution
 QA_PREBUILT="*"
@@ -11,27 +11,29 @@ QA_PREBUILT="*"
 DESCRIPTION="Project collaboration and tracking software for upwork.com"
 HOMEPAGE="https://www.upwork.com/"
 SRC_URI="
-	amd64? ( https://updates-desktopapp.upwork.com/binaries/v4_2_153_0_tkzkho5lhz15j08q/upwork_x86_64.rpm -> ${P}_x86_64.rpm )
-	x86? ( https://updates-desktopapp.upwork.com/binaries/v4_2_153_0_tkzkho5lhz15j08q/upwork_i386.rpm -> ${P}_i386.rpm )
+	amd64? ( https://updates-desktopapp.upwork.com/binaries/v5_2_3_771_okk32anbjc976nah/upwork-5.2.3.771-1fc24.x86_64.rpm -> ${P}_x86_64.rpm )
+	x86? ( https://updates-desktopapp.upwork.com/binaries/v5_2_3_771_okk32anbjc976nah/upwork-5.2.3.771-1fc24.i386.rpm -> ${P}_i386.rpm )
 "
 LICENSE="ODESK"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 
 S=${WORKDIR}
+PATCHES=( "${FILESDIR}/${PN}-desktop-r1.patch" )
 
 DEPEND="dev-util/patchelf"
 RDEPEND="
-	dev-libs/libgcrypt:11
+	dev-libs/expat
+	dev-libs/nspr
+	dev-libs/nss
 	gnome-base/gconf
 	media-libs/alsa-lib
-	net-print/cups
+	media-libs/freetype
+	sys-apps/dbus
 	sys-libs/libcap
-	x11-libs/gtk+:2
+	x11-libs/gtk+:2[cups]
 	x11-libs/gtkglext
 "
-
-PATCHES=( "${FILESDIR}/${PN}-desktop.patch" )
 
 src_install() {
 	pax-mark m usr/share/upwork/upwork
@@ -39,8 +41,6 @@ src_install() {
 	dobin usr/bin/upwork
 
 	patchelf --set-rpath /usr/share/upwork usr/share/upwork/upwork
-	dolib usr/share/upwork/libcef.so
-	rm usr/share/upwork/libcef.so
 
 	insinto /usr/share
 	doins -r usr/share/upwork
