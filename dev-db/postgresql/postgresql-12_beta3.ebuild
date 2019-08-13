@@ -17,7 +17,6 @@ SLOT=$(ver_cut 1)
 
 MY_PV=${PV/_/}
 S="${WORKDIR}/${PN}-${MY_PV}"
-
 SRC_URI="mirror://postgresql/source/v${MY_PV}/postgresql-${MY_PV}.tar.bz2"
 
 LICENSE="POSTGRESQL GPL-2"
@@ -184,7 +183,7 @@ src_install() {
 	emake DESTDIR="${D}" install
 	emake DESTDIR="${D}" install -C contrib
 
-	dodoc README HISTORY doc/{TODO,bug.template}
+	dodoc README HISTORY
 
 	# man pages are already built, but if we have the target make them,
 	# they'll be generated from source before being installed so we
