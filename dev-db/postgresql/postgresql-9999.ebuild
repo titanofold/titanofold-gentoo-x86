@@ -207,7 +207,7 @@ src_compile() {
 src_install() {
 	emake DESTDIR="${D}" install-world
 
-	dodoc README HISTORY doc/{TODO,bug.template}
+	dodoc README HISTORY doc/TODO
 
 	insinto /etc/postgresql-${SLOT}
 	newins src/bin/psql/psqlrc.sample psqlrc
