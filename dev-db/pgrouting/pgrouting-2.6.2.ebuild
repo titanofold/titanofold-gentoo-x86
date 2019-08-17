@@ -15,9 +15,7 @@ LICENSE="GPL-2 MIT Boost-1.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 SRC_URI="https://github.com/pgRouting/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-IUSE="doc pdf html"
-
-REQUIRED_USE="html? ( doc ) pdf? ( doc )"
+IUSE="pdf html"
 
 RDEPEND="${POSTGRES_DEP}
 	>=dev-db/postgis-2.0
@@ -25,8 +23,9 @@ RDEPEND="${POSTGRES_DEP}
 	sci-mathematics/cgal
 "
 
-DEPEND="
-	doc? ( >=dev-python/sphinx-1.2 )
+# Sphinx is needed to build the man pages
+DEPEND="${RDEPEND}
+	>=dev-python/sphinx-1.2
 	pdf? ( >=dev-python/sphinx-1.2[latex] )
 "
 
@@ -42,16 +41,14 @@ src_configure() {
 		-DBUILD_HTML=$(usex html)
 		-DBUILD_LATEX=$(usex pdf)
 		-DBUILD_MAN=ON
-		-DWITH_DOC=$(usex doc)
+		-DWITH_DOC=ON
 	)
 
 	cmake-utils_src_configure
 }
 
 src_compile() {
-	local make_opts
-	use doc && make_opts="all doc"
-	cmake-utils_src_make ${make_opts}
+	cmake-utils_src_make all doc
 }
 
 src_install() {
