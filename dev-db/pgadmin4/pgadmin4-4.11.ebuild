@@ -1,7 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 PYTHON_COMPAT=( python3_{5,6} )
 PYTHON_REQ_USE="sqlite"
@@ -21,7 +21,9 @@ RESTRICT="test"
 
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
+# libsodium dep added because of 689678
 COMMON_DEPEND="${PYTHON_DEPS}
+	dev-libs/libsodium[-minimal]
 	dev-qt/qtnetwork:5
 	dev-qt/qtwidgets:5
 "
