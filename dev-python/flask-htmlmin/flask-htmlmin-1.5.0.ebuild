@@ -28,3 +28,7 @@ DEPEND="${RDEPEND}
 	dev-python/setuptools[${PYTHON_USEDEP}]"
 
 S="${WORKDIR}/${MY_P}"
+
+python_test() {
+	esetup.py test
+}
