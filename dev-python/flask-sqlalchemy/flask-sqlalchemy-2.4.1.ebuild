@@ -1,8 +1,8 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
-PYTHON_COMPAT=( python{2_7,3_4,3_5,3_6} pypy )
+EAPI=7
+PYTHON_COMPAT=( python{2_7,3_5,3_6,3_7} pypy )
 
 inherit distutils-r1
 
@@ -15,17 +15,15 @@ SRC_URI="mirror://pypi/${MY_PN:0:1}/${MY_PN}/${MY_P}.tar.gz"
 
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="amd64 x86"
-IUSE="doc"
+KEYWORDS="~amd64 ~x86"
+IUSE="doc test"
 
 RDEPEND="dev-python/setuptools[${PYTHON_USEDEP}]
 	>=dev-python/flask-0.10[${PYTHON_USEDEP}]
-	dev-python/sqlalchemy[${PYTHON_USEDEP}]"
+	>=dev-python/sqlalchemy-0.8.0[${PYTHON_USEDEP}]"
 DEPEND="${RDEPEND}
+	test? ( dev-python/pytest[${PYTHON_USEDEP}] )
 	doc? ( dev-python/sphinx[${PYTHON_USEDEP}] )"
-
-# Patch out un-needed d'loading of obj.inv files in doc build
-PATCHES=( "${FILESDIR}"/2.3.2-mapping.patch )
 
 # Req'd for tests in py3
 DISTUTILS_IN_SOURCE_BUILD=1
@@ -37,7 +35,7 @@ python_compile_all() {
 }
 
 python_test() {
-	esetup.py test
+	pytest
 }
 
 python_install_all() {
