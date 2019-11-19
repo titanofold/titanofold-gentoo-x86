@@ -6,8 +6,8 @@ EAPI=7
 inherit user
 
 DESCRIPTION="Lightweight connection pooler for PostgreSQL"
-HOMEPAGE="https://pgbouncer.github.io"
-SRC_URI="https://pgbouncer.github.io/downloads/files/${PV}/${P}.tar.gz"
+HOMEPAGE="https://www.pgbouncer.org/"
+SRC_URI="https://www.pgbouncer.org/downloads/files/${PV}/pgbouncer-${PV}.tar.gz"
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
@@ -26,6 +26,10 @@ RDEPEND="
 
 DEPEND="${RDEPEND}"
 
+# Tests require a local database server, wants to fiddle with iptables,
+# and doesn't support override. things.
+RESTRICT="test"
+
 pkg_setup() {
 	enewgroup postgres 70
 	enewuser postgres 70 /bin/bash /var/lib/postgresql postgres
@@ -34,7 +38,7 @@ pkg_setup() {
 }
 
 src_prepare() {
-	eapply "${FILESDIR}/pgbouncer-1.8-dirs.patch"
+	eapply "${FILESDIR}"/pgbouncer-1.12-dirs.patch
 
 	default
 }
@@ -49,11 +53,6 @@ src_configure() {
 		$(use_with pam) \
 		$(use_with ssl openssl) \
 		$(use_with udns)
-}
-
-src_test() {
-	cd "${S}/test"
-	emake
 }
 
 src_install() {

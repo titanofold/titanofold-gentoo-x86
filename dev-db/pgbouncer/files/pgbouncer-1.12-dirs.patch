@@ -1,7 +1,6 @@
-diff -Naruw pgbouncer-1.8.orig/etc/pgbouncer.ini pgbouncer-1.8/etc/pgbouncer.ini
---- pgbouncer-1.8.orig/etc/pgbouncer.ini	2017-12-18 11:03:18.000000000 -0500
-+++ pgbouncer-1.8/etc/pgbouncer.ini	2017-12-20 06:48:25.935839539 -0500
-@@ -34,7 +34,9 @@
+--- a/etc/pgbouncer.ini
++++ b/etc/pgbouncer.ini
+@@ -43,7 +43,9 @@
  ;;;
  
  logfile = /var/log/pgbouncer/pgbouncer.log
@@ -12,12 +11,12 @@ diff -Naruw pgbouncer-1.8.orig/etc/pgbouncer.ini pgbouncer-1.8/etc/pgbouncer.ini
  
  ;;;
  ;;; Where to wait for clients
-@@ -44,11 +46,12 @@
+@@ -53,11 +55,12 @@
  listen_addr = 127.0.0.1
  listen_port = 6432
  
--; Unix socket is also used for -R.
--; On Debian it should be /var/run/postgresql
+-;; Unix socket is also used for -R.
+-;; On Debian it should be /var/run/postgresql
 -;unix_socket_dir = /tmp
 -;unix_socket_mode = 0777
 -;unix_socket_group =
