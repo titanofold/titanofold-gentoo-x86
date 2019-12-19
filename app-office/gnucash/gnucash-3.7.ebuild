@@ -1,7 +1,7 @@
 # Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
 PYTHON_COMPAT=( python3_{5,6} )
 
@@ -50,7 +50,7 @@ RDEPEND="
 		dev-db/libdbi
 		dev-db/libdbi-drivers[mysql]
 	)
-	ofx? ( >=dev-libs/libofx-0.9.1 )
+	ofx? ( >=dev-libs/libofx-0.9.1:= )
 	postgres? (
 		dev-db/libdbi
 		dev-db/libdbi-drivers[postgres]
@@ -68,12 +68,12 @@ RDEPEND="
 "
 
 DEPEND="${RDEPEND}
+	>=dev-cpp/gtest-1.8.0
 	>=sys-devel/gettext-0.19.6
 	dev-lang/perl
 	dev-perl/XML-Parser
 	sys-devel/libtool
 	virtual/pkgconfig
-	test? ( >=dev-cpp/gtest-1.8.0 )
 "
 
 PDEPEND="doc? (
@@ -88,13 +88,6 @@ PATCHES=(
 
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
-}
-
-src_unpack() {
-	default
-	cp "${FILESDIR}"/gnucash-3.4-test-stress-options.scm \
-	   ${PN}-${PV}/${PN}/report/standard-reports/test/test-stress-options.scm \
-		|| die "Failed copying scm"
 }
 
 src_prepare() {
