@@ -1,4 +1,4 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~x86"
 
 DESCRIPTION="${MY_PN} is a job scheduler for PostgreSQL"
 HOMEPAGE="https://www.pgadmin.org/download/pgagent-source-code/"
-SRC_URI="mirror://postgresql/pgadmin/${PN}/${MY_PN}-${PV}-Source.tar.gz"
+SRC_URI="https://ftp.postgresql.org/pub/pgadmin/${PN}/${MY_PN}-${PV}-Source.tar.gz"
 
 LICENSE="POSTGRESQL GPL-2"
 SLOT="0"
@@ -23,6 +23,8 @@ RDEPEND="dev-db/postgresql:*
 DEPEND="${RDEPEND}"
 
 S="${WORKDIR}/${MY_PN}-${PV}-Source"
+
+PATCHES=( "${FILESDIR}"/pgagent-4.0.0-pthreads-linking.patch )
 
 src_prepare() {
 	cmake-utils_src_prepare
