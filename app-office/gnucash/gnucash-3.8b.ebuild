@@ -1,15 +1,15 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{5,6} )
+PYTHON_COMPAT=( python3_{6,7} )
 
 inherit cmake-utils gnome2-utils python-single-r1 xdg-utils
 
 DESCRIPTION="A personal finance manager"
 HOMEPAGE="http://www.gnucash.org/"
-SRC_URI="https://github.com/Gnucash/${PN}/releases/download/${PV}/${P}.tar.bz2"
+SRC_URI="https://github.com/Gnucash/gnucash/releases/download/3.8b/gnucash-3.8b.tar.bz2"
 
 SLOT="0"
 LICENSE="GPL-2"
@@ -86,6 +86,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-3.7-include-checksymbolexists.patch
 )
 
+S="${WORKDIR}/${PN}-$(ver_cut 1-2)"
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
 }
