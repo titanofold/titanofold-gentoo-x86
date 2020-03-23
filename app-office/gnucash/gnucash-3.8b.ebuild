@@ -159,7 +159,7 @@ src_test() {
 	fi
 
 	cd "${BUILD_DIR}" || die
-	XDG_DATA_HOME="${T}/$(whoami)" cmake-utils_src_test
+	XDG_DATA_HOME="${T}/$(whoami)" eninja check
 }
 
 src_install() {
@@ -168,7 +168,6 @@ src_install() {
 	pushd "${ED%/}"/usr/share/doc/${PF} > /dev/null || die
 	rm *win32-bin.txt README.dependencies || die
 	popd > /dev/null || die
-
 
 	if use examples ; then
 		docompress -x /usr/share/doc/${PF}/examples/
