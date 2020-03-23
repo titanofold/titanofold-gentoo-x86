@@ -34,10 +34,6 @@ RDEPEND="
 	x11-libs/pango:0/0
 "
 
-		# dev-python/pytest-cov[${PYTHON_USEDEP}]
-		# dev-python/pytest-flake8[${PYTHON_USEDEP}]
-		# dev-python/pytest-isort[${PYTHON_USEDEP}]
-
 DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]
 	test? (
 		${RDEPEND}
