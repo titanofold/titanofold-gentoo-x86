@@ -3,13 +3,13 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{6,7} )
+PYTHON_COMPAT=( python3_{6,7,8} )
 
 inherit cmake-utils gnome2-utils python-single-r1 xdg-utils
 
 DESCRIPTION="A personal finance manager"
 HOMEPAGE="http://www.gnucash.org/"
-SRC_URI="https://github.com/Gnucash/gnucash/releases/download/3.8b/gnucash-3.8b.tar.bz2"
+SRC_URI="https://github.com/Gnucash/${PN}/releases/download/${PV}/${P}.tar.bz2"
 
 SLOT="0"
 LICENSE="GPL-2"
@@ -29,22 +29,22 @@ REQUIRED_USE="
 RDEPEND="
 	>=dev-libs/glib-2.46.0:2
 	>=dev-libs/libxml2-2.7.0:2
+	>=dev-scheme/guile-2.2.0:12=[deprecated,regex]
+	>=sys-libs/zlib-1.1.4
 	dev-libs/boost:=[icu,nls]
 	dev-libs/icu:=
 	dev-libs/libxslt
-	>=dev-scheme/guile-2.2.0:12=[deprecated,regex]
-	>=sys-libs/zlib-1.1.4
 	aqbanking? (
 		>=net-libs/aqbanking-5[ofx?]
-		sys-libs/gwenhywfar
+		>=sys-libs/gwenhywfar-4.20.2
 		smartcard? ( sys-libs/libchipcard )
 	)
 	gnome-keyring? ( >=app-crypt/libsecret-0.18 )
 	gui? (
+		>=x11-libs/gtk+-3.14.0:3
 		gnome-base/dconf
 		net-libs/webkit-gtk:4=
-		>=x11-libs/gtk+-3.14.0:3
-		aqbanking? ( >=sys-libs/gwenhywfar-4.20.2[gtk] )
+		aqbanking? ( sys-libs/gwenhywfar[gtk] )
 	)
 	mysql? (
 		dev-db/libdbi
@@ -84,16 +84,17 @@ PDEPEND="doc? (
 PATCHES=(
 	"${FILESDIR}"/${PN}-3.2-no-gui.patch
 	"${FILESDIR}"/${PN}-3.7-include-checksymbolexists.patch
+	"${FILESDIR}"/${PN}-3.8-examples-subdir.patch
 )
 
 S="${WORKDIR}/${PN}-$(ver_cut 1-2)"
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
+	xdg_environment_reset
 }
 
 src_prepare() {
 	cmake-utils_src_prepare
-	xdg_environment_reset
 
 	# Fix tests writing to /tmp
 	local fixtestfiles=(
@@ -158,24 +159,21 @@ src_test() {
 	fi
 
 	cd "${BUILD_DIR}" || die
-	XDG_DATA_HOME="${T}/$(whoami)" emake check
+	XDG_DATA_HOME="${T}/$(whoami)" cmake-utils_src_test
 }
 
 src_install() {
 	cmake-utils_src_install
 
-	rm "${ED%/}"/usr/share/doc/${PF}/README.dependencies || die
+	pushd "${ED%/}"/usr/share/doc/${PF} > /dev/null || die
+	rm *win32-bin.txt README.dependencies || die
+	popd > /dev/null || die
+
 
 	if use examples ; then
-		mv "${ED%/}"/usr/share/doc/gnucash \
-		   "${ED%/}"/usr/share/doc/${PF}/examples || die
-		pushd "${ED%/}"/usr/share/doc/${PF}/examples/ > /dev/null || die
-		rm AUTHORS DOCUMENTERS LICENSE NEWS projects.html ChangeLog* \
-		   *win32-bin.txt || die
-		popd > /dev/null || die
 		docompress -x /usr/share/doc/${PF}/examples/
 	else
-		rm -r "${ED%/}"/usr/share/doc/gnucash || die
+		rm -r "${ED%/}"/usr/share/doc/${PF}/examples || die
 	fi
 
 	use aqbanking && dodoc doc/README.HBCI

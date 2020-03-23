@@ -1,0 +1,11 @@
+diff -Naruw gnucash-3.8.orig/doc/examples/CMakeLists.txt gnucash-3.8/doc/examples/CMakeLists.txt
+--- gnucash-3.8.orig/doc/examples/CMakeLists.txt	2019-01-11 18:57:37.000000000 -0500
++++ gnucash-3.8/doc/examples/CMakeLists.txt	2020-03-22 08:13:23.976995622 -0400
+@@ -21,6 +21,6 @@
+   web.qif
+ )
+ 
+-install(FILES ${examples_DATA} DESTINATION  ${CMAKE_INSTALL_DOCDIR})
++install(FILES ${examples_DATA} DESTINATION  ${CMAKE_INSTALL_DOCDIR}/examples)
+ 
+ set_dist_list(examples_DIST ${examples_DATA} CMakeLists.txt )
