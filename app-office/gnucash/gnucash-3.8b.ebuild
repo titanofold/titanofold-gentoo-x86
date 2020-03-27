@@ -25,7 +25,9 @@ REQUIRED_USE="
 # libdbi version requirement for sqlite taken from bug #455134
 #
 # dev-libs/boost must always be built with nls enabled.
-# guile[deprecated] because of SCM_LIST*() use
+# guile[deprecated] because of SCM_LIST*() use.
+# net-libs/aqbanking dropped gtk with v6, so to simplify the dependency,
+# we just rely on that.
 RDEPEND="
 	>=dev-libs/glib-2.46.0:2
 	>=dev-libs/libxml2-2.7.0:2
@@ -35,7 +37,7 @@ RDEPEND="
 	dev-libs/icu:=
 	dev-libs/libxslt
 	aqbanking? (
-		>=net-libs/aqbanking-5[ofx?]
+		>=net-libs/aqbanking-6[ofx?]
 		>=sys-libs/gwenhywfar-5.1.2
 		smartcard? ( sys-libs/libchipcard )
 	)
@@ -44,6 +46,7 @@ RDEPEND="
 		>=x11-libs/gtk+-3.14.0:3
 		gnome-base/dconf
 		net-libs/webkit-gtk:4=
+		sys-libs/gwenhywfar[gtk]
 	)
 	mysql? (
 		dev-db/libdbi
@@ -82,8 +85,8 @@ PDEPEND="doc? (
 
 PATCHES=(
 	"${FILESDIR}"/${PN}-3.2-no-gui.patch
-	"${FILESDIR}"/${PN}-3.7-include-checksymbolexists.patch
 	"${FILESDIR}"/${PN}-3.8-examples-subdir.patch
+	"${FILESDIR}"/${PN}-3.8-exclude-license.patch
 )
 
 S="${WORKDIR}/${PN}-$(ver_cut 1-2)"
@@ -164,14 +167,13 @@ src_test() {
 src_install() {
 	cmake-utils_src_install
 
-	pushd "${ED%/}"/usr/share/doc/${PF} > /dev/null || die
-	rm *win32-bin.txt README.dependencies || die
-	popd > /dev/null || die
+	# It doesn't matter if we can't remove irrelevant READMEs
+	rm "${ED}"/usr/share/doc/${PF}/*win32-bin.txt
 
 	if use examples ; then
 		docompress -x /usr/share/doc/${PF}/examples/
 	else
-		rm -r "${ED%/}"/usr/share/doc/${PF}/examples || die
+		rm -r "${ED}"/usr/share/doc/${PF}/examples || die
 	fi
 
 	use aqbanking && dodoc doc/README.HBCI
