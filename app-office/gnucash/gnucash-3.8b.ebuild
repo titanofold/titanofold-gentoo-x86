@@ -18,7 +18,9 @@ KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 IUSE="aqbanking debug doc examples gnome-keyring +gui mysql nls ofx postgres
 	  python quotes -register2 smartcard sqlite test"
 
+# Examples doesn't build unless GUI is also built
 REQUIRED_USE="
+	examples? ( gui )
 	python? ( ${PYTHON_REQUIRED_USE} )
 	smartcard? ( aqbanking )"
 
@@ -90,6 +92,7 @@ PATCHES=(
 )
 
 S="${WORKDIR}/${PN}-$(ver_cut 1-2)"
+
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
 	xdg_environment_reset
@@ -167,13 +170,12 @@ src_test() {
 src_install() {
 	cmake-utils_src_install
 
-	# It doesn't matter if we can't remove irrelevant READMEs
 	rm "${ED}"/usr/share/doc/${PF}/*win32-bin.txt
 
 	if use examples ; then
-		docompress -x /usr/share/doc/${PF}/examples/
+		docompress -x /usr/share/doc/${PF}/examples
 	else
-		rm -r "${ED}"/usr/share/doc/${PF}/examples || die
+		rm -r "${ED}"/usr/share/doc/${PF}/examples
 	fi
 
 	use aqbanking && dodoc doc/README.HBCI
