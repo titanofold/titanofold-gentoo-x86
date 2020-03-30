@@ -40,7 +40,6 @@ RDEPEND="
 	dev-libs/libxslt
 	aqbanking? (
 		>=net-libs/aqbanking-6[ofx?]
-		>=sys-libs/gwenhywfar-5.1.2
 		smartcard? ( sys-libs/libchipcard )
 	)
 	gnome-keyring? ( >=app-crypt/libsecret-0.18 )
@@ -48,7 +47,7 @@ RDEPEND="
 		>=x11-libs/gtk+-3.14.0:3
 		gnome-base/dconf
 		net-libs/webkit-gtk:4=
-		sys-libs/gwenhywfar[gtk]
+		aqbanking? ( sys-libs/gwenhywfar[gtk] )
 	)
 	mysql? (
 		dev-db/libdbi
@@ -180,6 +179,11 @@ src_install() {
 
 	use aqbanking && dodoc doc/README.HBCI
 	use ofx && dodoc doc/README.OFX
+
+	if use python ; then
+		python_optimize
+		python_optimize "${ED}"/usr/share/gnucash/python
+	fi
 }
 
 pkg_postinst() {
