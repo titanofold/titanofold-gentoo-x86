@@ -89,6 +89,7 @@ PATCHES=(
 	"${FILESDIR}"/${PN}-3.2-no-gui.patch
 	"${FILESDIR}"/${PN}-3.8-examples-subdir.patch
 	"${FILESDIR}"/${PN}-3.8-exclude-license.patch
+	"${FILESDIR}"/${PN}-3.9-test-recurrence-result-uninitialized.patch
 )
 
 S="${WORKDIR}/${PN}-$(ver_cut 1-2)"

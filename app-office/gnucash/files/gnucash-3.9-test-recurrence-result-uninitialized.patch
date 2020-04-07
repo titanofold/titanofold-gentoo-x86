@@ -1,0 +1,44 @@
+From 8ccc1579d92c5642045a26b3046dee5dfce6729e Mon Sep 17 00:00:00 2001
+From: John Ralls <jralls@ceridwen.us>
+Date: Sun, 5 Apr 2020 12:06:02 -0700
+Subject: [PATCH] Bug 797666 - libgnucash/engine/test/test-recurrence.c: In
+ function 'check_valid': 'result' may be used uninitialized
+
+---
+ libgnucash/engine/test/test-recurrence.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/libgnucash/engine/test/test-recurrence.c b/libgnucash/engine/test/test-recurrence.c
+index 48c02cfbb2..a0a802836a 100644
+--- a/libgnucash/engine/test/test-recurrence.c
++++ b/libgnucash/engine/test/test-recurrence.c
+@@ -34,7 +34,6 @@ static gboolean check_valid(GDate *next, GDate *ref, GDate *start,
+                         guint16 mult, PeriodType pt, WeekendAdjust wadj)
+ {
+     gboolean valid;
+-    GDate adj_date;
+     gint startToNext;
+     gboolean ret_val = TRUE;
+ 
+@@ -65,10 +64,10 @@ static gboolean check_valid(GDate *next, GDate *ref, GDate *start,
+                 ret_val &= do_test(g_date_is_last_of_month(next), "end of month phase wrong");
+             else
+             {
+-                gboolean result;
++                gboolean result = TRUE;
+                 if(!g_date_is_last_of_month(next))
+                 {
+-                    adj_date = *next;
++                    GDate adj_date = *next;
+                     if(wadj == WEEKEND_ADJ_BACK)
+                     {
+                         // If adjusting back, one of the next two days to be end of month
+@@ -133,7 +132,7 @@ static gboolean check_valid(GDate *next, GDate *ref, GDate *start,
+             day_next = g_date_get_day(next);
+             if (day_start < 28)
+             {
+-                gboolean result;
++                gboolean result = TRUE;
+                 week_day = g_date_get_weekday (next);
+                 switch (wadj) {
+                     case WEEKEND_ADJ_NONE:
