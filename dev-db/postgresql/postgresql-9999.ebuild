@@ -1,9 +1,9 @@
-# Copyright 1999-2019 Gentoo Authors
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python2_7 python3_{5,6,7} )
+PYTHON_COMPAT=( python3_{6,7} )
 
 PLOCALES="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN
 		 zh_TW"
@@ -24,8 +24,8 @@ DESCRIPTION="PostgreSQL RDBMS"
 HOMEPAGE="https://www.postgresql.org/"
 
 IUSE="debug icu kerberos kernel_linux ldap libressl llvm nls pam perl
-	  python +readline selinux systemd ssl static-libs tcl threads uuid
-	  xml zlib"
+	  python +readline selinux server systemd ssl static-libs tcl
+	  threads uuid xml zlib"
 for my_locale in ${PLOCALES}; do
 	IUSE+=" l10n_${my_locale}"
 done
@@ -82,7 +82,6 @@ uuid? (
 )"
 
 DEPEND="${CDEPEND}
-!!<sys-apps/sandbox-2.0
 >=dev-lang/perl-5.8
 app-text/docbook-dsssl-stylesheets
 app-text/docbook-sgml-dtd:4.2
@@ -97,9 +96,6 @@ nls? ( sys-devel/gettext )
 xml? ( virtual/pkgconfig )
 "
 RDEPEND="${CDEPEND}
-!dev-db/postgresql-docs:${SLOT}
-!dev-db/postgresql-base:${SLOT}
-!dev-db/postgresql-server:${SLOT}
 selinux? ( sec-policy/selinux-postgresql )
 "
 
@@ -112,12 +108,14 @@ my_get_locales() {
 }
 
 pkg_pretend() {
-	ewarn "You are using a live ebuild that uses the current source code as it is"
-	ewarn "available from PostgreSQL's Git repository at emerge time. Given such,"
-	ewarn "the GNU Makefiles may be altered by upstream without notice and the"
-	ewarn "documentation for this live version is not readily available"
-	ewarn "online. Ergo, the ebuild maintainers will not support building a"
-	ewarn "client-only and/or document-free version."
+	if ! use server; then
+		ewarn "You are using a live ebuild that uses the current source code as it is"
+		ewarn "available from PostgreSQL's Git repository at emerge time. Given such,"
+		ewarn "the GNU Makefiles may be altered by upstream without notice and the"
+		ewarn "documentation for this live version is not readily available"
+		ewarn "online. Ergo, the ebuild maintainers will not support building a"
+		ewarn "client-only and/or document-free version."
+	fi
 }
 
 pkg_setup() {
@@ -158,7 +156,7 @@ src_configure() {
 	export LDFLAGS_SL="${LDFLAGS}"
 	export LDFLAGS_EX="${LDFLAGS}"
 
-	local PO="${EPREFIX%/}"
+	local PO="${EPREFIX}"
 
 	local i uuid_config=""
 	if use uuid; then
@@ -174,7 +172,6 @@ src_configure() {
 	econf \
 		--prefix="${PO}/usr/$(get_libdir)/postgresql-${SLOT}" \
 		--datadir="${PO}/usr/share/postgresql-${SLOT}" \
-		--docdir="${PO}/usr/share/doc/${PF}" \
 		--includedir="${PO}/usr/include/postgresql-${SLOT}" \
 		--mandir="${PO}/usr/share/postgresql-${SLOT}/man" \
 		--sysconfdir="${PO}/etc/postgresql-${SLOT}" \
@@ -207,7 +204,7 @@ src_compile() {
 src_install() {
 	emake DESTDIR="${D}" install-world
 
-	dodoc README HISTORY doc/TODO
+	dodoc README HISTORY doc/{TODO,bug.template}
 
 	insinto /etc/postgresql-${SLOT}
 	newins src/bin/psql/psqlrc.sample psqlrc
