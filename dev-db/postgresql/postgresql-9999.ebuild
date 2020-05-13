@@ -5,12 +5,11 @@ EAPI=7
 
 PYTHON_COMPAT=( python3_{6,7} )
 
-PLOCALES="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN
-		 zh_TW"
 PLOCALES="af cs de en es fa fr hr hu it ko nb pl pt-BR ro ru sk sl sv tr zh-CN
 		 zh-TW"
+
 inherit flag-o-matic git-r3 linux-info multilib pam prefix python-single-r1 \
-		systemd user
+		systemd
 
 KEYWORDS=""
 
@@ -34,6 +33,8 @@ REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 CDEPEND="
 >=app-eselect/eselect-postgresql-2.0
+acct-group/postgres
+acct-user/postgres
 sys-apps/less
 virtual/libintl
 icu? ( dev-libs/icu:= )
@@ -120,9 +121,6 @@ pkg_pretend() {
 
 pkg_setup() {
 	CONFIG_CHECK="~SYSVIPC" linux-info_pkg_setup
-
-	enewgroup postgres 70
-	enewuser postgres 70 /bin/sh /var/lib/postgresql postgres
 
 	use python && python-single-r1_pkg_setup
 }

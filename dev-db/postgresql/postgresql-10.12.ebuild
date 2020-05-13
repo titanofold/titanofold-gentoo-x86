@@ -9,7 +9,7 @@ PLOCALES="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN
 		 zh_TW"
 
 inherit flag-o-matic l10n linux-info multilib pam prefix python-single-r1 \
-		systemd user
+		systemd
 
 KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~mips ppc ppc64 ~s390 sparc x86 ~ppc-macos ~x86-solaris"
 
@@ -32,6 +32,8 @@ REQUIRED_USE="python? ( ${PYTHON_REQUIRED_USE} )"
 
 CDEPEND="
 >=app-eselect/eselect-postgresql-2.0
+acct-group/postgres
+acct-user/postgres
 sys-apps/less
 virtual/libintl
 icu? ( dev-libs/icu:= )
@@ -91,9 +93,6 @@ selinux? ( sec-policy/selinux-postgresql )
 
 pkg_setup() {
 	use server && CONFIG_CHECK="~SYSVIPC" linux-info_pkg_setup
-
-	enewgroup postgres 70
-	enewuser postgres 70 /bin/sh /var/lib/postgresql postgres
 
 	use python && python-single-r1_pkg_setup
 }
