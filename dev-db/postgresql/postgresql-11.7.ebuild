@@ -5,11 +5,7 @@ EAPI=7
 
 PYTHON_COMPAT=( python3_{6,7} )
 
-PLOCALES="af cs de en es fa fr hr hu it ko nb pl pt_BR ro ru sk sl sv tr zh_CN
-		 zh_TW"
-
-inherit flag-o-matic l10n linux-info multilib pam prefix python-single-r1 \
-		systemd
+inherit flag-o-matic linux-info multilib pam prefix python-single-r1 systemd
 
 KEYWORDS="~alpha amd64 arm arm64 hppa ~ia64 ~mips ppc ppc64 ~s390 sparc x86 ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
 
@@ -170,7 +166,7 @@ src_configure() {
 		$(use_with xml libxml) \
 		$(use_with xml libxslt) \
 		$(use_with zlib) \
-		$(use_enable nls nls "'$(l10n_get_locales)'")
+		$(use_enable nls)
 }
 
 src_compile() {
