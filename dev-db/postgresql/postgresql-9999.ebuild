@@ -96,12 +96,13 @@ selinux? ( sec-policy/selinux-postgresql )
 
 pkg_pretend() {
 	if ! use server; then
-		ewarn "You are using a live ebuild that uses the current source code as it is"
-		ewarn "available from PostgreSQL's Git repository at emerge time. Given such,"
-		ewarn "the GNU Makefiles may be altered by upstream without notice and the"
-		ewarn "documentation for this live version is not readily available"
-		ewarn "online. Ergo, the ebuild maintainers will not support building a"
-		ewarn "client-only and/or document-free version."
+		elog "You are using a live ebuild that uses the current source code as it is"
+		elog "available from PostgreSQL's Git repository at emerge time. Given such,"
+		elog "the GNU Makefiles may be altered by upstream without notice and the"
+		elog "documentation for this live version is not readily available"
+		elog "online. Ergo, the ebuild maintainers will not support building a"
+		elog "client-only and/or document-free version."
+		ewarn "Building server anyway."
 	fi
 }
 
