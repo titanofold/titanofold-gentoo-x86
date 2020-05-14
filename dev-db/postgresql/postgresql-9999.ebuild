@@ -94,14 +94,6 @@ RDEPEND="${CDEPEND}
 selinux? ( sec-policy/selinux-postgresql )
 "
 
-my_get_locales() {
-	local my_locale locale_list
-	for my_locale in ${PLOCALES[@]}; do
-		use l10n_${my_locale} && locale_list+=( ${my_locale} )
-	done
-	echo -n ${locale_list[@]}
-}
-
 pkg_pretend() {
 	if ! use server; then
 		ewarn "You are using a live ebuild that uses the current source code as it is"
