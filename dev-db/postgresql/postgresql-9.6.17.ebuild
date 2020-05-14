@@ -72,7 +72,6 @@ uuid? (
 )"
 
 DEPEND="${CDEPEND}
-!!<sys-apps/sandbox-2.0
 sys-devel/bison
 sys-devel/flex
 nls? ( sys-devel/gettext )
@@ -80,9 +79,6 @@ xml? ( virtual/pkgconfig )
 "
 
 RDEPEND="${CDEPEND}
-!dev-db/postgresql-docs:${SLOT}
-!dev-db/postgresql-base:${SLOT}
-!dev-db/postgresql-server:${SLOT}
 selinux? ( sec-policy/selinux-postgresql )
 "
 
