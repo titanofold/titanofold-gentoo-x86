@@ -10,8 +10,7 @@ inherit flag-o-matic git-r3 linux-info multilib pam prefix python-single-r1 \
 
 KEYWORDS=""
 
-# Bump when rc released.
-SLOT="13"
+SLOT="9999"
 
 EGIT_REPO_URI="https://git.postgresql.org/git/postgresql.git"
 
