@@ -63,8 +63,8 @@ src_configure() {
 		use ${u} &&  myconf+=" --with-${u}"
 	done
 
-	tc-export CC
-	./configure ${myconf} || die
+	tc-export CC CXX
+	CC_FOR_BUILD=${CC} ./configure ${myconf} || die
 }
 
 src_install() {
