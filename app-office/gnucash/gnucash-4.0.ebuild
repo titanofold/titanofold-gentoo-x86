@@ -31,8 +31,8 @@ REQUIRED_USE="
 # net-libs/aqbanking dropped gtk with v6, so to simplify the dependency,
 # we just rely on that.
 RDEPEND="
-	>=dev-libs/glib-2.46.0:2
-	>=dev-libs/libxml2-2.7.0:2
+	>=dev-libs/glib-2.56.0:2
+	>=dev-libs/libxml2-2.9.4:2
 	>=dev-scheme/guile-2.2.0:12=[deprecated,regex]
 	>=sys-libs/zlib-1.1.4
 	dev-libs/boost:=[icu,nls]
@@ -45,7 +45,7 @@ RDEPEND="
 	)
 	gnome-keyring? ( >=app-crypt/libsecret-0.18 )
 	gui? (
-		>=x11-libs/gtk+-3.14.0:3
+		>=x11-libs/gtk+-3.22.30:3
 		gnome-base/dconf
 		net-libs/webkit-gtk:4=
 		aqbanking? ( sys-libs/gwenhywfar[gtk] )
@@ -66,15 +66,16 @@ RDEPEND="
 		dev-perl/HTML-TableExtract
 	)
 	sqlite? (
-		>=dev-db/libdbi-0.9.0
-		>=dev-db/libdbi-drivers-0.9.0[sqlite]
+		dev-db/libdbi
+		dev-db/libdbi-drivers[sqlite]
 	)
 "
 
 DEPEND="${RDEPEND}
 	>=dev-cpp/gtest-1.8.0
-	>=sys-devel/gettext-0.19.6
+	>=sys-devel/gettext-0.20
 	dev-lang/perl
+	dev-lang/swig
 	dev-perl/XML-Parser
 	sys-devel/libtool
 	virtual/pkgconfig
@@ -103,10 +104,8 @@ src_prepare() {
 
 	# Fix tests writing to /tmp
 	local fixtestfiles=(
-		"${S}"/gnucash/report/report-system/test/test-commodity-utils.scm
-		"${S}"/gnucash/report/report-system/test/test-extras.scm
-		"${S}"/gnucash/report/report-system/test/test-report-html.scm
-		"${S}"/gnucash/report/report-system/test/test-report-system.scm
+		"${S}"/gnucash/report/test/test-commodity-utils.scm
+		"${S}"/gnucash/report/test/test-report-html.scm
 		"${S}"/libgnucash/backend/xml/test/test-xml-pricedb.cpp
 		"${S}"/libgnucash/backend/dbi/test/test-backend-dbi-basic.cpp
 	)
@@ -170,16 +169,11 @@ src_test() {
 src_install() {
 	cmake-utils_src_install
 
-	rm "${ED}"/usr/share/doc/${PF}/*win32-bin.txt
-
 	if use examples ; then
 		docompress -x /usr/share/doc/${PF}/examples
 	else
 		rm -r "${ED}"/usr/share/doc/${PF}/examples
 	fi
-
-	use aqbanking && dodoc doc/README.HBCI
-	use ofx && dodoc doc/README.OFX
 
 	if use python ; then
 		python_optimize
