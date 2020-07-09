@@ -5,7 +5,7 @@ EAPI=7
 
 PYTHON_COMPAT=( python3_{6,7,8} )
 
-inherit cmake-utils gnome2-utils python-single-r1 xdg-utils
+inherit cmake gnome2-utils python-single-r1 toolchain-funcs xdg-utils
 
 DESCRIPTION="A personal finance manager"
 HOMEPAGE="http://www.gnucash.org/"
@@ -27,16 +27,16 @@ REQUIRED_USE="
 # libdbi version requirement for sqlite taken from bug #455134
 #
 # dev-libs/boost must always be built with nls enabled.
-# guile[deprecated] because of SCM_LIST*() use.
+# dev-scheme/guile[deprecated] because of SCM_LIST*() use.
 # net-libs/aqbanking dropped gtk with v6, so to simplify the dependency,
 # we just rely on that.
 RDEPEND="
-	>=dev-libs/glib-2.56.0:2
-	>=dev-libs/libxml2-2.9.4:2
+	>=dev-libs/glib-2.56.1:2
 	>=dev-scheme/guile-2.2.0:12=[deprecated,regex]
 	>=sys-libs/zlib-1.1.4
 	dev-libs/boost:=[icu,nls]
 	dev-libs/icu:=
+	dev-libs/libxml2:2
 	dev-libs/libxslt
 	aqbanking? (
 		>=net-libs/aqbanking-6[ofx?]
@@ -75,10 +75,18 @@ DEPEND="${RDEPEND}
 	>=dev-cpp/gtest-1.8.0
 	>=sys-devel/gettext-0.20
 	dev-lang/perl
-	dev-lang/swig
 	dev-perl/XML-Parser
 	sys-devel/libtool
+"
+
+BDEPEND="
+	dev-lang/swig
+	dev-util/cmake
 	virtual/pkgconfig
+	|| (
+		>=sys-devel/gcc-8:*
+		>=sys-devel/clang-6:*
+	)
 "
 
 PDEPEND="doc? (
@@ -94,23 +102,45 @@ PATCHES=(
 
 S="${WORKDIR}/${PN}-$(ver_cut 1-2)"
 
+RESTRICT="!test? ( test )"
+
+pkg_pretend() {
+	if tc-is-gcc; then
+		if [[ $(gcc-major-version) -lt 8 ]]; then
+			die "Gnucash needs at least GCC version 8."
+		fi
+	elif tc-is-clang; then
+		if [[ $(clang-major-version) -lt 6 ]]; then
+			die "Gnucash needs at least clang version 6."
+		fi
+	fi
+}
+
 pkg_setup() {
 	use python && python-single-r1_pkg_setup
 	xdg_environment_reset
 }
 
 src_prepare() {
-	cmake-utils_src_prepare
+	cmake_src_prepare
 
 	# Fix tests writing to /tmp
 	local fixtestfiles=(
-		"${S}"/gnucash/report/test/test-commodity-utils.scm
-		"${S}"/gnucash/report/test/test-report-html.scm
-		"${S}"/libgnucash/backend/xml/test/test-xml-pricedb.cpp
-		"${S}"/libgnucash/backend/dbi/test/test-backend-dbi-basic.cpp
+		gnucash/report/test/test-report-html.scm
+		gnucash/report/reports/standard/test/test-invoice.scm
+		gnucash/report/reports/standard/test/test-new-owner-report.scm
+		gnucash/report/reports/standard/test/test-owner-report.scm
+		gnucash/report/reports/standard/test/test-transaction.scm
+		gnucash/report/reports/standard/test/test-portfolios.scm
+		gnucash/report/reports/standard/test/test-charts.scm
+		gnucash/report/test/test-report.scm
+		gnucash/report/test/test-commodity-utils.scm
+		gnucash/report/test/test-report-extras.scm
+		libgnucash/backend/dbi/test/test-backend-dbi-basic.cpp
+		libgnucash/backend/xml/test/test-xml-pricedb.cpp
 	)
 	for x in "${fixtestfiles[@]}"; do
-		sed -i -e "s|\"/tmp/|\"${T}/|g" "${x}" || die "sed of "${x}" failed"
+		sed -i -e "s|\"/tmp/|\"${T}/|g" "${S}/${x}" || die "sed of "${S}/${x}" failed"
 	done
 }
 
@@ -133,7 +163,7 @@ src_configure() {
 		-DWITH_GNUCASH=$(usex gui)
 	)
 
-	cmake-utils_src_configure
+	cmake_src_configure
 }
 
 src_test() {
@@ -167,7 +197,10 @@ src_test() {
 }
 
 src_install() {
-	cmake-utils_src_install
+	cmake_src_install
+
+	# strip is unable to recognise the format of the input files (*.go)
+	dostrip -x /usr/$(get_libdir)/guile
 
 	if use examples ; then
 		docompress -x /usr/share/doc/${PF}/examples
