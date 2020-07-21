@@ -17,6 +17,7 @@ KEYWORDS="~amd64 ~ppc ~ppc64 ~x86"
 
 IUSE="aqbanking debug doc examples gnome-keyring +gui mysql nls ofx postgres
 	  python quotes -register2 smartcard sqlite test"
+RESTRICT="!test? ( test )"
 
 # Examples doesn't build unless GUI is also built
 REQUIRED_USE="
@@ -24,12 +25,10 @@ REQUIRED_USE="
 	python? ( ${PYTHON_REQUIRED_USE} )
 	smartcard? ( aqbanking )"
 
-# libdbi version requirement for sqlite taken from bug #455134
-#
 # dev-libs/boost must always be built with nls enabled.
 # dev-scheme/guile[deprecated] because of SCM_LIST*() use.
-# net-libs/aqbanking dropped gtk with v6, so to simplify the dependency,
-# we just rely on that.
+# net-libs/aqbanking dropped gtk with v6. So, to simplify the
+#   dependency, we just rely on that.
 RDEPEND="
 	>=dev-libs/glib-2.56.1:2
 	>=dev-scheme/guile-2.2.0:12=[deprecated,regex]
@@ -102,16 +101,14 @@ PATCHES=(
 
 S="${WORKDIR}/${PN}-$(ver_cut 1-2)"
 
-RESTRICT="!test? ( test )"
-
 pkg_pretend() {
 	if tc-is-gcc; then
 		if [[ $(gcc-major-version) -lt 8 ]]; then
-			die "Gnucash needs at least GCC version 8."
+			die "GnuCash needs at least GCC version 8."
 		fi
 	elif tc-is-clang; then
 		if [[ $(clang-major-version) -lt 6 ]]; then
-			die "Gnucash needs at least clang version 6."
+			die "GnuCash needs at least clang version 6."
 		fi
 	fi
 }
