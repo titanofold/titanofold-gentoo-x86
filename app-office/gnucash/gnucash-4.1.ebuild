@@ -26,12 +26,11 @@ REQUIRED_USE="
 	smartcard? ( aqbanking )"
 
 # dev-libs/boost must always be built with nls enabled.
-# dev-scheme/guile[deprecated] because of SCM_LIST*() use.
 # net-libs/aqbanking dropped gtk with v6. So, to simplify the
 #   dependency, we just rely on that.
 RDEPEND="
 	>=dev-libs/glib-2.56.1:2
-	>=dev-scheme/guile-2.2.0:12=[deprecated,regex]
+	>=dev-scheme/guile-2.2.0:=[regex]
 	>=sys-libs/zlib-1.1.4
 	dev-libs/boost:=[icu,nls]
 	dev-libs/icu:=
