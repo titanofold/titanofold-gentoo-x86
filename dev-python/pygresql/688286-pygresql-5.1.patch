@@ -1,0 +1,50 @@
+commit 889fe32d75a24b7a5620ebdeeabd0a6af6654385
+Author: Jeroen Roovers <jer@gentoo.org>
+Date:   Mon Nov 4 10:36:05 2019 +0100
+
+    dev-python/pygresql: Respect CFLAGS
+    
+    The only valid CFLAGS additions in extra_compile_args are
+    -funsigned-char and -Wall, even if the latter does not affect what is
+    installed. Remove -O2 and -Werror.
+    
+    Package-Manager: Portage-2.3.78, Repoman-2.3.17
+    Fixes: https://bugs.gentoo.org/688286
+    Signed-off-by: Jeroen Roovers <jer@gentoo.org>
+
+diff --git a/dev-python/pygresql/files/pygresql-5.1-CFLAGS.patch b/dev-python/pygresql/files/pygresql-5.1-CFLAGS.patch
+new file mode 100644
+index 00000000000..480d0a3dc4c
+--- /dev/null
++++ b/dev-python/pygresql/files/pygresql-5.1-CFLAGS.patch
+@@ -0,0 +1,11 @@
++--- a/setup.py
+++++ b/setup.py
++@@ -101,7 +101,7 @@
++ library_dirs = [get_python_lib(), pg_config('libdir')]
++ define_macros = [('PYGRESQL_VERSION', version)]
++ undef_macros = []
++-extra_compile_args = ['-O2', '-funsigned-char', '-Wall', '-Werror']
+++extra_compile_args = ['-funsigned-char', '-Wall']
++ 
++ 
++ class build_pg_ext(build_ext):
+diff --git a/dev-python/pygresql/pygresql-5.1.ebuild b/dev-python/pygresql/pygresql-5.1.ebuild
+index 1f1d7861a4f..12703a26534 100644
+--- a/dev-python/pygresql/pygresql-5.1.ebuild
++++ b/dev-python/pygresql/pygresql-5.1.ebuild
+@@ -22,11 +22,9 @@ DEPEND="${POSTGRES_DEP}"
+ RDEPEND="${DEPEND}"
+ 
+ S="${WORKDIR}/${MY_P}"
+-
+-src_prepare() {
+-	sed "s/, '-Wall'//" -i setup.py || die
+-	default
+-}
++PATCHES=(
++	"${FILESDIR}"/${PN}-5.1-CFLAGS.patch
++)
+ 
+ python_install_all() {
+ 	local DOCS=( docs/*.rst docs/community/* docs/contents/tutorial.rst )
