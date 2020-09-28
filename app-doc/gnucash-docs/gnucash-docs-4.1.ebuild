@@ -1,9 +1,9 @@
 # Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=7
 
-inherit autotools eutils gnome2
+inherit autotools optfeature
 
 DESCRIPTION="Documentation package for GnuCash"
 HOMEPAGE="http://www.gnucash.org/"
@@ -16,7 +16,7 @@ LOCALES=( de it ja pt ru )
 IUSE="${LOCALES[*]/#/l10n_}"
 
 DEPEND="
-	app-text/docbook-xml-dtd
+	app-text/docbook-xml-dtd:4.5
 	app-text/docbook-xsl-stylesheets
 	app-text/rarian
 	dev-libs/libxml2
@@ -60,7 +60,6 @@ src_install() {
 }
 
 pkg_postinst() {
-	gnome2_pkg_postinst
 	optfeature "You need dev-java/fop to generate pdf files." dev-java/fop
 	optfeature "You need gnome-extra/yelp to view the docs." gnome-extra/yelp
 }
