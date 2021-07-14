@@ -33,7 +33,9 @@ gui? (
 )
 "
 DEPEND="${RDEPEND}
-dev-python/sphinx
+$(python_gen_cond_dep '
+	dev-python/sphinx[${PYTHON_USEDEP}]
+')
 sys-devel/gettext
 virtual/pkgconfig
 "
