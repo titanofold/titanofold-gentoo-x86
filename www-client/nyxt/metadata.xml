@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>titanofold@gentoo.org</email>
+    <name>Aaron W. Swenson</name>
+  </maintainer>
+  <longdescription>
+    Nyxt is a keyboard-driven web browser designed for power users. Inspired by
+    Emacs and Vim, it has familiar key-bindings (Emacs, vi, CUA), and is
+    infinitely extensible in Lisp.
+  </longdescription>
+</pkgmetadata>
